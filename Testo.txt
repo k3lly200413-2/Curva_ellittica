@@ -4,6 +4,47 @@ La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata,
 
 La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usate per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
 
-Alcuni degli algoritmi più popolari che utilizzano le chiavi pubbliche sono RSA e Diffie-Hellman;
+L'attacco più comune compiuto contro sistemi a chiave pubblica consiste nel codificare una serie di messaggi con le informazioni date dal destinatario ( la sua chiave pubblica e la funzione usata per cifrare i messaggi da inviare ) per poi confrontare questi nuovi crittogrammi con quelli che vengono inviati su un canale di comunicazione, in modo da vedere se coincidono.
 
-Test Test Tes
+Alcuni degli algoritmi più popolari che utilizzano le chiavi pubbliche che rimangono al giorno d'oggi inviolati sono RSA e Diffie-Hellman;
+
+
+[TITOLO]
+
+RSA
+
+Il cifrario RSA fonda la sua sicurezza sulla difficoltà di fattorizzazione di grandi numeri interi, il che lo rende sostanzialmente inviolabile per chiavi adeguatamente grandi
+
+[TITOLO]
+
+Creazione delle chiavi
+
+Un Destinatario deve compiere queste operazioni in modo di creare le chiavi pubbliche e private:
+
+	scegliere due numeri primi molto grandi p, q
+	
+	calcolare n = p*q e \Phi(n) = (p - 1)*(q - 1)
+	
+	scegliere un numero intero e minore di \Phi(n) e primo con esso
+
+	calcolare l'intero d inverso di e modulo \Phi(n)
+
+	rendere pubblica la chiave k[pub] = (e, n), e mantere segreta la chiave k[prv] = (d)
+
+Per codificare correttamente il messaggio questo deve essere trasformato in binario, il quale viene trattato come un numero intero m, questo deve risultare < n, il che è possibile dividendo il messaggio m in blocchi di al più [LOWER BOUND ]log2(n) bit
+
+formula per cifrare un messaggio => c = m^e mod n
+
+formula per decifrare un messaggio => m = c^d mod n
+
+A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due utenti per la generazione delle chiavi:
+	Utente A scegliere un numero a primo p, un generatore g di \mathbb{Z}^(*)_(p) e un numero intero a > 0
+	l'utente A calcola A = g^a mod p
+	spedice poi all'utente B (g, p, A)
+	l'utente B sceglie a un numero b
+	calcola poi B = g^b mod p
+	spedisce poi all'utente A B
+	utente B calcola la chiave segreta K = A^b mod p
+	utente A calcola la chiave segreta K = B^a mod p
+
+La sicurezza di questo protocollo è dato dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori p, g, A, B scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione A = g^a mod p ripetto ad a oppure B = g^b mod p rispetto a b ovvero calcolare il logaritmo discreto di A, o di B.
