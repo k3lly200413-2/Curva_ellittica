@@ -1,7 +1,11 @@
 \documentclass[12pt, a4paper]{report}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage[utf8]{inputenc}
+
+
+\newtheorem{definition}{Definizione}
 
 \title{Curve Ellittiche}
 \author{Applebee Kelly}
@@ -12,23 +16,65 @@
 
 \maketitle
 
-\section{Introduzione}
+\chapter{Introduzione}
 La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate.
 
 La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicato senza utilizzare canali non protetti ( di solito comunicati in persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
 
 La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usate per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
 
-L'attacco più comune compiuto contro sistemi a chiave pubblica consiste nel codificare una serie di messaggi con le informazioni date dal destinatario ( la sua chiave pubblica e la funzione usata per cifrare i messaggi da inviare ) per poi confrontare questi nuovi crittogrammi con quelli che vengono inviati su un canale di comunicazione, in modo da vedere se coincidono.
+L'attacco più comune compiuto contro sistemi a chiave pubblica si chiama \textit{know-plaintext} consiste nel codificare una serie di messaggi con le informazioni date dal destinatario ( la sua chiave pubblica e la funzione usata per cifrare i messaggi da inviare ) per poi confrontare questi nuovi crittogrammi con quelli che vengono inviati su un canale di comunicazione, in modo da vedere se coincidono.
+
+BROKEN BY QUANTUM COMPUTERS TO FIX
 
 Alcuni degli algoritmi più popolari che utilizzano le chiavi pubbliche che rimangono al giorno d'oggi inviolati sono RSA e Diffie-Hellman;
 
+\section{Campi}
+Prima di parlare di algoritmi crittografici è necessario introdurre alcuni concetti matematici, primo tra i quali i \textit{campi}.
+\begin{definition}
+    Un campo $(K, +, \cdot)$ è un insieme non vuoto che presenta operazioni binarie le quali soddisfano le seguenti propietà:
+    \begin{itemize}
+        \item $(K, +)$ è un gruppo con elemento neutro $0$
+        \item $(K \setminus \{0\}, \cdot)$ è un gruppo abeliano con elemento neutro 1
+        \item La moltiplicazione è distributiva rispetto all'addizione: $a \cdot ( b + c ) = ( a \cdot b ) + ( a \cdot c )$
+    \end{itemize}
+\end{definition}
 
-\subsection{RSA}
+In altre parole si vuole che ogni elemento, escluso lo $0$ abbia un inverso moltiplicativo.
+
+\subsection{Esempi di campi}
+\begin{itemize}
+    \item L'insieme dei numeri razionali $\mathbb{Q}$ è un campo.
+    \item L'insieme dei numeri reali $\mathbb{R}$ è un campo
+    \item L'insieme $\mathbb{Z} / \mathbb{Z}_p$ delle classi di resto modulo \textit{p} è un campo se e solo se \textit{p} è un numero primo
+\end{itemize}
+
+\section{Funzione di Eulero}
+
+\begin{definition}
+    La funzine di Eulero può essere scritta come $\Phi(n) = \left\lvert \mathbb{Z^*_n}\right\rvert $
+\end{definition}
+
+Questa funzione risulta utile perché dato: 
+\begin{itemize}
+    \item $\Phi(p) = p - 1$
+    \item $\Phi(pq) = (p - 1)(q - 1)$
+    \item \textit{a} primo con \textit{b} allora $\Phi(ab) = \Phi(a)\Phi(b)$
+    \item $\Phi(n)$ difficile da calcolare
+\end{itemize}
+\begin{definition}
+    Per ogni $p > 1$ primo e per ogni $k \geq 1$  intero:
+    \begin{align}
+        \Phi(p^k) = \Phi(p) \cdot p^{k-1}
+                \\ = (p-1)\cdot p^{k-1}
+    \end{align}
+\end{definition}
+
+\section{RSA}
 
 Il cifrario RSA fonda la sua sicurezza sulla difficoltà di fattorizzazione di grandi numeri interi, il che lo rende sostanzialmente inviolabile per chiavi adeguatamente grandi
 
-Creazione delle chiavi
+\subsection{Creazione delle chiavi}
 
 Un Destinatario deve compiere queste operazioni in modo di creare le chiavi pubbliche e private:
 \begin{enumerate}
@@ -49,7 +95,7 @@ Per codificare correttamente il messaggio questo deve essere trasformato in bina
     m &= c^d \bmod n \quad \text{(decifratura)}
 \end{align}
 
-\subsection{Diffie-Hellman}
+\section{Diffie-Hellman}
 
 A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due utenti per la generazione delle chiavi:
 \begin{enumerate}
@@ -62,7 +108,7 @@ A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due 
 
 La sicurezza di questo protocollo è dato dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ ripetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$.
 
-\subsection{Curve Ellittiche}
+\section{Curve Ellittiche}
 
 Una curva ellittica è una curva piana definita da un'equazione del tipo: 
 \begin{equation}
@@ -70,5 +116,13 @@ Una curva ellittica è una curva piana definita da un'equazione del tipo:
 \end{equation}
 Qeusta possiede un’operazione di somma fra punti
 appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui elemento neutro è costituito dal punto all’infinito $O$.
+
+\begin{thebibliography}{9}
+    \bibitem{Margara}
+    L. Margara, \textit{Crittografia su Curve Ellittiche}, Unibo, 2026.
+
+    \bibitem{Languasco, Zaccagnini}
+    A. Languasco, A. Zaccagnini \textit{Introduzione alla crittografia. Algoritmi, protocolli, sicurezza informatica}
+\end{thebibliography}
 
 \end{document}
