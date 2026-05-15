@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage[utf8]{inputenc}
+\usepackage{hyperref}
 
 
 \newtheorem{definition}{Definizione}
@@ -17,11 +18,13 @@
 \maketitle
 
 \chapter{Introduzione}
-La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate.
+La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate, tra cui i dispositivi IoT.
 
 La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicato senza utilizzare canali non protetti ( di solito comunicati in persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
 
 La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usate per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
+
+TO FIX ATTACK
 
 L'attacco più comune compiuto contro sistemi a chiave pubblica si chiama \textit{know-plaintext} consiste nel codificare una serie di messaggi con le informazioni date dal destinatario ( la sua chiave pubblica e la funzione usata per cifrare i messaggi da inviare ) per poi confrontare questi nuovi crittogrammi con quelli che vengono inviati su un canale di comunicazione, in modo da vedere se coincidono.
 
@@ -52,7 +55,7 @@ In altre parole si vuole che ogni elemento, escluso lo $0$ abbia un inverso molt
 \section{Funzione di Eulero}
 
 \begin{definition}
-    La funzine di Eulero può essere scritta come $\Phi(n) = \left\lvert \mathbb{Z^*_n}\right\rvert $
+    La funzipne di Eulero può essere scritta come $\Phi(n) = \left\lvert \mathbb{Z}_n^*\right\rvert $
 \end{definition}
 
 Questa funzione risulta utile perché dato: 
@@ -60,7 +63,7 @@ Questa funzione risulta utile perché dato:
     \item $\Phi(p) = p - 1$
     \item $\Phi(pq) = (p - 1)(q - 1)$
     \item \textit{a} primo con \textit{b} allora $\Phi(ab) = \Phi(a)\Phi(b)$
-    \item $\Phi(n)$ difficile da calcolare
+    \item $\Phi(n)$ difficile da calcolare senza conoscere la fattorizzazione di n
 \end{itemize}
 \begin{definition}
     Per ogni $p > 1$ primo e per ogni $k \geq 1$  intero:
@@ -112,10 +115,67 @@ La sicurezza di questo protocollo è dato dal fatto che anche se un crittoanalis
 
 Una curva ellittica è una curva piana definita da un'equazione del tipo: 
 \begin{equation}
-    y^2 = x^3 + ax + b
+    y^2 = x^3 + ax + b \footnote{Questo funziona solamente quando la caratteristica del campo K è diversa da 2 e 3, altrimenti l'equazione diventerebbe $y^2 + axy + by = x^3 + cx^2 + dx + e$ dove $a, b, c, d, e \in K$}
 \end{equation}
 Qeusta possiede un’operazione di somma fra punti
 appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui elemento neutro è costituito dal punto all’infinito $O$.
+\\Una curva ellittica è caratterizzata dal fatto che sommando due punti se ne ottiene un terzo della stessa curva.
+Nella definizione di curva ellittica viene definito anche il \textit{punto all'infinito O} definito come la somma di tre punti su una curva ellittica collegati da una retta.
+\subsection{Punto all'infinito}
+\begin{definition}
+    Punto improprio definito in Geometria proiettiva associato a una direzione nel piano: ogni famiglia di rette parallele converge in un unico punto all'infinito, l'insieme di questi punti forma la \emph{retta impropria}.\\
+    Nelle curve ellittiche, il punto all'infinito $\mathcal{O}$ è unico ed funge da elemento neutro dell'addizione del gruppo.
+\end{definition}
+\subsubsection*{Intuizione geometrica}
+    I punti all'infinito corrispondono ai punti $[X:Y:Z]$ con $Z = 0$.
+    Passando alle coordinate omogenee $[X:Y:Z]$ con $x = X/Z,\ y = Y/Z$, l'equazione di Weierstrass diventa:
+    \begin{equation}
+        Y^2Z = X^3 + aXZ^2 + bZ^3
+    \end{equation}
+Ponendo $Z = 0$ si ottiene $X = 0$, da cui il punto all'infinito è 
+$\mathcal{O} = [0:1:0]$ \cite{silverman}.
+
+\subsection{Somma su curve ellittiche}
+\begin{definition}
+    Ogni retta interseca una curva ellittica in al più tre punti \cite{Margara}
+\end{definition}
+
+Dalla definizione sopra si può capire dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R}. Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
+\\Dati tre punti \textit{P, Q, R} di una curva ellittica $E(a, b)$ se \textit{P, Q} e \textit{R} sono disposti su una retta, allora la loro somma si pone uguale al punto all'infinito:
+\begin{equation}
+    P + Q + R = O
+\end{equation}
+
+\subsection{Creazione di chiavi su $\mathbb{Z}_p$}
+
+Due utenti Angelica e Brian vogliono instaurare una comunicazione sicura, si concordano pubblicamente su un campo finito e su una curva ellittica definita su questo campo.
+Dopodiché scelgono un punto \textit{P} appartenente alla curva di ordine \textit{n} grande, in modo che $nP = O$.
+\\Angelica Sceglie un intero positivo $n_a < n$ come chiave privata, genera una chiave pubblica $P_a = n_aB$ spedendola in chiaro a Brian.
+\\Allo stesso modo Brian genera un punto casuale $P_b = n_bB$ che a sua volta viene spedito ad Angelica in chiaro.\footnote{I Punti \textit{$P_a$ e $P_b$} rappresentano punti calcolati a partire da punti scelti casualmente, questi appartengono alla curva}
+\\Angelica riceva il punto $P_b$ e calcola un nuovo punto $n_aP_b = n_an_bB = S$\footnote{S è un nuovo punto appartenente alla curva}, Brian compie la stessa operazione con $n_b$ al posto di $n_a$ in modo da ottenere lo stesso punto \textit{S}
+\\ Per trasformare \textit{S} in una chiave segreta condivisa occorre trasformarlo in un numero intero, convenzionalmente si considerano gli ultimi 256 bit dell'ascissa di \textit{S}, ovvero:
+\begin{equation}
+    k = x_s\mod2^{256}
+\end{equation}
+
+\subsection{Metodi a confronto}
+
+Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota come le curve ellittiche utilizzino chiavi di dimensione notevolmente inferiore rispetto agli altri, il che le rende molto utili per dispositivi con risorse limitate, come smartcard, dispositivi IoT\dots
+
+\begin{center}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        TDEA, AES  & \textit{RSA e DH} & \textit{ECC}\\
+        (bit della chiave) & (bit del modulo) & (bit dell'ordine)\\
+        \hline
+        80 & 1024 & 160 \\
+        112 & 2048 & 224 \\
+        128 & 3072 & 256 \\
+        192 & 7680 & 384 \\
+        256 & 15360 & 512 \\
+        \hline
+    \end{tabular}
+\end{center}
 
 \begin{thebibliography}{9}
     \bibitem{Margara}
@@ -123,6 +183,14 @@ appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui e
 
     \bibitem{Languasco, Zaccagnini}
     A. Languasco, A. Zaccagnini \textit{Introduzione alla crittografia. Algoritmi, protocolli, sicurezza informatica}
+
+    \bibitem{silverman}
+
+    Joseph H. Silverman \textit{The Arithmetic of Elliptic Curves}
+
+    \bibitem{Treccani}
+    Enciclopedia Treccani \textit{Punto all'infinito}
+    \url{https://www.treccani.it/enciclopedia/punto-all-infinito_(Enciclopedia-della-Matematica)/}
 \end{thebibliography}
 
 \end{document}
