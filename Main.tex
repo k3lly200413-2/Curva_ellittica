@@ -111,8 +111,8 @@ A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due 
 
 La sicurezza di questo protocollo è dato dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ ripetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$.
 
-\section{Curve Ellittiche}
-
+\chapter{Curve Ellittiche}
+\section{Curve ellittiche su $\mathbb{R}$}
 Una curva ellittica è una curva piana definita da un'equazione del tipo: 
 \begin{equation}
     y^2 = x^3 + ax + b \footnote{Questo funziona solamente quando la caratteristica del campo K è diversa da 2 e 3, altrimenti l'equazione diventerebbe $y^2 + axy + by = x^3 + cx^2 + dx + e$ dove $a, b, c, d, e \in K$}
@@ -136,6 +136,9 @@ Ponendo $Z = 0$ si ottiene $X = 0$, da cui il punto all'infinito è
 $\mathcal{O} = [0:1:0]$ \cite{silverman}.
 
 \subsection{Somma su curve ellittiche}
+\label{sec:Somma}
+
+DA METTERE ELEMENTO NEUTRO IN SOMMA DI DUE PUNTI CON LA STESSA X
 \begin{definition}
     Ogni retta interseca una curva ellittica in al più tre punti \cite{Margara}
 \end{definition}
@@ -153,9 +156,60 @@ Da queste definizioni è possibile ricavare la regola per sommare due punti \tex
     \item Si determina il punto di intersezione \textit{R} tra la curva e la retta appena tracciata
     \item Si definisce la somma come $P + Q = -R$ dove $-R$ rappresenta il punto simmetrico a \textit{R} rispetto all'asse delle ascisse
 \end{itemize}
+Da un punto di vista pratico questo vuol dire:
+\\Considerando \textit{P} e \textit{Q} distinti e $P \neq - Q$
+\begin{enumerate}
+    \item $P = (x_p, y_p), Q = (x_q, y_q)$,
+    \item $P + Q = S = (x_s, y_s)$
+    \item  $\lambda = \frac{y_q - y_p}{x_q - x_p}$
+    \item $x_s = \lambda^2 - x_p - x_q$
+    \item $y_s = -y_p + \lambda(x_p - x_s)$
+\end{enumerate}
 
+Se studiamo il caso in cui \textit{P} e \textit{Q} hanno la stessa coordinata \textit{x}, perciò $Q = - P$, questi si trovano allineati lungo la verticale che interseca il punto all'infinito della curva.\\
+Questa affermazione si può anche mostrare utilizzando la formula della somma di due punti $P + Q = P + (- P) = O$
+\\Da un punto di vista matematico questo si vede nel seguente modo:
+\begin{enumerate}
+    \item $P = (x_p, y_p), 2P = S = (x_s, y_s)$
+    \item $y_p \neq 0 \Rightarrow \lambda = \frac{(3x_p^2 + a)}{2y_p}$ 
+    \item $y_p = 0 \Rightarrow \text{tangente verticale} \Rightarrow 2P = 0$
+\end{enumerate}
+
+\subsection{Caratteristiche curve ellittiche}
+\begin{enumerate}
+    \item Chiusura: \begin{equation}
+        \forall P, Q \in E(a, b): P + Q \in E(a, b)
+    \end{equation}
+    \item Elemento neutro: \begin{equation}
+        \forall P \in E(a, b): P + O = O + P = P
+    \end{equation} (vedere \hyperref[sec:Somma]{Somma su curve ellittiche})
+    \item Associatività:
+    \begin{equation}
+        \forall P, Q, R \in E(a, b): P + (Q + R) = (P + Q) + R
+    \end{equation}
+    \item Commutatività:
+    \begin{equation}
+        \forall P, Q \in E(a, b): P + Q = Q + P
+    \end{equation}
+\end{enumerate}
+
+\section{Curve su campo finito}
+Le curve ellittiche su $\mathbb{R}$ non sono di particolare interesse ai crittografici, si preferisce invece lavorare su curve ellittiche definite su campi finiti.
+Questa decisione permette di compiere operazioni veloci e precise dato dal fatto che tutte le operazioni riguardano coefficienti relativamente ridotti e interi, senza preoccuparsi di calcoli approssimati ed esageramente lunghi.
+\\In aggiunta operare in aritmetica modulare ci permette di sviluppare problemi che risultano computazionalmente difficili.
+\\Per il resto di questa relazione si utilizzerà un campo $\mathbb{Z}_p$ con caratteristica $p > 3$ in modo da utilizzare l'equazione ellittica ridotta alla forma normale di Weierstrass.
+\begin{definition}
+    Sia $p > 3$ un numero primo. La curva ellittica su $\mathbb{Z}_p$, denotata $E_p(a,b)$, è l'insieme dei punti che soddisfano l'equazione $y^2 = x^3 + ax + b \mod p$ insieme al punto all'infinito.
+    \begin{equation}
+        E_p(a, b) = \{(x, y) \in \mathbb{Z}_p^2: y^2 = x^3 + ax + b \pmod{p} \} \cup \{O\}
+    \end{equation}
+    dove in aggiunta:
+    \begin{equation}
+        4a^3 + 27b^2 \neq 0
+    \end{equation}
+\end{definition}
+I punti della curva $E_p(a, b)$ che rispettano queste due condizioni formano un gruppo abeliano finito rispetto all'operazione di addizione. \cite{silverman}
 \subsection{Creazione di chiavi su $\mathbb{Z}_p$}
-
 Due utenti Angelica e Brian vogliono instaurare una comunicazione sicura, si concordano pubblicamente su un campo finito e su una curva ellittica definita su questo campo.
 Dopodiché scelgono un punto \textit{P} appartenente alla curva di ordine \textit{n} grande, in modo che $nP = O$.
 \\Angelica Sceglie un intero positivo $n_a < n$ come chiave privata, genera una chiave pubblica $P_a = n_aB$ spedendola in chiaro a Brian.
@@ -186,19 +240,23 @@ Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota com
 \end{center}
 
 \begin{thebibliography}{9}
+
     \bibitem{Margara}
     L. Margara, \textit{Crittografia su Curve Ellittiche}, Unibo, 2026.
 
-    \bibitem{Languasco, Zaccagnini}
-    A. Languasco, A. Zaccagnini \textit{Introduzione alla crittografia. Algoritmi, protocolli, sicurezza informatica}
+    \bibitem{Languasco}
+    A. Languasco, A. Zaccagnini, \textit{Introduzione alla Crittografia. 
+    Algoritmi, Protocolli, Sicurezza Informatica}, Springer, 2004.
 
     \bibitem{silverman}
-
-    Joseph H. Silverman \textit{The Arithmetic of Elliptic Curves}
+    J. H. Silverman, \textit{The Arithmetic of Elliptic Curves}, 
+    2nd ed., Springer, 2009.
 
     \bibitem{Treccani}
-    Enciclopedia Treccani \textit{Punto all'infinito}
-    \url{https://www.treccani.it/enciclopedia/punto-all-infinito_(Enciclopedia-della-Matematica)/}
+    Enciclopedia Treccani, \textit{Punto all'infinito},
+    \url{https://www.treccani.it/enciclopedia/punto-all-infinito_(Enciclopedia-della-Matematica)/},
+    consultato il \today.
+
 \end{thebibliography}
 
 \end{document}
