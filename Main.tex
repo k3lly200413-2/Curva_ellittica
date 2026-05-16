@@ -140,11 +140,19 @@ $\mathcal{O} = [0:1:0]$ \cite{silverman}.
     Ogni retta interseca una curva ellittica in al più tre punti \cite{Margara}
 \end{definition}
 
-Dalla definizione sopra si può capire dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R}. Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
+Dalla definizione sopra si può capire dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R} nel caso $P \neq Q$; altrimenti la retta interseca soltanto due punti. \\Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
 \\Dati tre punti \textit{P, Q, R} di una curva ellittica $E(a, b)$ se \textit{P, Q} e \textit{R} sono disposti su una retta, allora la loro somma si pone uguale al punto all'infinito:
 \begin{equation}
     P + Q + R = O
 \end{equation}
+
+Da queste definizioni è possibile ricavare la regola per sommare due punti \textit{P} e \textit{Q}
+
+\begin{itemize}
+    \item Si consideri la retta passante per i punti \textit{P} e \textit{Q}, oppure la tangente alla curva in \textit{P} nel caso \textit{P} e \textit{Q} coincidano.
+    \item Si determina il punto di intersezione \textit{R} tra la curva e la retta appena tracciata
+    \item Si definisce la somma come $P + Q = -R$ dove $-R$ rappresenta il punto simmetrico a \textit{R} rispetto all'asse delle ascisse
+\end{itemize}
 
 \subsection{Creazione di chiavi su $\mathbb{Z}_p$}
 
