@@ -7,6 +7,7 @@
 
 
 \newtheorem{definition}{Definizione}
+\newtheorem{theorem}{Theorem}[section]
 
 \title{Curve Ellittiche}
 \author{Applebee Kelly}
@@ -174,6 +175,30 @@ Questa affermazione si può anche mostrare utilizzando la formula della somma di
     \item $y_p \neq 0 \Rightarrow \lambda = \frac{(3x_p^2 + a)}{2y_p}$ 
     \item $y_p = 0 \Rightarrow \text{tangente verticale} \Rightarrow 2P = 0$
 \end{enumerate}
+\subsection{Moltiplicazione scalare}
+La moltiplicazione scalare consiste nella ripetizione della somma di un punto a se stesso, un numero arbitrario grande \textit{k} volte, segnato come $S = kP$.
+Il problema si incontra quando, \textit{k}, inevitabilmente, diventa molto grande; per evitare la difficoltà computazionale richiesta per sommare migliaia di volte un punto su un'equazione si usa un algoritmo chiamato \textbf{double-and-add}
+\subsection{Double-and-add}
+L'algoritmo \textit{double and add} si basa sui principi della scomposizione binaria e sulle proprietà delle curve ellittiche.
+\\Per capire in quale modo consideriamo lo scalare \textit{k} nella sua forma binaria:
+\begin{equation}
+    k = (k_{n-1}k_{n-2}\dots k_1k_0)_2
+\end{equation}
+dove $k_i$ sono le cifre binarie (bit) di \textit{k}. La rappresentazione binaria ci consente di esprimere \textit{k} come:
+\begin{equation}
+    k = \sum_{i=0}^{n-1}k_i \cdot 2^i
+\end{equation}
+Utilizzando la stessa rappresentazione si può rappresentare \textit{kP} come:
+\begin{equation}
+    kP = \left(\sum_{i=0}^{n-1}k_i\cdot2^i\right)P
+\end{equation}
+
+Per la proprietà distributiva questa espressione può essere scritta come:
+\begin{equation}
+    kP = \sum_{i=0}^{n-1}k_i \cdot (2^iP)
+\end{equation}
+
+Il termine $2^iP$ rappresenta il punto \textit{P} raddoppiato \textit{i} volte. Perciò il problema si riduce ad una serie di raddoppi e addizioni di punti, il che rappresenta l'essenza dell'algoritmo.
 
 \subsection{Caratteristiche curve ellittiche}
 \begin{enumerate}
@@ -208,7 +233,15 @@ Questa decisione permette di compiere operazioni veloci e precise dato dal fatto
         4a^3 + 27b^2 \neq 0
     \end{equation}
 \end{definition}
+\begin{theorem}[Hasse]
+    Sia N il numero di punti di una curva ellittica E definita su $\mathbb{F}_q$. Allora
+    \begin{equation}
+        | N - (q - 1) | \leq 2 \sqrt{q}
+    \end{equation}
+    Per la dimostrazione si veda \cite{silverman}
+\end{theorem}
 I punti della curva $E_p(a, b)$ che rispettano queste due condizioni formano un gruppo abeliano finito rispetto all'operazione di addizione. \cite{silverman}
+
 \subsection{Creazione di chiavi su $\mathbb{Z}_p$}
 Due utenti Angelica e Brian vogliono instaurare una comunicazione sicura, si concordano pubblicamente su un campo finito e su una curva ellittica definita su questo campo.
 Dopodiché scelgono un punto \textit{P} appartenente alla curva di ordine \textit{n} grande, in modo che $nP = O$.
