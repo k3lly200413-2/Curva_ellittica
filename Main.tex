@@ -122,6 +122,25 @@ Qeusta possiede un’operazione di somma fra punti
 appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui elemento neutro è costituito dal punto all’infinito $O$.
 \\Una curva ellittica è caratterizzata dal fatto che sommando due punti se ne ottiene un terzo della stessa curva.
 Nella definizione di curva ellittica viene definito anche il \textit{punto all'infinito O} definito come la somma di tre punti su una curva ellittica collegati da una retta.
+
+\subsection{Caratteristiche curve ellittiche}
+\begin{enumerate}
+    \item Chiusura: \begin{equation}
+        \forall P, Q \in E(a, b): P + Q \in E(a, b)
+    \end{equation}
+    \item Elemento neutro: \begin{equation}
+        \forall P \in E(a, b): P + O = O + P = P
+    \end{equation} (vedere \hyperref[sec:Somma]{Somma su curve ellittiche})
+    \item Associatività:
+    \begin{equation}
+        \forall P, Q, R \in E(a, b): P + (Q + R) = (P + Q) + R
+    \end{equation}
+    \item Commutatività:
+    \begin{equation}
+        \forall P, Q \in E(a, b): P + Q = Q + P
+    \end{equation}
+\end{enumerate}
+
 \subsection{Punto all'infinito}
 \begin{definition}
     Punto improprio definito in Geometria proiettiva associato a una direzione nel piano: ogni famiglia di rette parallele converge in un unico punto all'infinito, l'insieme di questi punti forma la \emph{retta impropria}.\\
@@ -200,24 +219,6 @@ Per la proprietà distributiva questa espressione può essere scritta come:
 
 Il termine $2^iP$ rappresenta il punto \textit{P} raddoppiato \textit{i} volte. Perciò il problema si riduce ad una serie di raddoppi e addizioni di punti, il che rappresenta l'essenza dell'algoritmo.
 
-\subsection{Caratteristiche curve ellittiche}
-\begin{enumerate}
-    \item Chiusura: \begin{equation}
-        \forall P, Q \in E(a, b): P + Q \in E(a, b)
-    \end{equation}
-    \item Elemento neutro: \begin{equation}
-        \forall P \in E(a, b): P + O = O + P = P
-    \end{equation} (vedere \hyperref[sec:Somma]{Somma su curve ellittiche})
-    \item Associatività:
-    \begin{equation}
-        \forall P, Q, R \in E(a, b): P + (Q + R) = (P + Q) + R
-    \end{equation}
-    \item Commutatività:
-    \begin{equation}
-        \forall P, Q \in E(a, b): P + Q = Q + P
-    \end{equation}
-\end{enumerate}
-
 \section{Curve su campo finito}
 Le curve ellittiche su $\mathbb{R}$ non sono di particolare interesse ai crittografici, si preferisce invece lavorare su curve ellittiche definite su campi finiti.
 Questa decisione permette di compiere operazioni veloci e precise dato dal fatto che tutte le operazioni riguardano coefficienti relativamente ridotti e interi, senza preoccuparsi di calcoli approssimati ed esageramente lunghi.
@@ -236,7 +237,7 @@ Questa decisione permette di compiere operazioni veloci e precise dato dal fatto
 \begin{theorem}[Hasse]
     Sia N il numero di punti di una curva ellittica E definita su $\mathbb{F}_q$. Allora
     \begin{equation}
-        | N - (q - 1) | \leq 2 \sqrt{q}
+        | N - (q + 1) | \leq 2 \sqrt{q}
     \end{equation}
     Per la dimostrazione si veda \cite{silverman}
 \end{theorem}
