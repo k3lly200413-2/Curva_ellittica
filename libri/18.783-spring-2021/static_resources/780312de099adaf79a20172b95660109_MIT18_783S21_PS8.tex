@@ -1,0 +1,357 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{nicefrac}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{plain}
+
+
+% growing list of useful macros, use these where appropriate and add to this list as needed
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fqn}{\mathbb{F}_{q^n}}
+\newcommand{\Fqbar}{\overline{\mathbb{F}}_q}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\renewcommand{\H}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\Z/n\Z}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\PGL}{{\rm PGL}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\DFT}{{\rm DFT}}
+\newcommand{\dy}{\,dy}
+\newcommand{\dx}{\,dx}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}[2]{\bigl(\frac{#1}{#2}\bigr)}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\softO}{\widetilde{O}}
+\newcommand{\ceil}[1]{\lceil{#1}\frac{1}eil}
+\newcommand{\Exp}{{\rm E}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\OK}{\O_K}
+\newcommand{\T}{{\rm T}}
+\newcommand{\N}{{\rm N}}
+\newcommand{\re}{\operatorname{re}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\ord}{{\rm ord}}
+\newcommand{\SL}{{\rm SL}}
+\newcommand{\PSL}{{\rm PSL}}
+\newcommand{\EllO}{{\rm Ell}_\O}
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakb}{\mathfrak{b}}
+\newcommand{\frakc}{\mathfrak{c}}
+\newcommand{\cl}{{\rm cl}}
+\newcommand{\disc}{{\rm disc}}
+\newcommand{\abcd}{\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)}
+\newcommand{\ABCD}{\left(\begin{smallmatrix}A&B\\C&D\end{smallmatrix}\right)}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\a}{\mathfrak{a}}
+\renewcommand{\b}{\mathfrak{b}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\lt}{{\rm lt}}
+\newcommand{\id}{{\rm id}}
+\newcommand{\sumprime}{\sideset{}{'}\sum}
+
+\newtheorem*{theorem}{Theorem}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#8\due{04/21/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 14--16.
+\medskip
+
+\noindent\textbf{Instructions}: Pick any combination of problems to solve that sums to 100 points.
+Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves writing code, please either include your code in your write up (as part of the pdf), or the name of a notebook in your 18.783 CoCalc project containing you code (please use a separate notebook for each problem).
+
+
+\subsection*{Problem 1. From lattices to elliptic curves (49 points)}
+In this problem you will explicitly construct an elliptic curve corresponding to a given lattice $L=[1,\tau]$ by computing the $j$-invariant
+\[
+j(L) = 1728\frac{g_2(L)^3}{g_2(L)^3-27g_3(L)^2},
+\]
+where
+\begin{equation}\label{eq:g2g3}
+g_2(L)=60\sum_{\substack{m,n\in\Z\\(m,n)\ne (0,0)}}\frac{1}{(m+n\tau)^4},\qquad\text{and}\qquad g_3(L)=140\sum_{\substack{m,n\in\Z\\(m,n)\ne(0,0)}}\frac{1}{(m+n\tau)^6}.
+\end{equation}
+
+Let $\tau=(1+\sqrt{-7})/2$, so that the lattice $L=[1,\tau]$ is the ring of integers of $\Q(\sqrt{-7})$.
+
+\begin{enumerate}[{\bf (a)}]
+\item 
+As a warmup, use Sage to approximate the complex numbers $g_2(L)$ and $g_3(L)$ by summing over lattice points $m+n\tau$ with $|m|,|n|< 10$.
+To work over the complex numbers, you will need to set \texttt{tau=CC((1+sqrt(-7))/2)} (by default, Sage will work with a symbolic representation of $\tau$, the wrapper \texttt{CC( )} coerces $\tau$ to $\C$).
+Now define the elliptic curve $E:y^2=x^3-g_2(L)/4 x - g_3/4(L)$ over $\C$ using your approximations of $g_2(L)$ and $g_3(L)$ (use \texttt{E=EllipticCurve([-g2/4,-g3/4])}).
+Let $z=0.N$, where $N$ is the last 4 digits of your student ID, and compute $x=\wp(z;L)$ and $y=\wp'(z;L)$ by summing over lattice points $m+n\tau$ with $|m|,|n|<10$.
+The point $(x,y/2)$ will then be approximately on the elliptic curve $E$ that you defined.
+To get an exact point $P\in E(\C)$, use \texttt{E.lift\_x(x)}, which will cause sage to choose an exact $y$-value corresponding to $x$ (with an arbitrary sign choice).
+You should find that $y$-coordinate of $P$ is approximately $\pm y/2$.
+Now compute $7P$ in Sage, and compare its $x$ and $y$ coordinates with $\wp(7z)$ and $\wp'(7z)/2$ (the sign on the $y$-coordinate may be off, don't worry about this); this corresponds to comparing $7\Phi(z)$ with $\Phi(7z)$, where $\Phi$ is the isomorphism $\C/L\to E(\C)$ defined by $z\mapsto (\wp(z),\wp'(z)/2)$.
+In your answer report the values of $g_2(L)$ and $g_3(L)$ that you computed, along with $z$, $P$, $(\wp(z),\wp'(z)/2)$, $7P$, and $(\wp(7z),\wp'(7z)/2)$.
+
+\item
+While it will not be apparent from your work in part (a), the elliptic curve $E$ corresponding to $L=[1,\tau]$ is actually defined over $\Q$, even though $g_2(L)$ and $g_3(L)$ are not.
+To see this we need to compute the $j$-invariant
+\[
+j(L) = 1728\frac{g_2(L)^3}{g_2(L)^3-27g_3(L)^2}.
+\]
+Use Sage to approximate $j(L)$ by computing the sums for $g_2(L)$ and $g_2(L)$ over lattice points with $|m|,|n|< r$ for increasing values of $r=10,20,30,\ldots$, until you are convinced you can correctly approximate the real and imaginary parts of $j(L)$ to one decimal place. You should find that $j(L)$ approaches an integer as $r$ increases.
+In your solution list the value of $r$ you used, the complex value of $j(L)$ you computed (to 8 decimal places), as well as the integer obtained.
+
+\item
+Use the $j$-invariant $j=j(L)$ you computed in part (b) to construct an elliptic curve $E\colon y^2 = x^3+Ax+B$ over $\Q$ using
+$A=3j(1728-j)$ and $B=2j(1728-j)^2$.
+Heuristically verify that $\End^0(E)\simeq \Q(\sqrt{-7})$ by checking for each prime $p<1000$ where $E$ has good reduction that:
+\begin{enumerate}
+\item[(i)] if $\bigl(\frac{-7}{p}\bigr)=1$ then $4p=t^2+7v^2$ for some $v\in \Z$, where $t=\tr\pi_{E_p}$,
+\item[(ii)] if $\bigl(\frac{-7}{p}\bigr)=-1$ then $t=\tr\pi_{E_p}\equiv 0\bmod p$, so $E_p$ is supersingular,
+\end{enumerate}
+where $E_p/\F_p$ is the elliptic curve given by reducing the equation for $E$ modulo $p$.
+
+\end{enumerate}
+
+\noindent
+Using \eqref{eq:g2g3} to approximate $g_2(L)$ and $g_3(L)$ is inefficient because the sums converge very slowly;
+a better approach is to use their $q$-expansions.  If we put $q=\exp(2\pi i \tau)$ then
+\begin{align*}
+g_2([1,\tau])&=\frac{4\pi^4}{3}\left(1 + 240 \sum_{k=1}^\infty\frac{k^3q^k}{1-q^k}\right)\quad\text{and}\quad
+g_3([1,\tau])&=\frac{8\pi^6}{27}\left(1 - 504 \sum_{k=1}^\infty\frac{k^5q^k}{1-q^k}\right);
+\end{align*}
+see \cite[p.\ 275]{washington}.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item
+Repeat part (b) using the $q$-expansion formulas for $g_2(L)$ and $g_3(L)$, truncating the sums after 1000 terms.
+Extend the precision of your computations by defining \texttt{CC=ComplexField(500)}, and use
+\texttt{q=CC(exp(2*pi*sqrt(-1)*tau))} to compute $q$  (\textbf{important}: use \texttt{tau=(1+sqrt(-7))/2}, coercing $\tau$ to $\C$ before computing $q$ will result in a loss of precision).
+Compare the resulting approximation to $j(L)$ to the one you computed in part (b) by listing the the real and imaginary parts of both approximations to $8$ decimal places.
+
+\item
+Use your improved algorithm to compute the $j$-invariant of the lattice $L=[1,\sqrt{-7}]$.
+Assuming it is a rational integer, construct the corresponding elliptic curve and heuristically verify that it also has CM by  $\Q(\sqrt{-7})$ (note that in this case $L$ is not the maximal order in $\Q(\sqrt{-7})$).
+
+\item
+Now let $L=[1,(1+\sqrt{-23})/2]$ be the ring of integers of $\Q(\sqrt{-23})$.
+After approximating $j(L)$ you will find that it does not appear to be a rational integer.
+But it is an algebraic integer.  Use Sage to find its minimal polynomial using the \texttt{algdep} method with a degree bound of 4 and the optional \texttt{use\_digits} parameter set to 100  (you should get a monic polynomial of degree 3; if not, you have made a mistake or are not using enough precision).
+
+\item
+Let $H(x)$ be the minimal polynomial you computed in part (f) and let $D=-23$.
+Find a prime $p$ for which $\bigl(\frac{D}{p}\bigr)=1$ and $H(x)$ splits completely into linear factors in $\Fp[x]$, and let $r$ be one of its roots.
+Construct an elliptic curve $E/\Fp$ with $j$-invariant~$r$ and compute its trace of Frobenius~$t$.
+Verify that $4p=t^2-v^2D$ for some integer $v$.
+Repeat this verification for every prime $p<1000$ for which $\bigl(\frac{D}{p}\bigr)=1$ and $H(x)$ splits completely in $\Fp[x]$.
+Now use this method to construct an elliptic curve with CM by $\Q(\sqrt{D})$ over a 256-bit finite field.
+
+\end{enumerate}
+
+\subsection*{Problem  2. From elliptic curves to lattices (49 points)}
+We now consider the problem of determining the lattice $L$ corresponding to an elliptic curve $E\colon y^2=x^3+Ax+B$. This is known as ``computing the periods" of $E$, and involves computing approximate solutions to certain elliptic integrals associated to $E$, as explained in \cite[\S 9.4]{washington}.
+To simplify matters, we will focus on the case where $A$ and $B$ are real numbers.
+
+Given two positive real numbers $a$ and $b$, define the sequences $\{a_n\}$ and $\{b_n\}$ as follows:
+\begin{equation}\label{eq:agm}
+a_0 = a,\qquad b_0 = b,\qquad
+a_n = \frac{a_{n-1}+b_{n-1}}{2},\qquad
+b_n = \sqrt{a_{n-1}b_{n-1}}.
+\end{equation}
+As proven in \cite[Prop.\ 9.23]{washington}, these sequences both converge to a common limit $M(a,b)$, which is defined as the \emph{arithmetic-geometric mean} (AGM) of $a$ and $b$.
+As with Newton iteration, the rate of convergence is doubly exponential, which makes the arithmetic-geometric mean a powerful tool for numerical algorithms.
+
+When the cubic $f(x)=x^3+Ax+B$ has three real roots $e_1<e_2 < e_3$, we can compute a lattice $L=[\omega_1,\omega_2]$ for $E$ via the formulas
+\begin{align*}
+\omega_1 &= \frac{\pi }{M(\sqrt{e_3-e_1},\sqrt{e_3-e_2})},\\
+\omega_2 &= \frac{\pi i}{M(\sqrt{e_3-e_1},\sqrt{e_2-e_1})},
+\end{align*}
+as proven in \cite[Thm.\ 9.26]{washington}.
+When $f(x)=x^3+Ax+B$ has just one real root $e_1$, we let $e_2=\sqrt{3e_1^2+A}$ and use the formulas
+\begin{align*}
+\omega_1 &= \frac{2\pi }{M(2\sqrt{e_2},\sqrt{2e_2+3e_1})},\\
+\omega_2 &=-\frac{\omega_1}{2}+ \frac{\pi i}{M(2\sqrt{e_2},\sqrt{2e_2-3e_1})}.
+\end{align*}
+The resulting lattice $L=[\omega_1,\omega_2]$ then satisfies $g_2(L)=-4A$ and $g_3(L)=-4B$, so that the elliptic curve $y^2=4x^3-g_2(L)x-g_3(L)$ corresponding to the torus $\C/L$ is isomorphic to our original curve $E$.
+
+
+\begin{enumerate}[{\bf (a)}]
+\item Implement an algorithm in Sage to approximate $M(a,b)$ using \eqref{eq:agm}.
+Using your algorithm, compute the RHS of the identity\footnote{This identity was of great interest to Gauss; the quantity $1/M(1,\sqrt{2})=0.8346268\ldots$ is known as Gauss's constant.  A proof can be found in \cite[Ex.\ VI.6.12-14]{silverman} (NB: there is a typo in part (f) of Exercise VI.6.14 in \cite{silverman}: the quantity $M(1,\sqrt{2})$ should appear in the denominator, as above).}
+\[
+\int_0^1 \frac{dz}{\sqrt{1-z^4}} = \frac{\pi}{2M(1,\sqrt{2})},
+\]
+use Sage to compute the LHS, and verify that these values agree to, say, 100 decimal places.
+You will need to extend the precision of the real field to do this: use \texttt{RR=RealField(1000)} to get 1000 bits of precision, and then be sure to coerce the arguments to $M(a,b)$ into \texttt{RR} using \texttt{M(RR(a),RR(b))}.
+To compute the LHS in Sage, use \texttt{RR(integral(1/sqrt(1-x**4),x,0,1))}.
+
+\item
+Using the formulas above, approximate the periods $\omega_1$ and $\omega_2$ associated to the elliptic curve $E\colon y^2=x^3-35x-98$.
+Compute the ratio $\tau = \omega_2/\omega_1$, so that $L$ is homothetic to $[1,\tau]$, and then compute the $j$-invariant $j(L)$ and compare it to $j(E)$.
+Attempt to identify $\tau$ as an algebraic number in a quadratic field using the \texttt{algdep} method in Sage, with the degree bound set to 2.
+In your answers, just list your values for $\omega_1,\omega_2,\tau$, and $j(L)$ out to 16 decimal places, even though you may need to use higher precision in your computations, and list the polynomial computed by \texttt{algdep}.
+
+\item Do the same thing for the elliptic curves
+\begin{align*}
+E_1\colon y^2&=x^3-7x+6,\\
+E_2\colon y^2&=x^3-608x+5776,\\
+E_3\colon y^2 &= x^3 - 34790720x + 78984748304.
+\end{align*}
+In cases where you are able to provisionally identify $\tau$ as an algebraic number in a quadratic field $K=\Q(\sqrt{D})$, heuristically test whether $E_i$ has CM by $K$ by checking if it has supersingular reduction modulo good primes $p<1000$ for which $\bigl(\frac{D}{p}\bigr)=-1$.
+For the $E_i$ where this test is successful, it may be that $\tau$ is an algebraic number but not an algebraic integer.
+Show that in each such case $\tau$ is equivalent under the action of $\SL_2(\Z)$ to an algebraic integer with real part $0$ or $-1/2$.
+
+\item Lastly, compute the periods for an elliptic curve that is defined over $\R$ but not over~$\Q$ (or any number field).
+Let $N$ be the last 4 digits of your student ID, and compute the periods for $E\colon y^2 = x^3 + \pi x + N$,
+where $\pi=3.1415\ldots$ is transcendental.
+\end{enumerate}
+
+\subsection*{Problem  3.  Elliptic curves over $\boldsymbol{\R}$ (49 points)}
+Let $L=[1,\tau]$ be a lattice with $0\le \re \tau < 1$ (note that every lattice in $\C$ is homothetic to such a lattice $L$), let $E/\C$ be the corresponding elliptic curve $$y^2=4x^3-g_2(L)x-g_3(L),$$
+and let $\Phi(z)=(\wp(z),\wp'(z))$ be the isomorphism from $\C/L$ to $E(\C)$.
+
+\begin{enumerate}[{\bf (a)}]
+\item Prove that $E$ is defined over $\R$ (meaning $g_2(L),g_3(L)\in\R$) if and only if $L$ is stable under complex conjugation.
+
+\item Characterize the lattices $L=[1,\tau]$ that are stable under complex conjugation by giving necessary and sufficient conditions on $\tau$ (with $0\le \re \tau < 1$ as above).
+
+\item Does your answer to (b) cover every lattice $L=[1,\tau]$ with $j(L)\in \R$?
+If not, describe those that are missing and why these do not contradict your answers to (a) and (b).
+\end{enumerate}
+
+Let us now assume that $E$ is defined over $\R$ (so $g_2(L),g_3(L)\in\R$), but still view $E$ as an elliptic curve over~$\C$, using $E(\R)$ to denote the subgroup of real points in $E(\C)$.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item Prove that if $z\in\R$ then $\Phi(z)\in E(\R)$.
+\item Prove that if $z=\frac{1}{2}+it$ with $t\in\R$ then $\wp(z)\in \R$ but $\wp'(z)\not\in \R$, unless $\wp'(z)=0$.
+Conclude that there is at most one $z_0\not\in \R$ in the  fundamental parallelogram $\mathcal{F}_0$ for $L$ with real part $1/2$ for which $\Phi(z_0)\in E(\R)$.  Show that such a $z_0$ exists if and only if the cubic $f(x)=4x^3-g_2(L)x-g_3(L)$ has three real roots.
+\item Prove that the pre-image $\Phi^{-1}(E(\R))$ is given by
+\[
+\mathcal{R}_0 =
+\begin{cases}
+\{z\in\mathcal{F}_0: \im z = 0\}&\text{if $f(x)$ has one real root},\\
+\{z\in\mathcal{F}_0:\im z = 0 \text{ or }\im z= \frac{1}{2}\im \tau\}&\text{if $f(x)$ has three real roots}.
+\end{cases}
+\]
+Prove that $L$ is rectangular ($\re \tau = 0$) if and only  if we are in the latter case.
+
+\item Conclude that $E(\R)$ has either one or two components, depending on whether its 2-torsion subgroup is cyclic or not.
+Show that $E(\R)\simeq \R/\Z$ in the first case and $E(\R)\simeq \R/\Z\oplus \Z/2$ in the second.
+\end{enumerate}
+
+\subsection*{Problem 4.  The modular group $\boldsymbol{\SL_2(\Z)}$ (49 points)}
+Let $\Gamma=\SL_2(\Z)$ and let $\H=\{z\in\C:\im z > 0\}$ be the upper half plane.
+For each $\gamma=\abcd\in\Gamma$ and $\tau\in\H$, define
+\[
+\gamma\tau = \frac{a\tau+b}{c\tau+d}.
+\]
+Let $S=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$ and let $T=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$.
+\begin{enumerate}[{\bf (a)}]
+\item Prove that $\Gamma$ is generated by $S$ and $T$.
+\item Prove that $\gamma\tau\in\H$ for all $\gamma\in\Gamma$ and $\tau\in\H$.
+\item Prove that the map from $\Gamma\times\H$ to $\H$ that sends $(\gamma,\tau)$  to $\gamma\tau$ is a group action.
+\item Compute the stabilizers of $i:=e^{\pi i/2}$ and $\rho:=e^{2\pi i/3}$ under the action of $\Gamma$.
+Express the elements of each stabilizer in terms of $S$ and $T$.
+\item Prove that  the stabilizer of every element of $\H$ that is not $\Gamma$-equivalent to $i$ or $\rho$ is the subgroup of order 2 consisting of $\pm I$, where $I$ is the $2\times 2$ identity matrix.
+\end{enumerate}
+
+The \emph{extended upper half plane} $\H^*$ is defined as $\H\cup \P^1(\Q)$, where $\P^1(\Q)$ is the projective line over $\Q$,
+consisting of all projective points $(x:y)$ with integer coordinates.
+One can view $\P^1(\Q)$ as $\Q\cup\{\infty\}$, where $\Q$ consists of the points $x/y=(x:y)$ with $y\ne 0$ and $\infty$ is the point $(1:0)$ ``at infinity".
+We extend the action of $\Gamma$ to $\H^*$ by defining
+\[
+\gamma(x:y)=(ax+by:cx+dy)
+\]
+for each $\gamma=\abcd\in \Gamma$ and $(x:y)\in\P^1(\Q)$.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{5}
+\item Prove that the elements of $\P^1(\Q)$ are all $\Gamma$-equivalent.
+\item Compute the stabilizers of $0=(0:1)$ and $\infty=(1:0)$.
+\item Compute the stabilizer of $(x:y)$ when $xy\ne 0$.
+\end{enumerate}
+
+\subsection*{Problem 5. Survey (2 points)}
+
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found it (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you it (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|r}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+4/12 & Elliptic curves over $\C$ (part 2) & & & & \\\hline 
+4/14 & Complex multiplication (CM) & & & & \\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Please feel free to record any additional comments you have on the problem sets or lectures, in particular, ways in which they might be improved.
+
+\begin{thebibliography}{9}
+\bibitem{silverman} J.H. Silverman, \href{https://link.springer.com/book/10.1007/978-0-387-09494-6}{\textit{The arithmetic of elliptic curves}}, second edition, Springer, 2009;.
+\bibitem{washington} L.C. Washington, \href{https://doi.org/10.1201/9781420071474}{\textit{Elliptic curves: Number theory and cryptography}}, second edition, Chapman and Hall/CRC, 2008. 
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,381 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{color}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{plain}
+
+\newcommand{\Fl}{\mathbb{F}_\ell}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fptwo}{\mathbb{F}_{p^2}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\lcm}{{\rm lcm}}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hfill Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#4\due{03/19/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 6-8.
+\medskip
+
+\noindent\textbf{Instructions}: Pick any two of Problems 1-6 to solve.  Then complete Problem~7, which is a short survey.
+Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves writing code, please either include your code in your write up (as part of the pdf), or the name of a notebook in your 18.783 CoCalc project containing you code (please use a separate notebook for each problem).
+
+
+\subsection*{Problem 1. The Hasse invariant (49 points)}
+Let $E\colon y^2=f(x)$ be an elliptic curve over $\Fp$, where $p$ is an odd prime and $f$ is a monic cubic.  The \emph{Hasse invariant} $H_p(E)$  is the coefficient of $x^{p-1}$ in $f(x)^{(p-1)/2}\in \Fp[x]$.
+
+\begin{enumerate}[{\bf (a)}]
+\item Prove that $\#E(\Fp) = 1+\sum_{a\in \Fp}f(a)^{(p-1)/2}$ holds as an identity in $\Fp$.
+\item Prove that for any integer $k\ge 0$ we have
+\[
+\sum_{a\in \Fp} a^k = \begin{cases}
+-1 & \text{if $k$ is a nonzero multiple of $p-1$}\\
+0 & \text{otherwise}
+\end{cases}
+\]
+\item Use (b) to show that $\#E(\Fp) = 1 - H_p(E)$ holds as an identity in $\Fp$, and that $H_p(E)$ is therefore an element of $\Fp$ that is equal to the trace of Frobenius $\tr\pi_E$ modulo $p$.
+Conclude that $H_p(E)$ uniquely determines $\#E(\Fp)$ for all $p > 13$.
+\item Show that for $p=13$ there exist elliptic curves $E_1$ and $E_2$ over $\Fp$ for which we have $H_p(E_1)=H_p(E_2)$ but $\#E_1(\Fp)\ne \#E_2(\Fp)$.
+\item Suppose $E$ is a \emph{Legendre curve} $E_\lambda\colon y^2=x(x-1)(x-\lambda)$ with $\lambda\in \Fp-\{0,1\}$.
+Prove that $H_p(E)=(-1)^nS_p(\lambda)$, where $n=(p-1)/2$ and $S_p\in \Fp[x]$ is the polynomial
+\[
+S_p(x)=\sum_{i=0}^n \binom{n}{i}^2x^i.
+\]
+\end{enumerate}
+Let us now generalize to the case where $E\colon y^2=f(x)$ is an elliptic curve over a finite field $\Fq$ of odd characteristic $p$, with $f$ a monic cubic.
+For any positive integer $r$, define $H_{p^r}(E)$ to be the coefficient of $x^{p^r-1}$ in $f(x)^{(p^r-1)/2}$ (for $r=1$ this generalizes our definition of $H_p(E)$ to elliptic curves defined over any finite extension $\Fp$).
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{5}
+\item Show that $\#E(\Fq)=1-H_q(E)$ (as an identity in $\Fq$).  Conclude that in fact $H_q(E)\in\Fp\subseteq \Fq$ and that $\tr\pi_E\equiv 0\bmod p$ if and only if $H_q(E)=0$.
+\item Prove that the identity $H_{p^{r+1}}(E)=H_{p^r}(E)H_p(E)^{p^r}$ holds for all integers $r>0$.  Conclude that $H_q(E)=0$ if and only if $H_p(E)=0$.
+\item Show that, up to isomorphism, every elliptic curve $E$ over $\Fpbar$ is a Legendre curve $E_\lambda\colon y^2=x(x-1)(x-\lambda)$, for some $\lambda\in\Fpbar-\{0,1\}$.
+\item Show that for all $\lambda\in \Fpbar-\{0,1\}$ we have $H_p(E_\lambda)=0$ if and only if $S_p(\lambda)=0$.  Conclude that (up to isomorphism), among the infinitely many elliptic curves $E$ defined over finite fields $\Fq\subseteq\Fpbar$, only a finite number have $\tr \pi_E \equiv 0\bmod p$.
+\end{enumerate}
+
+In a later lecture we will show that an elliptic $E$ curve over a finite field of characteristic $p>0$ is supersingular if and only if $\tr \pi_E\equiv 0\bmod p$.
+You have thus proved that there are only finitely many supersingular elliptic curves defined over finite fields of characteristic~$p$ (in fact this holds for all fields of characteristic $p$, not just finite fields).
+
+\subsection*{Problem 2. Computing the $L$-function of an elliptic curve (49 points)}
+
+Let $E\colon y^2=x^3+Ax+B$ be an elliptic curve over $\Q$; without loss of generality, we may assume $A,B\in\Z$ with $B\ne 0$.
+As you may recall from Lecture 1, the $L$-function of an elliptic curve can defined as an Euler product of the form
+\[
+L(E,s) = \prod_{p|\Delta(E)} (\cdots)^{-1}\prod_{p\nmid \Delta(p)} (1-a_pp^{-s}+p^{1-2s})^{-1},
+\]
+where $\Delta(E)=-16(4A^3+27B^2)$ is the discriminant of $E$ and $a_p:=p+1-\#E_p(\Fp)$ is the trace of Frobenius of the elliptic curve $E_p/\Fp$ obtained by reducing $A$ and $B$ modulo~$p$.  Ignoring the finite set of bad primes $p$ that divide $\Delta(E)$ (which are easy to address and will be discussed in a later lecture), computing the $L$-function of an elliptic curve amounts to computing the sequence of Frobenius traces $a_p$ over good primes $p$.
+
+Of course we cannot compute all of the infinitely many $a_p$, but if we compute them for all good primes~$p$ up to some bound $N$, we can approximate $L(E,s)$ or any of its derivatives to high precision (assuming we also know the Euler factors at bad primes). Such computations are critical to testing the Birch and Swinnerton-Dyer conjecture, for example, which relates the order of vanishing of $L(E,s)$ at $s=1$ to the rank of $E(\Q)$.
+
+By applying Schoof's algorithm to each of $E_p/\Fp$ we can compute~$a_p$ for all good primes $p\le N$ in time quasi-linear in $N$ (you can use the results of Problem 6 to get a precise estimate).  Alternatively, we could use the baby-steps giant-steps algorithm from Problem 4 to obtain a running time that is quasi-linear in $N^{5/4}$; in practice this turns out to be faster than using Schoof's algorithm unless $N$ is extremely large.
+
+Neither of these approaches takes advantage of the fact that we are working with reductions $E_p$ of a \emph{fixed} elliptic curve $E/\Q$.
+In this problem you will use this fact to develop an algorithm with a complexity is both practically and asymptotically faster than using Schoof's algorithm.
+It also efficiently generalizes to higher genus curves, which is not true of either Schoof's algorithm or the baby-steps giant-steps approach.
+
+Our basic strategy is to compute the Hasse Invariant $H_p(E_p)$ defined in Problem~1 as the coefficient of $x^{p-1}$ in $f(x)^{(p-1)/2}$, where $f(x)=x^3+Ax+B$ is the cubic defining our elliptic curve $E\colon y^2=f(x)$, except now $f\in \Z[x]$ is an integer polynomial.
+If we iteratively compute $f(x),f(x)^2,f(x)^3,\cdots,f(x)^{\lfloor N/2\rfloor}$ as integer polynomials and for each prime $p=2n+1$ extract the coefficient of $x^{2n}$ from the polynomial $f(x)^n$ and reduce its value modulo $p=2n+1$, then we will have determined $a_p\equiv H_p(E_p)\bmod p$ for all primes $p\le N$ where $E$ has good reduction.
+As shown in part (c) of Problem 1, this will determine the trace of Frobenius $a_p\in\Z$ for all $p>13$ (and for $p\le 13$ we can just compute $a_p=p+1-\#E_p(\Fp)$ using brute force).
+
+\begin{enumerate}[{\bf (a)}]
+\item Show that at first glance this is a terrible idea by analyzing its complexity as a function of $N$, assuming the coefficients $A$ and $B$ each have $O(\log N)$ bits.
+Keep in mind that we are working in $\Z$, so the coefficient sizes in $f(x)^n$ increase with $n$.
+\end{enumerate}
+
+Even using fast multiplication ($\M(n)=O(n\log n\log\log n)$) your answer to (a) will be far from our quasi-linear goal.
+There are two keys to obtaining an efficient algorithm; the first is to avoid computing all the coefficients of $f(x)^n$.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{1}
+\item Let $f = \sum f_ix^i\in \Z[x]$ be a polynomial of degree $d$, and for each $m\in \Z$ and $n\in\Z_{\ge 0}$ let $f_m^n\in\Z$ denote the coefficient of $x^m$ in $f(x)^n$ (so $f_m^n=0$ for $m<0$).  Derive the identity
+\[
+mf_0f_m^n = \sum_{i=1}^d((n+1)i-m)f_if_{m-i}^n,
+\]
+which expresses the coefficient $f_m^n$ of $x^m$ in $f(x)^n$ as a linear combination of $d$ coefficients $f_{m-1}^n,f_{m-2}^n,\ldots,f_{m-d}^n$ of lower order terms.
+\item For each $m\in \Z$ define the row vector $v_m^n:=[f^n_{m-d+1},f^n_{m-d+2},\ldots,f^n_m]\in \Z^d$.
+The linear recurrence in (b) determines integer matrices $M_m^n\in \Z^{d\times d}$, with coefficients depending on $m,n,f_0,\ldots, f_d\in\Z$, that satisfy
+\[
+mf_0v_m^n = v_{m-1}^nM_m^n
+\]
+for all $m,n\ge 1$.  Write down the matrix $M_m^n$ explicitly for the case $d=3$.
+\item Show that provided $f_0\ne 0$, for all $m,n\ge 1$ we have
+\[
+v_m^n = \frac{1}{f_0^{m-n}m!}V_0M_1^n\cdots M_m^n,
+\]
+where $V_0:=[0,\ldots,0,1]\in\Z^d$.
+\item Now suppose $p=2n+1$ is an odd prime not dividing $f_0$.
+For convenience let us specialize to the case $d=3$ of interest and define
+\[
+M_m := \begin{bmatrix}0&0&(3-2m)f_3\\2mf_0&0&(2-2m)f_2\\0&2mf_0&(1-2m)f_1\end{bmatrix}.
+\]
+Notice that the matrices $M_m$ do not depend on $n$.
+Prove that if $p\nmid f_0$ is prime and $n=(p-1)/2$ then
+\[
+v_{2n}^n\equiv \frac{-1}{f_0^n}V_0M_1\cdots M_{2n}\bmod (2n+1).
+\]
+Now $v^{n}_{2n}=[f_{2n-2}^n,f_{2n-1}^n,f_{2n}^n]$, so we can use this to compute $H_p(E_p)\equiv f_{2n}^n\bmod p$ for all good primes $p=2n+1$ that do not divide $f_0$ using the cubic $f(x)=x^3+Ax+B$ defining $E$ (so $f_0=B,f_1=A,f_2=0,f_3=1$).
+\end{enumerate}
+
+Note that we regard $A$ and $B$ as fixed relative to $N$, so like the primes $p\le 13$ we could use brute force (or Schoof's algorithm) to handle primes $p|B$.
+
+Now comes the second key to obtaining a quasi-linear running time, which is to use a recursive strategy for computing the matrix products $M_1\cdots M_{2n}\bmod (2n+1)$.  At first glance this seems hard, since the modulus is changing with $n$.  But we will take a recursive approach that allows for more general moduli.
+Let $M_1,\ldots,M_N\in \Z^{d\times d}$ be a sequence of integer matrices and let $m_1,\ldots,m_N\in \Z_{\ge 1}$ be a sequence of integer moduli.
+For $k=1,\ldots,N$ define the reduced partial products
+\[
+C_k:=M_1\cdots M_{k-1}\bmod m_k
+\]
+(the matrix $M_N$ is never used and could be omitted).
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{5}
+\item Assume $N$ is a power of 2.  Show how to reduce the problem of computing $C_1,\ldots,C_N$ to a problem involving $N/2$ integer matrices and $N/2$ integer moduli where the total number of bits involved is essentially the same (you can view $d$ as a constant).
+\item Analyze the complexity of the recursive algorithm given by (f) under the assumption that the integers appearing in the matrices $M_k$ and the moduli $m_k$ all have bit-sizes bounded by $O(\log N)$.  Your bound should be quasi-linear in $N$.  What is the average running time of your algorithm per prime $p\le N$ as a function of $\log p$?
+In other words, determine a function $f(n)$ such that $\sum_{p\le N} f(\log p)$ is within a constant factor of your complexity estimate for the entire algorithm.
+
+\item Let $A=42$ and let $B$ be the least integer greater than or equal to the last 4 digits of your student ID such that $\Delta(E)=4A^3+27B^2\ne 0$.  Using the matrices defined in (e) and the moduli $m_k$ defined by
+\[
+m_k = \begin{cases}
+k &\text{if $k>13$ is a prime not dividing $B$ or $\Delta(E)$},\\
+1 &\text{otherwise},
+\end{cases}
+\]
+use the recursive algorithm in (f) to compute the Frobenius traces $a_p$ for primes~$p$ in the interval $(13,N]$ not dividing $B$ or $\Delta(E)$, where $N=2^{k}$ with $k=10,11,\ldots,15$.
+For each value of $N$, report the sum of the traces, along with the running time of your algorithm.
+\end{enumerate}
+
+
+\subsection*{Problem 3. The probability of $\ell$-torsion (49 points)}
+Let $\ell$ be a prime.
+In this problem you will determine the probability that a random\footnote{There are several ways to vary the random elliptic curve $E/\Fp$.  We will just pick curve coefficients $A$ and $B$ at random and ignore the negligible number of cases where the discriminant is 0.} elliptic curve $E/\Fp$ has an $\Fp$-rational point of order $\ell$, where $p$ is either a fixed prime that is much larger than $\ell$, or a prime varying over some large interval.
+
+Let $\pi=\pi_E$ be the Frobenius endomorphism of $E$, and let $\pi_\ell\in \GL_2(\Fl)$ denote the matrix corresponding to the action of $\pi_E$ on the $\ell$-torsion subgroup $E[\ell]$ with respect to some chosen basis (here we have identified $\Fl\simeq \Z/\ell\Z$).
+The matrix $\pi_\ell$ is only defined up to conjugacy, since it depends on the choice of basis,  but its trace $\tr \pi_\ell = \tr \pi\bmod\ell$ and $\det\pi_\ell = \deg \pi = p\bmod \ell$ are uniquely determined.
+
+We shall make the heuristic assumption that $\pi_\ell$ is uniformly distributed over $\GL_2(\Fl)$ as $E$ varies over elliptic curves defined over $\Fp$ and $p$ varies over primes in some large interval, and also that for any sufficiently large fixed prime $p$ the matrix $\pi_\ell$ is uniformly distributed over the set $\{A\in \GL_2(\Fl):\det A\equiv p\bmod\ell\}$ as $E/\Fp$ varies.\footnote{One can prove that these heuristic assumptions hold in the limit as $p\to \infty$.}
+
+\begin{enumerate}[{\bf (a)}]
+\item
+Determine the probability that $E(\Fp)[\ell]=E[\ell]$, both for a large fixed~$p$ (in which case the answer will depend on $p\bmod \ell$), and for $p$ varying over some large interval (assume every possible value of $p\bmod \ell$ occurs equally often).
+
+Use your answer to derive a heuristic estimate for the probability that $E(\Fp)$ is cyclic, for large $p$, by estimating the probability that $E(\Fp)[\ell]\ne E[\ell]$ for all $\ell $,  assuming that these probabilities are independent.\footnote{This assumption is false, but the extent to which it is false becomes negligible as $p\to \infty$.}
+%\footnote{This probability is 1 for all $\ell>\sqrt{p+1+2\sqrt{p}}$, but taking an infinite product will give the same answer, since we are letting $p$ tend to infinity.}
+Use Sage to compute the product of these probabilities for primes $\ell$ bounded by 50, 100, 200, 500, and then given an estimate that you believe is accurate to at least 4 decimal places for all sufficiently large $p$.
+
+Now test your heuristic estimate using the following Sage script
+\begin{lstlisting}
+cnt=0
+for i in range(1000):
+    Fp = GF(random_prime(2^20,lbound=2^19))
+    A,B = Fp.random_element(),Fp.random_element()
+    cnt+=int(EllipticCurve([A,B]).abelian_group().is_cyclic())
+print("%.3f"%(cnt/1000))
+\end{lstlisting}
+In the unlikely event that you stumble upon a singular curve, simply rerun the test.
+Run this script three times (be patient, it may take a few minutes), and compare the results to your estimate. 
+
+\item
+Show that a necessary and sufficient condition for $E(\Fp)[\ell]\ne\{0\}$ is
+\vspace{-2pt}
+\[
+\tr\pi_\ell\equiv\det\pi_\ell + 1\pmod \ell.
+\]
+
+\item
+Under our heuristic assumption, to determine the probability that $E(\Fp)$ contains a point of order $\ell$, we just need to count the matrices $\pi_\ell$ in $\GL_2(\Fl)$ that satisfy this condition.
+Your task is to derive a combinatorial formula for this probability as a rational function in $\ell$.
+Do this by summing over the possible values of $\det\pi_\ell$, so that you can also compute the probability for any fixed value of $p$, which determines $\det\pi_\ell \equiv p\bmod \ell$. 
+For each nonzero value of $d=\det\pi_\ell\in\Fl$, you want to count the number of matrices in $\GL_2(\Fl)$ that have determinant $d$ and trace $d+1$.
+
+As a warm-up, for $\ell=3$ use Sage to count the number of matrices $\pi_\ell \in \GL_2(\FF_3)$ with trace $d+1$ for $d=1$ and $d=2$.
+You can then compute the probability of $\ell$-torsion for a fixed $p\equiv 1\bmod 3$ or $p\equiv 2\bmod 3$, and also the average probability for varying~$p$ by averaging over the 2 possible values of $d=\det\pi_\ell \equiv p\bmod \ell$.  
+
+You can solve this problem with purely elementary methods, but if you know a little representation theory you may find it helpful to consult the character table for $\GL_2(\FF_\ell)$ (be sure to list your sources).
+Assume initially that $\ell$ is odd, and after obtaining your formula, verify that it also works when $\ell=2$.
+
+\item
+For $\ell=3,5,7$ do the following:
+Pick two random primes $p_1,p_2\in [2^{29},2^{30}]$, with $p_1\equiv 1\bmod\ell$ and $p_2\not\equiv 1\bmod\ell$, and for each prime generate 1000 random elliptic curves $E/\Fp$.
+Count how often $\#E(\Fp)$ is divisible by $\ell$, and compare this with the value predicted by the formulas you derived in part (c).
+\end{enumerate}
+
+\subsection*{Problem 4. Fast order algorithms (49 points)}
+Let $\alpha$ be an element of a generic group $G$, written additively.
+Let $N$ be a positive integer for which $N\alpha=0$, and let $p_1^{e_1}\cdots p_r^{e_r}$ be the prime factorization of $N$.
+An algorithm that computes the order of $\alpha$ given $N$ and its prime factorization is known as a \emph{fast order algorithm}.
+It's fast because the knowledge of $N$ and its factorization allows the algorithm to run in polynomial time (polynomial in $n=\log N$); determining the order of $\alpha$ without being given~$N$ provably takes exponential time.
+
+The na\"ive fast order algorithm given in class is rather inefficient.  This is irrelevant in the context of computing the order of a point in $\#E(\Fq)$ with the baby-steps giant-steps method; the complexity is dominated by the time to determine $N$.  But this is not the case in every application.  In this problem you will analyze two more efficient approaches.
+
+When giving time complexity bounds for generic group algorithms, we simply count group operations, since these are assumed to dominate the computation (so integer arithmetic costs nothing).
+Space complexity is measured by counting the maximum number of group elements that the algorithm must store simultaneously, but for this problem we will just be concerned with time complexity.
+All your complexity bounds should be specified in terms of $n$.
+
+\begin{enumerate}[{\bf (a)}]
+\item Prove that the number of distinct prime divisors of an integer $N$ is bounded by $O(n/\log n)$, where $n=\log N$ (you can use the bounds proved in Problem Set 1).
+\item The fast order algorithm given in class begins by initializing $m=N$ and then for each prime $p_i|N$ it repeatedly replaces $m$ by $m/p_i$ so  long as $p_i|m$ and $(m/p_i)\alpha=0$.
+Analyze the time complexity of this algorithm in the worst case, and give separate asymptotic bounds for inputs of the form $2^k$ and $p_1\cdots p_k$.
+\item Consider an alternative algorithm that first computes $\alpha_i=(N/p_i^{e_i})\alpha$ for $1\le i\le r$, and then for each $i$ determines the least $d_i\ge 0$ for which $p_i^{d_i}\alpha_i=0$ by computing the sequence
+\[
+\alpha_i,\  p_i\alpha_i,\  p_i^2\alpha_i,\  \ldots,\  p_i^{d_i}\alpha_i=0,
+\]
+where each term is obtained from the previous via a scalar multiplication by $p_i$.
+Show that the order of $\alpha$ is $\prod_i p_i^{d_i}$.
+Analyze the time complexity of this algorithm in the worst case, and give separate asymptotic bounds for inputs of the form $2^k$ and $p_1\cdots p_k$.
+\item Consider a third algorithm that uses a recursive divide-and-conquer strategy.
+In the base case $r=1$, so $N=p^k$ is a prime power and it computes the sequence $\alpha, p\alpha, p^2\alpha,\ldots,p^d\alpha=0$ as above and returns $p^d$.
+For $r > 1$ it sets $s=\lfloor r/2\rfloor$ and puts $N=N_1N_2$ with $N_1=p_1^{e_1}\cdots p_s^{e_s}$ and $N_2=p_{s+1}^{e_{s+1}}\cdots  p_r^{e_r}$.  It then recursively computes $m_1 = |N_1\alpha|$ and $m_2 = |N_2\alpha|$ and outputs $m_1m_2$.
+\begin{enumerate}[{\bf (i)}]
+\item Prove that this algorithm is correct.
+\item Analyze the time complexity of this algorithm in the worst case, and give separate asymptotic bounds for inputs of the form $2^k$ and $p_1\cdots p_k$.
+\end{enumerate}
+\item Assume that for any integer $m$ you can compute $m\alpha$ using $\lceil \log m\rceil$ group operations (the truth is $(1+o(1))\log(m)$, so this is asymptotically accurate).
+For the integer $N=100!$, estimate the group operations needed to compute $|\alpha|$ given $N\alpha=0$ for each of the three algorithms above in the worst case.
+\end{enumerate}
+
+\subsection*{Problem 5. A Las Vegas algorithm to compute $\#E(\Fp)$ (49 points)}
+Implement a Las Vegas algorithm to compute $\#E(\Fp)$, as described in class.
+Use Sage's built-in functions for generating random points on an elliptic curve, for adding
+points on an elliptic curve, and for performing scalar multiplication, but write your own
+code for performing the baby-steps giant-steps search and the fast order computation.
+When implementing the search, you will want to use a python dictionary to store the baby steps; python will automatically create a hash table to facilitate fast lookups (alternatively you can do a sort and match yourself, just be sure to avoid a linear search).
+
+In the code below, $\mathcal{H}(p)=[p+1-2\sqrt{p},p+1+2\sqrt{p}]$ denotes the Hasse interval.
+The following algorithm to compute $\#E(\Fp)$ was given in class:
+\bigskip\bigskip
+
+\noindent
+\textbf{Input}: An elliptic curve $E/\Fp$, where $p>229$ is prime.\\
+\noindent
+\textbf{Output}: The cardinality of $E(\Fp)$.
+\begin{enumerate}
+\item Find a random non-square element $d\in\Fp$ and use it to compute the equation
+of a quadratic twist $E_1$ of $E_0=E$ over $\Fp$.
+\item Set $N_0=N_1=1$ and $i=0$ (the index $i$ is used to alternate between $E_0$ and $E_1$).
+\item While neither $N_0$ nor $N_1$ has a unique multiple in $\mathcal{H}(p)$:
+\begin{enumerate}
+\item Pick a random point $P$ on $E_i$.
+\item Use a baby-steps giant-steps search to find a multiple $M$ of $|P|$ in $\mathcal{H}(p)$.
+\item Compute the prime factorization of $M$ using Sage's \texttt{factor} function.
+\item Compute $m=|P|$ using any of the fast order algorithms from Problem 4.
+\item Set $N_i=\lcm(m,N_i)$ and set $i=1-i$.
+\end{enumerate}
+\item If $N_0$ has a unique multiple $M$ in $\mathcal{H}(p)$ then return $M$, otherwise return $2p+2-M$, where $M$ is the unique multiple of $N_1$ in $\mathcal{H}(p)$.
+\end{enumerate}
+
+\begin{enumerate}[{\bf (a)}]
+\item By modifying part (b) of step 3, give an alternative method for determining an integer $m$ that is a multiple of $|P|$ and guaranteed to divide $\#E_i(\Fp)$, thereby eliminating the need for steps (c) and (d), without increasing the complexity.
+\item
+Let $E$ be the elliptic curve $y^2=x^3-35x-98$ over $\Fp$ with $p=4657$.
+Run your algorithm on $E/\Fp$ and record the values of $N_i$, $M$, and $m$ that are obtained as the algorithm progresses.
+\item
+For $k=20,40,60,80$, pick a random prime $p$ in the interval $[2^{k-1},2^{k}]$ (using Sage's \texttt{random\_prime} function with the \texttt{lbound} parameter).  Record the time it takes for you program to compute $\#E(\Fp)$ for the elliptic curve $y^2=x^3+314159x+271828$ for each of these primes and list these timings in a table.
+
+When gathering these timings you may want to use the \texttt{\%time} line magic rather than \texttt{\%timeit} (the latter will attempt to run the code several times so it can take an average, but this may take a long time).
+\end{enumerate}
+
+The timings will vary depending on your exact implementation and the machine you are running on, but you should be able to see an $O(p^{1/4})$ growth rate for large $p$; the $k=20$ and $k=40$ cases will be too quick too see this, but you should see the times go up by a factor of roughly $2^{20/4}=32$ as you move from a 40-bit to a 60-bit and then an 80-bit prime.  As ball park figures to shoot for, the cases $k=20,40$ should both take less than a second, the $k=60$ case should take a few tens of seconds (under ten if your code is tight); the $k=80$ case may take several minutes.
+If you are not seeing $O(p^{1/4})$ growth it likely means that you are inadvertently doing a linear search of the baby steps rather than a table lookup; use a python dictionary to store baby steps and make sure you access it correctly (use ``\texttt{giant in babys}" not ``\texttt{giant in babys.keys()}"; the latter will do a linear search).  You can use the sage function \texttt{cputime()} to time specific sections of your code.
+
+
+\subsection*{Problem 6. Schoof's algorithm (49 points)}
+In this problem you will analyze the complexity of Schoof's algorithm, as described in \href{https://math.mit.edu/classes/18.783/2021/LectureNotes8.pdf}{Lecture 8} and implemented in this \href{https://cocalc.com/share/public_paths/600832aafc89f1098d5415b39eec4fbaa63ccab1}{Sage notebook}.
+In your complexity bounds, use $\M(m)$ to denote the complexity of multiplying two $m$-bit integers.
+You may wish to recall that the complexity of multiplying polynomials in $\Fp[x]$ of degree~$d$ is $O(\M(d\log p))$, provided that $\log d = O(\log p)$ (in Schoof's algorithm, $\ell=O(\log p)$, so this certainly applies).
+Under the same assumption, the complexity of inverting a polynomial of degree $O(d)$ modulo a polynomial of degree $d$ is $O(\M(d\log p)\log d)$.
+
+\begin{enumerate}[{\bf (a)}]
+\item Analyze the time complexity of computing $t_\ell$ as described in Algorithm 9.3 of the lecture notes and implemented in the \texttt{trace\_mod} function in the worksheet.
+Give separate bounds for each of the four non-trivial steps in Algorithm 9.3 as well as overall bounds for the entire algorithm.
+Express your bounds in terms of $\ell$ and $n=\log p$, using $\M(m)$ to denote the cost of multiplying two $m$-bit integers.
+
+\item Analyze the total time complexity of Schoof's algorithm, as described in Algorithm~9.1 of the lecture notes and implemented in the \texttt{Schoof} function of the Sage notebook linked to above, as a function of $n=\log p$.
+Give your answer in three forms, first using $\M(m)$ to express the cost of multiplying $m$-bit integers, then after plugging in the na\"ive bound $\M(m)=O(m^2)$ or the Sch\"onhage-Strassen bound for FFT-based multiplication $\M(m)=O(m\log m\log\log m)$.
+
+\item In your answer to part (a), you should have found that the time complexity bound for one particular step is strictly worse than any of the other steps of Algorithm~9.3.
+Explain how to modify Algorithm~9.3 so that this step no longer strictly dominates the asymptotic running time.
+
+\item Revise your time complexity estimates in part (b) to reflect part (c).
+
+\item Analyze the space complexity of Schoof's algorithm as a function of $n$, both before and after your optimization in part (c).
+\end{enumerate}
+
+\subsection*{Problem 7. Survey (2 points)}
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found it (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found it (1 = ``trivial," 10 = ``brutal").  Estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+Problem 5 & & & \\\hline
+Problem 6 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+3/15 & Schoof's algorithm & & & &\\\hline 
+3/17 & The discrete logarithm problem & & & &\\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Please record any additional comments you have on the problem sets or lectures, in particular, ways in which they might be improved.
+\end{document}

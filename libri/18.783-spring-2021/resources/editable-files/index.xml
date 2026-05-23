@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Editable Files on MIT OpenCourseWare</title>
+    <link>/resources/editable-files/</link>
+    <description>Recent content in Editable Files on MIT OpenCourseWare</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="/resources/editable-files/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MIT18_783S21_PS01.tex</title>
+      <link>/resources/mit18_783s21_ps1-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps1-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS02.tex</title>
+      <link>/resources/mit18_783s21_ps2-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps2-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS03.tex</title>
+      <link>/resources/mit18_783s21_ps3-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps3-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS04.tex</title>
+      <link>/resources/mit18_783s21_ps4-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps4-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS05.tex</title>
+      <link>/resources/mit18_783s21_ps5-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps5-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS06.tex</title>
+      <link>/resources/mit18_783s21_ps6-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps6-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS07.tex</title>
+      <link>/resources/mit18_783s21_ps7-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps7-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS08.tex</title>
+      <link>/resources/mit18_783s21_ps8-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps8-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS09.tex</title>
+      <link>/resources/mit18_783s21_ps9-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps9-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS10.tex</title>
+      <link>/resources/mit18_783s21_ps10-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps10-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS11.tex</title>
+      <link>/resources/mit18_783s21_ps11-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps11-1/data.json</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MIT18_783S21_PS12.tex</title>
+      <link>/resources/mit18_783s21_ps12-1/data.json</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/resources/mit18_783s21_ps12-1/data.json</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

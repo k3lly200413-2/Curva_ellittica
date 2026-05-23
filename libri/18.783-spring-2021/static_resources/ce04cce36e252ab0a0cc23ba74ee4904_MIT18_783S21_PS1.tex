@@ -1,0 +1,329 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{color}
+\definecolor{mylinkcolor}{rgb}{0.5,0.0,0.0}
+\definecolor{myurlcolor}{rgb}{0.0,0.0,0.75}
+\definecolor{mycitecolor}{rgb}{0.0,0.4,0.0}
+\hypersetup{colorlinks=true,urlcolor=myurlcolor,citecolor=mycitecolor,linkcolor=mylinkcolor}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset=-.45in
+\pagestyle{plain}
+
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\kron}[2]{\left(\frac{#1}{#2}\right)}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\End}{\mathrm{End}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\rem}{\operatorname{rem}}
+\newcommand{\redc}{\operatorname{redc}}
+\renewcommand{\div}{\operatorname{div}}
+\newcommand{\M}{\textbf{\textsf M}}
+\newcommand{\A}{\textbf{\textsf A}}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#1\due{02/26/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to material covered in Lectures 1--3.
+Some require the use of Sage; you will need to either create a (free) \href{https://cloud.sagemath.com/}{CoCalc} account, or you can \href{http://www.sagemath.org/index.html}{download} and install a copy of Sage to run on your own computer (warning, it is big and takes time to setup, using CoCalc avoids this but won't work offline).
+Sage is based on the python programming language; you will find examples of Sage usage in the problems below, and there is a wealth of information to be found on the \href{http://www.sagemath.org/help.html}{Sage website}, including tutorials.
+\medskip
+
+\noindent
+\textbf{Instructions}: Solve any combination of problems 1-5 that sums to 96 points, then complete the survey problem 6 (worth 4 points), whose results will help shape future problem sets and lectures.
+You can use the latex source for this problem set as a template for writing up your solutions.
+CoCalc includes an online latex editor, but feel free to use the latex environment of your choice (I currently use \href{https://www.overleaf.com/}{Overleaf} and \href{https://www.xm1math.net/texmaker/}{Texmaker}, but there are \href{https://en.wikipedia.org/wiki/Comparison_of_TeX_editors}{many other options}).
+Be sure to put your name on your solution (you can replace the due date in the header with your name).
+Your solutions should be written up in latex (please do not submit handwritten solutions) and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to report each non-trivial typo/error in any of the problem sets or lecture notes will receive 1-5 points of extra credit (depending on the severity).
+
+\subsection*{Problem 1. Chebyshev's theorem (16 points)}
+Let $\pi(x)$ denote the prime counting function, which for any real number $x$ counts the number of primes $p\le x$.
+The Prime Number Theorem is the asymptotic statement
+\[
+\pi(x)\sim \frac{x}{\log x}
+\]
+which means $\lim_{x\to\infty} \pi(x)/(x/\log x) = 1$.  We won't neeed to prove the prime number theorem in this course because we are happy to make do with the weaker statement that there are explicit constants $c_2 > 1 > c_1>0$ for which
+\begin{equation}\label{eq:pibounds}
+c_1\frac{x}{\log x}\le \pi(x)\le c_2\frac{x}{\log x}
+\end{equation}
+holds for all sufficiently large $x$, as proved by Chebyshev.
+In fact, if we take $c_1=(\log 2)/2$ and $c_2=6\log 2$ then \eqref{eq:pibounds} holds for all $x\ge 2$, as you will now prove.
+\begin{enumerate}
+\item[\textbf{(a)}] Show that for all integers $n\ge 1$ we have
+\[
+n^{\pi(2n)-\pi(n)}\le \prod_{n<p\le 2n}p\le \binom{2n}{n}\le 2^{2n},
+\]
+where $p$ ranges over primes.  Conclude that $\pi(2n)-\pi(n)\le (2\log 2)n/(\log n)$.\footnote{When you are asked to ``conclude" something on a problem set in this course, you need to prove it.}
+\item[\textbf{(b)}] Using \textbf{(a)}, prove that $\pi(2^n)\le 3\cdot 2^n/n$ for all integers $n\ge 1$, and use this to show
+\[
+\pi(x)\le (6\log 2)\frac{x}{\log x}
+\]
+for all $x\ge 1$.
+
+\item[\textbf{(c)}] For integers $n\ge 1$, let $v_p(n)$ denote the largest integer $e\ge 0$ such that $p^e|n$.
+Prove
+\[
+v_p(n!)=\sum_{e\ge 1} \left\lfloor \frac{n}{p^e}\right\rfloor,
+\]
+and then show that $v_p(\binom{2n}{n})\le (\log 2n)/(\log p)$.  Using this, prove that
+\[
+\frac{2^{2n}}{2n}\le (2n)^{\pi(2n)}
+\]
+holds for all integers $n\ge 1$.
+\item[\textbf{(d)}] Using \textbf{(c)}, show that for $x\ge 2$ we have
+\[
+\pi(x) \ge \frac{\log 2}{2}\frac{x}{\log x}.
+\]
+\end{enumerate}
+
+\subsection*{Problem 2. Montgomery arithmetic (16 points)}
+
+Let $p$ be a prime.
+For any integers $a,b$ with $b>0$, let $a\rem b$ denote the unique integer in $[0,b-1]$ that is congruent to $a$ modulo $b$, and let $a\div b$ denote the unique integer for which  $a = (a\div b)b + a\rem b$; in other words, $a\div b$ and $a\rem b$ are the quotient and remainder in the Euclidean division of $a$ by~$b$.
+
+For this problem we will assume we have a machine that performs integer arithmetic modulo $2^w$ for some fixed word-size $w$ we shall assume is a power of 2 (typically $w=64$ or $w=128$) and that $p<2^w$.  For cryptographic applications one will have $p>2^w$, but the algorithms we consider here can be readily extended to multi-word operands.
+
+For integers $a,b\in [0,2^w-1]$  let $\M$ denote the cost of computing $ab\div 2^w$ or $ab\rem 2^w$, and for $a,b\in [0,2^{2w}-1]$, let $\A$ denote the cost of computing $(a+b)\rem 2^w$, $(a-b)\rem 2^w$, or $a\rem 2^n$ for any $0\le n\le w$.  We assign a cost of $\A+\M$ to compute $(ab+c)\div 2^w$ with $c\in [0,2^{2w}-1]$.
+
+For the purposes of this problem we will ignore the cost of operations that do not involve integer arithmetic; you can assume that setting an integer to 0 or 1, comparing integers, and testing a boolean condition all have zero cost.
+
+In practice the cost of $\A$ is typically one clock cycle, the cost of $\M$ is typically three clock cycles; you can lookup the exact count for your favorite CPU \href{https://www.agner.org/optimize/instruction_tables.pdf}{here}.  We will assume that our computer does not directly support Euclidean division except by powers of 2. Modern computers do provide instructions for Euclidean division, but their cost is quite high, typically 30 clock cycles or more for a 64-bit operands.
+The goal of this problem is to show that we can perform ring operations in $\Z/p\Z$ without Euclidean division by $p$.
+
+\begin{enumerate}
+\item[\textbf{(a)}] Give an algorithm to compute $-1/p\rem 2^w$ with cost $2(\lg w)\M+(\lg w+1)\A$ and an algorithm to compute $2^e\rem p$ with cost $2e\A$.
+\end{enumerate}
+Define $q:=-1/p\rem 2^w, R:=2^w\rem p, R^2:=2^{2w}\rem p$.  Henceforth we shall assume these quantities have been precomputed via \textbf{(a)}.   The cost of this precomputation is not worth doing if you only want to perform one or two operations in $\Z/p\Z$, in which case you may as well use the Euclidean division modulo $p$ provided by your CPU, but it is negligible for algorithms that perform  many operations in $\Z/p\Z$.
+\begin{enumerate}
+\item[\textbf{(b)}] Let $R^{-1}$ be the unique integer in $[0,p-1]$ for which $RR^{-1}\equiv 1\bmod p$, and define
+\[
+\redc(x):= xR^{-1}\rem p,
+\]
+so that $\redc(x)R\equiv x\bmod p$. Show that given $q$, for any $x\in [0,p2^w-1]$ we can compute $\redc(x)$ as
+\[
+\redc(x) = (((((x\rem 2^w)q)\rem 2^w)p + x) \div 2^w) \rem p,
+\]
+for a cost of $2\M+3\A$.
+\end{enumerate}
+Note that in your solution to \textbf{2b} you cannot use an operation of the form $a\rem p$, you are only allowed to use operations supported by our machine, and you need to prove that your solution works (you will need to use the assumption $x<p2^w$, for example).
+
+I recommend implementing your ``algorithm'' in Sage (it will be just a few lines) to make sure you understand what is going on.  The python syntax for $a\rem b$ is ``\texttt{a\%b}'', and the syntax for $a\div b$ is ``\texttt{a//b}'' --- note the double-slash, which tells python to do a Euclidean division, if you just type ``\texttt{a/b}'' you will get the rational number $a/b$.
+\bigskip
+
+Now let $S$ be the set of integers in $[0,p-1]$ representing the ring $\Z/p\Z$ with addition and multiplication defined by $(a+b)\rem p$ and $ab\rem p$, respectively; for $a\in\Z$ the integer $a\rem p$ is the \emph{standard representation} of $a$ modulo $p$.
+Now let us define $[a] := a2^w\rem p$ as the \textit{Montgomery representation}\footnote{Named after \href{https://en.wikipedia.org/wiki/Peter_Montgomery_(mathematician)}{Peter L. Montgomery}, also known for the \textit{Montgomery ladder} we will see later.} of $a$ modulo~$p$.
+\begin{enumerate}
+\item[\textbf{(c)}]
+Show that the map $a\mapsto [a]$ is injective with inverse $[a]\mapsto \redc([a])$.  This allows us to view the set $T:=\{[a]: a\in S\}\subseteq[0,2^w-1]$ as an alternative representation of the ring $\Z/p\Z$ with addition and multiplication defined by $[a]\oplus [b]:=[(a+b)\rem p]$ and $[a]\otimes[b]:=[ab\rem p]$ (here $\oplus$ and $\otimes$ denote addition and multiplication in $T$).
+
+Show that $[0]=0$, $[1]=R$, and explain how to compute in the ring $T$ for a cost of $2\A$ per addition and $3\M+3\A$ per multiplication, assuming $q$ has been precomputed (in practice the cost of multiplication is closer to $3\M+\A$; some bit-shifting operations we are charging for actually have zero cost).
+\item[\textbf{(d)}] The map $[a]\mapsto \redc([a])=a$ allows us to recover $a$ from its Montgomery representation $[a]$, but this still leaves the question of how to compute $[a]:=a2^w\rem p$.  Give an algorithm that computes $[a]$ given $a$ and $R^2$ for a cost of $3\M+3\A$.
+\end{enumerate}
+
+\subsection*{Problem 3. Twists of elliptic curves (32 points)}
+Let $E/k$ be an elliptic curve in short Weierstrass form
+\[
+E\colon\qquad y^2 = x^3 + Ax +B.
+\]
+The \emph{quadratic twist} of $E$ by $c\in k^\times$ is the elliptic curve over $k$ defined by the equation
+\[
+E_c\colon\qquad cy^2 = x^3 + Ax + B.
+\]
+\begin{enumerate}
+\item[\textbf{(a)}] Using a linear change of variables, show that $E_c$ is isomorphic to an elliptic curve in standard Weierstrass form $y^2=x^3+A'x + B'$, and express $A'$ and $B'$ in terms of $A$ and $B$ and c.  Verify that $E_c$ is not singular.
+\item[\textbf{(b)}] For any group $G$ and positive integer $n$, we use $G[n]$ to denote the $n$-torsion subgroup of $G$, consisting of all elements whose order divides $n$.  Prove that $E(k)[2] = E_c(k)[2]$.
+\item[\textbf{(c)}] Prove that if $c$ is a square in $k^\times$, then $E$ and $E_c$ are isomorphic over $k$ (via a linear change of variables with coefficients in $k$).
+Conclude that $E$ and $E_c$ are always isomorphic over $k(\sqrt{c})$, whether $c$ is a square in $k^\times$ or not (in general, curves defined over $k$ are \emph{twists} if they are isomorphic over some extension of $k$).
+\item[\textbf{(d)}] Show that when $B=0$, replacing $A$ by $A':=cA$ for some nonsquare $c$ yields an elliptic curve $E'$ that is not a quadratic twist of $E$ but is a \emph{quartic twist} of $E$, which becomes isomorphic to $E$ over the extension $k(c^{1/4})$.  Similarly show how to construct \emph{cubic twists} and \emph{sextic twists} of $E$ when $A=0$.
+\item[\textbf{(e)}] Now let $k=\Fq$ be a finite field of odd characteristic, and let $t$ be the unique integer for which
+\[
+\#E(\Fq) =q+1-t,
+\]
+where $\#E(\Fq)$ is the cardinality of the group of $\Fq$-rational points of $E$.
+Prove that
+\[
+\#E_c(\Fq) = q+1 - \chi(c)t,
+\]
+where $\chi\colon\Fq^\times\to \{\pm 1\}$ is the quadratic character of $\Fq^\times$ (so $\chi(c)=1$ iff $c$ is a square).
+\item[\textbf{(f)}] Continuing with $k=\Fq$, show that if $t\ne 0$ then $E_c$ and $E_{c'}$ are isomorphic if and only if $\chi(c)=\chi(c')$ (this is also true when $t=0$ but you need not prove this).
+\end{enumerate}
+
+% Consider changing to 48 points in the future?
+\subsection*{Problem 4.  Four torsion subgroups (32 points)}
+Let $E/k$ be an elliptic curve in short Weierstrass form
+\[
+E\colon\qquad y^2 = f(x) = x^3 + Ax +B,
+\]
+and let $f'(x):=3x^2+A$ denote the formal derivative of $f(x)$.  Let $E[n]:=E(\kbar)[n]$ denote the $n$-torsion subgroup of $E(\kbar)$.  The goal of this problem is to gain a better understanding of the 2-torsion and 4-torsion subgroups of $E$.
+
+You may want to solve (or at least read) Problem 3 before attempting this problem, particularly \textbf{(3b)}.
+
+\begin{enumerate}
+\item[\textbf{(a)}] Prove that $P\in E(\kbar)$ has order $2$ if and only if $P=(x_0,0)$ with $f(x_0)=0$.  Conclude that $E[2]\simeq \Z/2\Z\oplus \Z/2\Z$ and $E[2^r]\simeq \Z/2^r\Z\oplus \Z/2^r\Z$ for all $r\ge 1$.
+\item[\textbf{(b)}] Let $Q=(x_0,0)\in E(\kbar)$ and let $P=(u,v)\in E(\kbar)$.  Prove that $2P=Q$ if and only if we have $f'(x_0)=(u-x_0)^2$.
+\end{enumerate}
+
+\noindent
+Now let $k=\Fq$ be a finite field of odd characteristic and let $\chi\colon \Fq^\times\to\{\pm 1\}$ be its quadratic character.
+\begin{enumerate}
+\item[\textbf{(c)}] Prove that $E(\Fq)$ contains a point of order 4 only if $\chi(f'(x_0))=1$ for some rational root $x_0\in \Fq$ of $f(x)$.  Show that this necessary condition is not always sufficient.
+\item[\textbf{(d)}] Suppose that $f(x)$ has three rational roots $x_1,x_2,x_3\in \Fq$.  Prove that
+\[
+\chi(-1)\chi(f'(x_1))\chi(f'(x_2))\chi(f'(x_3))=1.
+\]
+Conclude that if $q\equiv 3\bmod 4$ then $E(\Fq)[4]\ne E[4]$.
+\end{enumerate}
+Let $c\in \Fq^\times$ be a nonsquare and let $E_c$ denote the quadratic twist of $E$, as in Problem 3.\\
+If $f(x)$ has no rational roots then $E(\Fq)[4]=E_c(\Fq)[4]=\{0\}$ (by \textbf{3b} and \textbf{4a}).
+\begin{enumerate}
+\item[\textbf{(e)}] Determine up to isomorphism the unordered pairs $(E(\Fq)[4],E_c(\Fq)[4])$ that can arise when $f(x)$ has exactly one rational root, where $q$ and $f(x)$ are allowed to vary subject to this constraint.
+\item[\textbf{(f)}] Determine up to isomorphism the unordered pairs $(E(\Fq)[4],E_c(\Fq)[4])$ that can arise when $f(x)$ has three rational roots and $q\equiv 3\bmod 4$, and then do the same for $q\equiv 1\bmod 4$, where $q$ and $f$ are allowed to vary subject to these constraints.
+\end{enumerate}
+
+
+
+\subsection*{Problem 5. Sato-Tate for CM elliptic curves (32 points)}
+Recall from Lecture 1 that the elliptic curve $E/\Q$ defined by $y^2=x^3+Ax+B$ has \emph{good reduction} at a prime $p$ whenever $p$ does not divide $\Delta(E) := -16(4A^3+27B^2)$.
+For each prime $p$ of good reduction, let
+\[
+a_p=p+1-\#E_p(\Fp)\qquad\text{and}\qquad x_p=a_p/\sqrt{p},
+\]
+where $E_p$ denotes the reduction of $E$ modulo $p$.
+
+To create an elliptic curve  defined by a short Weierstrass equation in Sage, you can type \texttt{E=EllipticCurve([A,B])}.  To check whether the elliptic curve $E$ has good reduction at $p$, use \texttt{E.has\_good\_reduction(p)}, and to compute~$a_p$, use \texttt{E.ap(p)}.
+
+In this problem you will investigate the distribution of $x_p$ for some elliptic curves over~$\Q$ to which the Sato-Tate conjecture does not apply.
+These are elliptic curves with \emph{complex multiplication} (CM for short), a term we will define later in the course.
+In Sage you can check for CM using \texttt{E.has\_cm()}.
+
+\begin{enumerate}
+\item[\textbf{(a)}] Let $E/\Q$ be the curve defined by $y^2 = x^3+1$.
+Compute a list of $a_p$ values for the primes $p\le 200$ where $E$ has good reduction (all but 2 and 3).
+The following block of Sage code does this.
+
+\begin{lstlisting}
+E=EllipticCurve([0,1])
+for p in primes(0,200):
+    if E.has_good_reduction(p):
+    	print("%d:%d" % (p, E.ap(p)))
+\end{lstlisting}
+
+You will notice that many of the $a_p$ values are zero.
+Give a conjectural criterion for the primes $p$ for which $a_p=0$.
+Verify your conjecture for all primes $p\le 2^{10}$ where $E$ has good reduction.
+
+\item[\textbf{(b)}] Given a bound $B$, the $n$th \emph{moment statistic} $M_n$ of $x_p$ is defined as the average value of $x_p^n$ over primes $p\le B$ where $E$ has good reduction.  In Lecture 1 we saw that for an elliptic curve over $\Q$ without complex multiplication, the sequence of moment statistics $M_0, M_1, M_2,\ldots$ appear to converge to the integer sequence
+\[
+1,0,1,0,2,0,5,0,14,0,42,\ldots,
+\]
+whose odd terms are 0 and whose even terms are the Catalan numbers.
+Your goal is to determine an analogous sequence for elliptic curves over $\Q$ with complex multiplication.
+
+To do this efficiently, use the \texttt{E.aplist()} method in Sage.  The following block of code computes the moment statistics $M_0,\ldots,M_{10}$ of $x_p$ using the bound $B=2^k$.
+
+\begin{lstlisting}
+k=12
+E=EllipticCurve([0,1])
+A=E.aplist(2^k)
+P=prime_range(0,2^k)
+X=[A[i]/sqrt(RR(P[i])) for i in range(0,len(A))]
+M=[sum([a^n for a in X])/len(X) for n in [0..10]]
+print(M)
+\end{lstlisting}
+
+(note that use of \texttt{RR(P[i])} to coerce the prime \texttt{P[i]} to a real number before taking its square root --- without this Sage will use a symbolic representation of the square root as an algebraic number, which is not what we want).
+With this approach we are also including a few $a_p$ values at bad primes (which will yield $x_p\approx 0$), but this is harmless as long as we make $B=2^k$ large enough.
+
+By computing moment statistics using bounds $B=2^k$ with $k=12,16,20,24$, determine the integers to which the  first ten moment statistics appear to converge, and come up with a conjectural formula for the $n$th moment (if you get stuck on this, look at \textbf{(e)} and \textbf{(f)} below).  Then test your conjecture by computing the 12th and 14th moment statistics and comparing the results.
+
+\item[\textbf{(c)}] Repeat the analysis in parts \textbf{(a)} and \textbf{(b)} for the following elliptic curves over $\Q$:
+\begin{align*}
+y^2 &= x^3-595x+5586,\\
+y^2 &= x^3-608x+5776,\\
+y^2 &= x^3 - 9504x + 365904.
+\end{align*}
+You will probably need to look at more $a_p$ values than just up to $p\le 200$ in order to formulate a criterion for the $a_p$ that are zero.  Do the $x_p$ moment statistics for these elliptic curves appear to converge to the same sequence you conjectured in part \textbf{(b)}?
+
+\item[\textbf{(d)}] Pick one of the three curves from part \textbf{(c)} and take its quadratic twist by the last four digits of your student ID.
+Does this change the sequence of $a_p$ values?
+Does it change the moment statistics of $x_p$?
+
+\item[\textbf{(e)}] Recall that the special orthogonal group $\SO(2)$ consists of all matrices of the form $R_\theta = \left(\begin{smallmatrix}\cos \theta&-\sin\theta\\\sin\theta&\cos\theta\end{smallmatrix}\right)$.
+To generate a random matrix in $\SO(2)$, one simply picks $\theta$ uniformly at random from the interval $[0,2\pi)$; this is the \emph{Haar measure} on $\SO(2)$, the unique probability measure that is invariant under the group action.
+Derive a formula for the $n$th moment of the trace of a random matrix in $\SO(2)$ by integrating the $n$th power of the trace of $R_\theta$ over all $\theta\in[0,2\pi)$.  Be sure to normalize by $1/(2\pi)$ so that $M_0=1$.
+
+\item[\textbf{(f)}] The normalizer $N(\SO(2))$ of $\SO(2)$ in the special unitary group $\SU(2)$ consists of all matrices of the form $R_\theta$ and $JR_\theta$, where $J= \left(\begin{smallmatrix}i&0\\0&-i\end{smallmatrix}\right)$.  Derive a formula for the $n$th moment of the trace of a random matrix in $N(\SO(2))$ (under the Haar measure on $N(\SO(2))$ one picks $\theta\in [0,2\pi)$ uniformly at random and then takes $R_\theta$ or $JR_\theta$ with equal probability).
+Compare the results to the formula you conjectured in part \textbf{(b)}.
+\end{enumerate}
+
+
+\subsection*{Problem 6. Survey (4 points)}
+Complete the following survey by rating each of the problems you solved on a scale of 1 to~10 according to how interesting you found the problem (1 = ``mind numbing," 10 = ``mind blowing"), and how difficult you found the problem (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+Problem 5 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Please rate each of the following lectures that you attended on a scale of 1 to 10, according to the quality of the material (1=``pointless", 10=``priceless"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``watching paint dry", 10=``head still spinning"), and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+2/17 & Introduction & & & &\\\hline 
+2/22 & The group law & & & &\\\hline 
+2/24 & Finite field arithmetic & & & &\\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Feel free to record any additional comments you have on the problem sets or lectures; in particular, how you think they could be improved (which they surely can!).
+
+\end{document}

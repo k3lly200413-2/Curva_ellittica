@@ -1,0 +1,369 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{color}
+\definecolor{mylinkcolor}{rgb}{0.5,0.0,0.0}
+\definecolor{myurlcolor}{rgb}{0.0,0.0,0.75}
+\definecolor{mycitecolor}{rgb}{0.0,0.4,0.0}
+\hypersetup{colorlinks=true,urlcolor=myurlcolor,citecolor=mycitecolor,linkcolor=mylinkcolor}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset=-.45in
+\pagestyle{plain}
+
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\kron}[2]{\left(\frac{#1}{#2}\right)}
+\newcommand{\SO}{\rm SO}
+\newcommand{\SU}{\rm SU}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\tr}{\operatorname{tr}}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#2\due{03/05/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are primarily related to material covered in Lecture 3.
+\medskip
+
+\noindent
+\textbf{Instructions}: Solve any combination of problems summing to 100 points --- this will necessarily include the survey (Problem 6). Your solutions should be written up in latex (please do not submit handwritten solutions) and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem set or lecture notes will receive 1-5 points of extra credit.
+\smallskip
+
+\noindent
+\textbf{Note}: Several problems require a portion of your MIT ID as input.  If you would prefer not to use your MIT ID, let me know and I will choose a random 9-digit number that you can use in place of your MIT ID for the purpose of solving 18.783 problem sets.
+\smallskip
+
+\subsection*{Problem 1. Eight ways to Fibonacci (19 points)}
+Let $F_k$ denote the $k$th Fibonacci number, defined by:
+\begin{equation}\label{eq:fib}
+F_1:=1,\qquad F_2:=1,\qquad F_{k}:=F_{k-2}+F_{k-1}\qquad(k\ge 2).
+\end{equation}
+Analyze the time complexity of computing $F_k$ modulo an $n$-bit prime~$p$ using each of the algorithms listed below.
+You may assume that $k>n$.
+Your answers should be in the form $O(f(k,n))$ and as tight as you can make them.
+Use $\textsf{M}(n)$ to denote the complexity of multiplying two $n$-bit integers.
+\begin{enumerate}[{\bf (a)}]
+\item Compute the integers $F_1,F_2,\ldots, F_k$ via \eqref{eq:fib}, and then reduce $F_k$ mod $p$.
+\item Same as (a), except compute in $\Fp$ rather than $\Z$ throughout.
+\item Assume $p=\pm 1\bmod 5$.  Compute the roots $\phi$ and $\psi$ of $x^2-x-1$ in $\Fp$ (using a probabilistic root-finding algorithm), and then compute
+$F_k=\frac{\phi^k-\psi^k}{\phi-\psi}$ in $\Fp$.
+\item Assume $p\ne\pm 1\bmod 5$ and $p\ne 5$.  Represent $\FF_{p^2}$ as $\Fp[\phi]/(\phi^2-\phi-1)$, let $\psi=1-\phi$, and then compute $F_k=\frac{\phi^k-\psi^k}{\phi-\psi}$ as an element of $\FF_{p^2}$ that actually lies in $\Fp$.
+\item Compute the $k$th power of $\begin{pmatrix}0&1\\1&1\end{pmatrix}$ in ${\rm GL}_2(\Fp)$ and output its upper right entry.
+\item Assume $k$ is a power of 2.  Use the identities
+\begin{align*}
+F_{2i-1} &= F_i^2+F_{i-1}^2\\
+F_{2i} &= (2F_{i-1}+F_i)F_i
+\end{align*}
+to compute $(F_1,F_2)$, $(F_3,F_4)$, $(F_7,F_8)$,\ldots $(F_{k-1},F_k)$, working modulo $p$ throughout.\footnote{This approach can be generalized to arbitrary $k$.}
+\item
+Notably absent from the above list is the standard recursive algorithm:
+\begin{lstlisting}
+def fibonacci(k):
+    if k <= 2: return 1
+    return fibonacci(k-1) + fibonacci(k-2)
+\end{lstlisting}
+What is the time complexity of computing \texttt{fibonacci(k)} and reducing it mod $p$?
+What is the time complexity of computing \texttt{fibonacci(GF(p)(k))}?
+\item Let $n:=10^6+N$, where $N$ is the last five digits of your student ID, and let $k=n^n$.\\  Compute $F_k\bmod 10007$.
+\end{enumerate}
+
+
+\subsection*{Problem 2. Cornacchia's algorithm (19 points)}
+Cornacchia's algorithm computes primitive solutions $(x,y)$ to the Diophantine equation
+\begin{equation}\label{eq:cornacchia}
+x^2+dy^2 = m,
+\end{equation}
+where $d$ and $m$ are positive integers.  A \emph{primitive} solution has $x$ and $y$ relatively prime.
+Typically $m=p$ or $m=4p$, where $p$ is a prime, but the algorithm works for any $m$, provided we are given an appropriate square root $r$ of $-d$ mod $m$ (if there are only two square roots, as when $m$ is prime $p$ or $4p$ with $p$ odd, it does not matter which we use, but in general one needs to check one of $\pm r$ for each square root $r$ of $-d$ modulo $m$).\footnote{Using the probabilistic root-finding algorithm described in \href{https://math.mit.edu/classes/18.783/2021/LectureNotes3.pdf}{Lecture 3} one can efficiently compute square roots modulo $p$, and with this one can also determine square roots modulo $4p$, and more generally, modulo any integer whose prime factorization is known.  But in general the problem of computing square roots modulo $m$ is believed to be as hard as factoring $m$.}
+
+
+
+The algorithm uses a partial Euclidean algorithm that terminates as soon as the sequence of remainders $r_i$ drops below the square root of $r_0=m$.
+\begin{enumerate}[1.]
+\item
+Let $r_0 = m$ and $r_1 = r$, where $r^2\equiv -d \bmod m$ and $0\le r\le m/2$.
+\item
+Compute $r_{i+2} = r_i \bmod r_{i+1}$ until $r_k^2 < m$ is reached.
+\item
+If $(m-r_k^2)/d$ is the square of an integer $s$, return the solution $(r_k,s)$.\\
+Otherwise, return \texttt{null}.
+\end{enumerate}
+
+It is clear that if the algorithm returns $(r_k,s)$, then it is a solution to \eqref{eq:cornacchia}.
+It is not so clear that the algorithm always finds a primitive solution if one exists, but this is true; see \cite{basilla} for a
+short elementary proof.\footnote{There is an obvious typo in step 3 of the algorithm given in \cite{basilla} which is corrected above.}
+If $m$ is square-free (as when $m$ is prime), every solution to \eqref{eq:cornacchia} is primitive, but this is not true in general (this is relevant to part (e)).
+
+\medskip
+\noindent
+In this problem let $N:=n\cdot 10^{100}$, where $n$ is the last 4 digits of your student ID.
+
+\begin{enumerate}[{\bf (a)}]
+\item Implement this algorithm in Sage.  Use \texttt{mod(-d,m).is\_square()} to test if $-d$ has a square root mod $m$, and use \texttt{int(mod(-d,m).sqrt())} to get a square root.
+\item You may recall Fermat's ``Christmas theorem", which states that an odd prime $p$ is the sum of two squares if and only if $p\equiv 1\bmod 4$.  You may also recall that $-1$ is a square modulo an odd prime $p$ if and only if $p\equiv 1\bmod 4$.
+
+Let $n$ be the integer corresponding to the last 4 digits of your student ID.
+For the least prime $p > N$ congruent to $1\bmod 4$, write $p$ as the sum of two squares.
+
+\item Fermat also proved that a prime $p$ can be written in the form $p=x^2+3y^2$ if and only if $p\equiv 1\bmod 3$, which is equivalent to the condition that $-3$ is a square mod $p$.  For the least prime $p > N$ congruent to $1\bmod 3$, write $p$ in the form $p=x^2+3y^2$.
+
+\item Show that this does not work for $d=5$ by finding a prime $p$ for which $-5$ is a square modulo $p$ but $p$ cannot be written in the form $x^2+5y^2$.  Empirically determine a stronger congruence condition on $p$ that guarantees not only that is $-5$ a square mod~$p$, but also that $p$ can be written in the form $x^2+5y^2$.
+Then find the least prime $p >N$ that satisfies your condition and write $p$ in the form $p=x^2+5y^2$.
+
+\item Let $E$ be the elliptic curve $y^2=x^3-35x-98$ and let $p\ne 2,7$ be a prime.  Like the elliptic curves considered in Problem 5 of Problem Set 1, the elliptic curve $E$ has complex multiplication, and the integer $a_p=p+1-\#E(\Fp)$ is zero if and only if $-7$ is not a square modulo $p$.
+When $-7$ is a square modulo $p$, the integer $a_p$ satisfies the equation $4p=a_p^2+7y^2$, for some $y\in\Z$.
+Prove that this equation has a solution $(a_p,y)$ if and only if the equation $p=u^2+7v^2$ has a solution $(u,v)$.
+
+Use your algorithm to find a solution to $p=u^2+7v^2$ for the least prime $p>N$ for which $-7$ is a square modulo $p$,
+and use this to deduce the absolute value of $a_p$.
+Determine the sign of $a_p$, by finding a random point $P\in E(\Fp)$ for which only one of $(p+1-a_p)P$ and $(p+1+a_p)P$ is zero.
+
+\end{enumerate}
+
+\subsection*{Problem 3. Computing $r$th roots in cyclic groups (38 points)}
+In Lecture 3 we saw how to compute $r$th roots in a finite field $\Fq$ using a probabilistic root-finding algorithm.
+In this problem you will implement an entirely different approach for computing $r$th roots that works in any finite cyclic group $G$, including $G=\Fq^\times$.
+In addition to being more general, this method is typically faster than using probabilistic root-finding to compute $r$th roots in $\Fq^\times$ (but this depends on the values of $r$ and  $q$).
+
+We assume without loss of generality that $r$ is prime (to compute $n$th roots, successively compute $r$th roots for the primes $r$ dividing $n$, with multiplicity).
+To simplify notation we write $G$ additively, so an \emph{$r$th root} of $\gamma\in G$ is an element $\rho\in G$ for which $r\rho=\gamma$.
+Let $|\gamma|$ denote the \emph{order} of~$\gamma$, the least positive integer~$m$ for which $m\gamma=0$.
+
+\medskip
+\noindent
+\textbf{Prove the following statements}:
+\begin{enumerate}[{\bf (a)}]
+\item For all $\gamma\in G$ and $n\in\Z$ we have $|n\gamma| = |\gamma| / \gcd(n,|\gamma|)$.
+\item If $r$ does not divide $|G|$, then there is an integer $s$ such that for all $\gamma\in G$ the element $\rho = s\gamma$ is the unique $r$th root of $\gamma$.
+\item  If $r$ does divide $|G|$, then the number of $r$th roots of each $\gamma\in G$ is either 0 or $r$.
+In the latter case, the $r$th roots of $\gamma$ do not necessarily lie in $\langle \gamma\rangle$ (give an example).
+\item Suppose $r$ divides $|G|$.  Let $|G|=ar^k$, where $r\nmid a$.  Let $\delta\in G$ be an element of order~$r^k$, let $\gamma$ be any element of $G$, and $\alpha=a\gamma$ and $\beta=r^k\gamma$.  The following hold:
+
+\begin{enumerate}[(i)]
+\setlength{\itemsep}{0pt}
+\item $\alpha = x\delta$ for some integer $x\in[1,r^k]$.
+\item If $r$ does not divide $x$ then there is no $\rho\in G$ for which $r\rho = \gamma$.
+\item If $r$ divides $x$, and $s$ and $t$ are integers satisfying $sa+tr^{k+1}=1$,
+then the element $\rho = s(x/r)\delta + t\beta$ satisfies $r\rho = \gamma$.
+\end{enumerate}
+\end{enumerate}
+\vspace{-4pt}
+
+\noindent
+The element $\delta$ is a generator for the $r$-Sylow subgroup of~$G$.  If $G=\langle\sigma\rangle$, we can use $\delta=a\sigma$.
+The integer $x$ is the \emph{discrete logarithm} of $\alpha$ with respect to $\delta$.
+
+\bigskip
+\noindent
+\textbf{Implement the following algorithm} for computing an $r$th root of $\gamma$ in a cyclic group~$G$ of order $ar^k$, where $r$ is a prime that does not divide $a$, given $\delta\in G$ of order $r^k$:
+\begin{enumerate}
+\setlength{\itemsep}{-1pt}
+\item If $k=0$ then compute $s=1/r\bmod a$ and return $\rho = s\gamma$.
+\item Compute $\alpha=a\gamma$ and $\beta=r^k\gamma$.
+\item Compute the discrete logarithm $x$ of $\alpha$ with respect to $\delta$ by brute force: check whether $\alpha=x\delta$ for each $x$ from 1 to $r^k$ (this holds for some $x$, by part (a) of 4).\footnote{We will learn much better ways to compute this discrete logarithm later in the course.  For the moment, assume $r^k$ is small (for finite fields $\Fq$, this is usually the case, even when $q$ is very large).}
+\item If $r$ does not divide $x$ then return \texttt{null}.
+\item Compute $s$ and $t$ such that $sa+tr^{k+1}=1$ using the extended Euclidean algorithm.
+\item Return $\rho=s(x/r)\delta+t\beta$.
+\end{enumerate}
+The return value \texttt{null} is used to indicate that $\gamma$ does not have any $r$th roots in $G$.
+To compute $s=1/r\bmod a$ in Sage, use: \texttt{s=1/mod(r,a)}.
+To compute $s$ and~$t$ such that $sa+tr^{k+1}=1$, use: \texttt{d,s,t=xgcd(a,r**(k+1))} (here $d=\gcd(a,r^{k+1})$ is 1).
+
+The Python language used by Sage is untyped, so your algorithm can be used to compute $r$th roots in any cyclic group that Sage knows how to represent; it will automatically perform operations in whatever group the inputs $\delta$ and $\gamma$ happen to lie in.
+To test your algorithm, you may find it useful to work in the additive group of the ring $\Z/n\Z$, where $n=ar^k$, which you can create in Sage using \texttt{Zn=Integers(n)}.
+You can then use \texttt{delta=Zn(a)} to create an element of $\Z/n\Z$ with additive order $r^k$.
+
+\bigskip
+
+Let $E$ be the elliptic curve $y^2=x^3+31415926x+27182818$ over $\Fp$ with $p=2^{255}-19$.
+The group $E(\Fp)$ is cyclic, of order $n = 2\cdot 3\cdot 31\cdot m$, where
+\small
+$$m=311269057089559665117126303786795451217418463436862985689835777395934466489,$$
+\normalsize
+and the point $P=(x_0:y_0:1)$, where $x_0=99$ and
+\small
+$$y_0=3646051633135286488902046129458077014725501801396015176760137375427748642285,$$
+\normalsize
+is a generator for $E(\Fp)$.  Thus for $r=2,3,31$ you can use $\delta = (n/r)P$ as a generator of the $r$-Sylow subgroup (which in each case has order $r$).
+
+Let $c$ be the least prime greater than the integer formed by the last four digits of your student ID.
+Let $Q=(x_1:y_1:1)$, where
+\small
+\begin{align*}
+x_1&=43125933575059134974422288266359854378815207690220011740187158431378585841262,\\
+y_1&=30438392960540783858586956956150489842875282144799753811252714114065692010946
+\end{align*}
+\normalsize
+\begin{enumerate}
+\item[{\bf (e)}]
+Use your algorithm to find an $r$th root $R$ of $\gamma=cQ$, for $r=2,3,31$.
+Note that you can easily check your result by testing whether \texttt{r*R==c*Q} holds using Sage (please be sure to do this).
+In your answer you only need to list the point $R$ for each value of $r$, you don't need to include your code.
+Be sure to format your answer so that the coordinates of $R$ all fit on the page.
+\end{enumerate}
+
+\subsection*{Problem 4. Exponentiating with addition chains (38 points)}
+An \emph{addition chain} for a positive integer $n$ is an increasing sequence of integers $(c_0,\ldots,c_m)$ with $c_0=1$ and $c_m=n$ such that each entry other than $c_0$ is the sum of two (not necessarily distinct) preceding entries.
+The \emph{length} of an addition chain is the index $m$ of the last entry.
+When computing $a^n$ with a generic algorithm, the exponents of the powers of $a^k$ computed by the algorithm define an addition chain whose length is the number of multiplications performed.
+For example, using left-to-right binary exponentiation to compute $a^{47}$ yields the addition chain $(1,2,4,5,10,11,22,23,46,47)$,
+and right-to-left binary exponentiation yields the addition chain $(1,2,3,4,7,8,15,16,32,47)$, both of which have length~9.
+
+\begin{enumerate}[{\bf (a)}]
+\item For $n=715$, determine the addition chains given by: (i) left-to-right binary, (ii) right-to-left binary, (iii) fixed-window, and (iv) sliding-window exponentiation, using a window of size 2 for (iii) and~(iv).
+\item Find an addition chain for $n=715$ that is shorter than any you found in part (a).
+\item Repeat part (a) for the integer $N$ obtained by adding 990,000 to the last 4 digits of your student ID, using a window of size 3 for the fixed and sliding window cases.
+\item Find the shortest addition chain for $N$ that you can.
+There is a good chance you can do better than any of the chains you found in part (c).
+\end{enumerate}
+
+In groups where inversions are cheap (such as the group of points on an elliptic curve), it is advantageous to use \emph{signed} binary representations of exponents, where we write the exponent $n$ in the form $n=\sum n_i2^i$ with $n_i\in\{-1,0,1\}$.  Such a representation is generally not unique, but there is a unique signed representation with the property that no pair of adjacent digits are both nonzero.  This is known as \emph{non-adjacent form} (NAF).  The NAF representation of 47, for example, is $10\bar{1}000\bar{1}$, where $\bar{1}$ denotes $-1$.
+
+To construct the NAF representation one begins by writing $n$ in binary with a leading~$0$, and then successively replaces the least significant block of the form $01\cdots1$ with $10\cdots0\bar{1}$ until there are no adjacent nonzero digits.  For example, the computation for $47$ proceeds as $0101111, 11000\bar{1}, 10\bar{1}000\bar{1}$, which reduces the number of nonzero digits from 5 to 3.  Even though the length is increased by 1, the total cost of exponentiation may be reduced.
+
+An \emph{addition-subtraction} chain extends the definition of an addition chain by allowing $c_k=c_i\pm c_j$.
+Exponentiation using the NAF representation defines an addition-subtraction chain.
+For example, using left-to-right binary exponentiation, the NAF representation of 47 yields the chain $(1,2,4,3,6,12,24,48,47)$,
+which is shorter than the addition chain $(1,2,4,5,10,11,22,23,46,47)$ given by standard left-to-right binary exponentiation.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{4}
+\item Compute addition-subtraction chains for $n=715$ and the integer $N$ defined in part (c) using left-to-right binary exponentiation with the NAF representation.
+\item Find the shortest addition-subtraction chains for $n$ and $N$ that you can.
+\end{enumerate}
+
+\subsection*{Problem 5. Root-finding over $\Z$ (76 points)}
+In this problem you will develop an algorithm to find integer roots of polynomials in $\Z[x]$ using a $p$-adic version of Newton's method (also known as Hensel lifting).
+As an application, this gives us an efficient way to factor perfect powers (a special case that we will need to handle when we come to the elliptic curve factorization method),
+and it will be used as a black box in Problem 2 to find integer roots of division polynomials.
+
+In the questions below, $p$ can be any integer greater than 1, but you may assume it is a prime power if you wish.
+
+\begin{enumerate}[{\bf (a)}]
+\item Let $x_0\in\Z$ and $f\in\Z[x]$.  Prove that the following equivalence holds in $\Z[x]$:
+\[
+f(x) \equiv f(x_0) + f'(x_0)(x-x_0)\bmod (x-x_0)^2.
+\]
+\item
+Let $x_0,z_0\in\Z$ and $f\in\Z[x]$ satisfy $f(x_0)\equiv 0\bmod p$ and $f'(x_0)z_0\equiv 1\bmod p$.
+Let
+\begin{align*}
+x_1 &\equiv x_0-f(x_0)z_0 \bmod p^2,\\
+z_1 &\equiv 2z_0-f'(x_1)z_0^2\bmod p^2.
+\end{align*}
+Prove that that the following three equivalences hold:
+\begin{align}
+x_1&\equiv x_0\bmod p,\tag{i}\\
+f(x_1)&\equiv 0\bmod p^2,\tag{ii}\\
+f'(x_1)z_1&\equiv 1\bmod p^2.\tag{iii}
+\end{align}
+Show that (i) and (ii) characterize $x_1\bmod p^2$ uniquely by proving that if $x_2\in\Z$ also satisfies $x_2\equiv x_0\bmod p$ and $f(x_2)\equiv 0\bmod p^2$, then $x_1\equiv x_2\bmod p^2$.
+\end{enumerate}
+
+\noindent
+Iteratively applying (b) yields an algorithm that, given an integer $k$ and $x_0,z_0$, and~$f$ satisfying the hypothesis (a), outputs an integer $x_k$ that satisfies $f(x_k)\equiv 0\bmod p^{2^k}$.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{2}
+\item
+Prove that if $f$ has an integer root $r$ for which $f'(r)$ is invertible modulo $p$, then given $x_0\equiv r\bmod p$, $z_0\equiv 1/f'(x_0)\bmod p$, and $k$ such that $|r| < p^{2^k}/2$, this algorithm outputs $x_k$ such that $r$ is the unique integer $r\equiv x_k \bmod p^{2^k}$ satisfying $|r| < p^{2^k}/2$.
+\end{enumerate}
+
+\noindent
+To apply the result in (c), we need to know a suitable starting value (or values) for $x_0$.  For the two applications we have in mind, this is will be straightforward, so let us proceed on the assumption that we are given a suitable $x_0$ and $z_0$ such that $f'(x_0)z_0\equiv 1\bmod p$.
+
+Let $B$ be the maximum of the absolute values of the coefficients of~$f$, and let $B_0$ be an upper bound on the absolute value of its largest integer root.  It suffices to choose the least~$k$ such that $p^{2^k} > 2B_0$, and since any integer root of $f$ must divide its constant coefficient, we can assume that $B_0\le B$.
+We can also assume $p < 2B_0$, since otherwise the problem is trivial ($k=0$ and $x_k=x_0$).
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item
+Prove that with this choice of $k$ the algorithm can be implemented to run in time $O(d\ \M(\log B))$, where $d$ is the degree of~$f$ (be careful here, the most obvious implementation will not achieve this time bound).
+Prove that if $f$ has $O(1)$ terms, then the algorithm can be implemented to run in time $O(\M(\log B) + \M(\log B_0)\log d)$.
+
+\item
+Using the primes $p=2$ and $p=3$, describe an efficient algorithm that, given an integer $N$ relatively prime to 6, either outputs an integer~$a$ and a prime~$q$ such that $a^q=N$, or proves that $N$ is not a perfect power.
+Prove that your algorithm runs in quasi-quadratic time (meaning $O(n^2(\log n)^c)$ for some constant $c$, where $n=\log N$).
+\end{enumerate}
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{5}
+\item
+Implement your algorithm and report the result and running time on the each of the following inputs:
+$2^{1000}+297,\ 5^{503},\ (2^{500}+55)^2,\ (2^{333}+285)^3$, $(2^{32}+15)^{31}$, $500!$.
+To time your code in sage, use the \texttt{timeit} function (e.g. \texttt{timeit("1+1")}), or in a CoCalc Jupyter notebook, use the \texttt{\%timeit} \href{https://share.cocalc.com/share/8b892baf91f98d0cf6172b872c8ad6694d0f7204/PythonDataScienceHandbook/notebooks/01.07-Timing-and-Profiling.ipynb}{line-magic}.
+\item
+Prove that the algorithm you gave in (e) can be implemented to run in sub-quadratic time (meaning $o(n^2)$ where $n=\log N$).  You may need to modify your algorithm in order to achieve this.\footnote{In fact, this problem can be solved in quasi-linear time \cite{bernstein}.}
+\end{enumerate}
+
+\subsection*{Problem 6. Survey (5 points)}
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found the problem (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found it (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+Problem 5 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way to fast"), and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+2/24 & Finite field arithmetic & & & & \\\hline 
+3/1 & Isogenies & & & & \\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Feel free to record any additional comments you have on the problem sets or lectures.
+
+\begin{thebibliography}{9}
+\bibitem{basilla}
+Julius Magalona Basilla, \href{http://projecteuclid.org/euclid.pja/1116442240}{\textit{On the solution of $x^2+dy^2=m$}}, Proc. Japan Acad. Ser. A Math Sci. \textbf{80} (2004), 40--41.
+\bibitem{bernstein} D. J. Bernstein, \href{http://www.ams.org/journals/mcom/1998-67-223/S0025-5718-98-00952-1/}{\textit{Detecting perfect powers in essentially linear time}}, Math. Comp. \textbf{67} (1998), 1252--1283.
+\end{thebibliography}
+
+\end{document}

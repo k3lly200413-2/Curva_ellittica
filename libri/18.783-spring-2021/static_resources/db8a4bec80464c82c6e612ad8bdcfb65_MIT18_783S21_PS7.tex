@@ -1,0 +1,345 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{nicefrac}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{plain}
+
+
+% growing list of useful macros, use these where appropriate and add to this list as needed
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fptwo}{\mathbb{F}_{p^2}}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fqn}{\mathbb{F}_{q^n}}
+\newcommand{\Fqbar}{\overline{\mathbb{F}}_q}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\Z/n\Z}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\PGL}{{\rm PGL}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\DFT}{{\rm DFT}}
+\newcommand{\dy}{\,dy}
+\newcommand{\dx}{\,dx}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}[2]{\bigl(\frac{#1}{#2}\bigr)}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\softO}{\widetilde{O}}
+\newcommand{\ceil}[1]{\lceil{#1}\frac{1}eil}
+\newcommand{\Exp}{{\rm E}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\T}{{\rm T}}
+\newcommand{\N}{{\rm N}}
+\newcommand{\re}{\operatorname{re}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\ord}{{\rm ord}}
+\newcommand{\SL}{{\rm SL}}
+\newcommand{\PSL}{{\rm PSL}}
+\newcommand{\EllO}{{\rm Ell}_\O}
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakb}{\mathfrak{b}}
+\newcommand{\frakc}{\mathfrak{c}}
+\newcommand{\cl}{{\rm cl}}
+\newcommand{\disc}{{\rm disc}}
+\newcommand{\abcd}{\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)}
+\newcommand{\ABCD}{\left(\begin{smallmatrix}A&B\\C&D\end{smallmatrix}\right)}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\a}{\mathfrak{a}}
+\renewcommand{\b}{\mathfrak{b}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\lt}{{\rm lt}}
+\newcommand{\id}{{\rm id}}
+
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#7\due{04/11/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 12--13.
+\medskip
+
+\noindent\textbf{Instructions}: Pick any combination of problems to solve that sums to 100 points.
+Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves writing code, please either include your code in your write up (as part of the pdf), or the name of a notebook in your 18.783 CoCalc project containing you code (please use a separate notebook for each problem).
+
+
+\subsection*{Problem 1.  Isogeny invariants (19 points)}
+Let $\alpha\colon E_1\to E_2$ be an isogeny of elliptic curves defined over a finite field $\Fq$.
+
+\begin{enumerate}[{\bf (a)}]
+\item Prove that $\#E_1(\Fq)=\#E_2(\Fq)$. (Hint: show that $\alpha\circ (1-\pi_{E_1})=(1-\pi_{E_2})\circ\alpha$).
+\item Prove that $E_1(\Fq)$ is not necessarily isomorphic to $E_2(\Fq)$ (give a counterexample).
+\end{enumerate}
+Now let $\alpha\colon E_1\to E_2$ be an isogeny of elliptic curves defined over $\Q$.
+By the Mordell-Weil theorem, $E_1(\Q)$ and $E_2(\Q)$ are finitely generated abelian groups, hence of the form $\Z^r\oplus T$, where $r$ is the \emph{rank} and $T$ is the finite \emph{torsion subgroup}.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{2}
+\item Prove that $E_1$ and $E_2$ have the same rank.
+\end{enumerate}
+In contrast to the situation over a finite field, the torsion subgroups of $E_1(\Q)$ and $E_2(\Q)$ need not have the same cardinality.
+In particular, it may happen that $E_1(\Q)$ and $E_2(\Q)$ are both finite but $\#E_1(\Q)\ne \#E_2(\Q)$.
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item Given an explicit example of isogenous elliptic curves $E_1$ and $E_2$ over $\Q$ for which $E_1(\Q)$ and $E_2(\Q)$ are finite groups with  $\#E_1(\Q)\ne \#E_2(\Q)$.
+You may find the \href{http://lmfdb.org}{L-functions and Modular Forms Database} helpful.
+\end{enumerate}
+
+
+\subsection*{Problem 2. The Weil conjectures (79 points)}
+The \emph{zeta function} of a smooth projective curve $C/\Fq$ (or more generally, a projective variety) is the exponential generating function
+\[
+Z_C(T) = \exp\left(\sum_{n=1}^\infty\frac{\#C(\Fqn)T^n}{n}\right),
+\]
+where ``$\exp$'' denotes the exponential operator in the ring of formal power series $F\in\Q[[t]]$ with constant term zero, defined by
+\[
+\exp(F) := \sum_{k=0}^\infty \frac{F^k}{k!}.
+\]
+The inverse of the exponential operator is given by the formal logarithm\footnote{These definitions agree with the usual Taylor series expansions; note that $\log(1-F)=-\sum_{n=1}^\infty\frac{F^n}{n}$.}
+\[
+\log(F) := \sum_{n=1}^\infty (-1)^{n+1}\frac{(F-1)^n}{n}.
+\]
+The integers $\#C(\Fqn)$ can be recovered from $Z_C(T)$ via
+\[
+\#C(\Fqn)=\frac{1}{(n-1)!}\frac{d^n}{dT^n}\log Z_C(T)\Bigm|_{T=0}.
+\]
+The definition of the zeta function may seem awkward at first glance, but it has many remarkable properties.
+Most notably, although it is defined by an infinite power series, it is actually a rational function.
+\begin{theorem}[Weil]
+Let $C/\Fq$ be a smooth projective curve of genus~$g$.
+\begin{enumerate}[{\bf (i)}]
+\item \textbf{Rationality}: $Z_C(T) =\frac{P(T)}{(1-T)(1-qT)}$ for some $P\in\Z[T]$ of degree $2g$.
+\item \textbf{Functional equation}: $Z_C(\frac{1}{qT}) = q^{1-g}T^{2-2g}Z_C(T)$
+\item \textbf{Riemann hypothesis}  : the roots $\alpha_1,\ldots\alpha_{2g}\in\C$ of $P(T)$ satisfy $|\alpha_i|=1/\sqrt{q}$.
+\end{enumerate}
+\end{theorem}
+This theorem was conjectured by Emil Artin in 1924 and proved by Weil in 1949.  Weil also proposed generalizations of the three parts of the theorem to smooth projective varieties of arbitrary dimension; these became known as the \emph{Weil conjectures}.
+Many mathematicians contributed to the proof of the Weil conjectures, including Bernard Dwork, Michael Artin, Alexander Grothendieck, and Pierre Deligne, who completed the proof in the 1970's.\footnote{Deligne was awarded both the Fields medal (1978) and the Abel prize (2013) for this work.}
+In this problem you will prove the Weil conjectures for elliptic curves and derive several useful facts along the way.
+
+The proof relies on various properties of the Frobenius endomorphism, most of which actually hold for any endomorphism of any elliptic curve $E/k$, in fact, for any element of the endomorphism algebra $\End^0(E):=\End(E)\otimes_\Z \Q$, so we will prove them in this generality and then apply them to the Frobenius endomorphism of an elliptic curve over a finite field.
+So let $\phi$ be an arbitrary element of $\End^0(E)$, and let $\alpha,\beta\in\C$ be the roots of its characteristic polynomial
+$x^2-(\T\phi)x + \N\phi$.
+
+\begin{enumerate}[{\bf (a)}]
+\item
+Show that $\phi$ can be written uniquely as $\phi=\phi_r+\phi_i$, with $\phi_r\in\Q$, $\phi_i\in\End^0(E)$ and $\phi_i^2=-\N\phi_i$.
+Define $\re(\phi):=\phi_r\in\R$ and $\im(\phi):=\sqrt{\N\phi_i}\in\R$, and let $\Q(\phi)$ denote the $\Q$-subalgebra of $\End^0(E)$ generated by $\phi$.
+Prove that there is a unique field embedding $\iota\colon\Q(\phi)\hookrightarrow\C$ that maps $\phi$ to $\re(\phi)+\im(\phi)i$, and that for all $\lambda\in\Q(\phi)$ we have $\iota(\hat\lambda) = \overline{\iota(\lambda)}$, where the bar denotes complex conjugation in $\C$.
+\item
+Use part (a) to prove that $|\alpha|=|\beta|=\sqrt{\N\phi}$ and therefore $|\T\phi|\le 2\sqrt{\N\phi}$.
+\item
+By applying part (b) to the Frobenius endomorphism $\pi$ of $E/\Fq$ and recalling that $1-\pi$ is separable,
+give a very short proof of Hasse's theorem: $|q+1-\#E(\Fq)|\le 2\sqrt{q}$.
+\item
+Prove that for any positive integer $n$ we have $\T\phi^n=\alpha^n+\beta^n$ and therefore
+\[
+\N(1-\phi^n) = (\N\phi)^n + 1 -\alpha^n-\beta^n.
+\]
+Deduce that if $\phi=\pi$ is the Frobenius endomorphism of $E/\Fq$, then $$\#E(\Fqn)=q^n+1-\alpha^n-\beta^n.$$
+\end{enumerate}
+As a quick digression, part (d) implies that for $E/\Fq$ we can easily compute $\#E(\Fqn)$ once we know $\#E(\Fq)$.
+A useful method for doing this is the following recurrence.
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{4}
+\item
+Let $a_0=2$ and $a_n=q^n+1-\#E(\Fqn)$.  Prove that $a_{n+2}=a_1a_{n+1}-qa_n$ for all $n\ge 0$.
+Conclude that the zeta function $Z_E(T)$ is determined by $\#E(\Fq)$.
+\end{enumerate}
+You are now ready to prove the Weil conjectures for elliptic curves.
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{5}
+\item
+Prove that
+\[
+\exp\left(\sum_{n=1}^\infty\frac{\N(1-\phi^n)}{n}T^n\right) = \frac{1-(\T\phi)T+(\N\phi)T^2}{(1-T)(1-(\N\phi)T)}.
+\]
+By applying this when $\phi=\pi$ is the Frobenius endomorphism of $E/\Fq$, prove that the rationality statement (i) in Theorem~1 holds with $P(T)=1-\tr(\pi)T+qT^2$ in the case that $C$ is the elliptic curve $E$.
+\item
+Prove that the functional equation (ii) and Riemann hypothesis (iii) in Theorem~1 hold when $C$ is an elliptic curve.
+\end{enumerate}
+
+You may be wondering why $Z_E(T)$ is called a zeta function, and how it relates to the \emph{Riemann zeta function}
+\[
+\zeta(s) := \sum_{n=1}^\infty\frac{1}{n^s}.
+\]
+The sum on the RHS converges for complex~$s$ with real part greater than $1$, and it extends to a unique analytic function $\zeta(s)$ that is defined on all of $\C$ except for a simple pole at $s=1$.
+The \emph{normalized Riemann zeta function} $\xi(s):=\pi^{s/2}\Gamma(s/2)\zeta(s)$ satisfies the \emph{functional equation}\footnote{Here $\pi=3.1415\ldots$ and $\Gamma(t):= \int_0^\infty x^{t-1}e^{-x}dx$.}
+\[
+\xi(s) = \xi(1-s),
+\]
+and the \emph{Riemann hypothesis} states that the zeros of $\xi(s)$ all lie on the \emph{critical line} $\{s\in \C:\mathrm{Re}(s)=1/2\}$.
+
+For an elliptic curve $E/\Fq$ we define
+\[
+\zeta_E(s) := Z_E(q^{-s}).
+\]
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{7}
+\item Prove that $\zeta_E(s)=\zeta_E(1-s)$.
+\item Prove that every zero of $\zeta_E(s)$ lies on the critical line $\{s\in \C:\mathrm{Re}(s)=1/2\}$.
+\end{enumerate}
+\noindent
+
+You may recall that the Riemann zeta function has an \emph{Euler product}
+\[
+\zeta(s)=\prod_p\left(1-p^{-s}\right)^{-1},
+\]
+where $p$ ranges over all primes.
+The function $\zeta_E(s)$ also has an Euler product that can be written as a product over points $P\in E(\Fqbar)$, but in this product we don't want to distinguish points $P$ and $Q$ that are \emph{Galois conjugate}, meaning that $Q=\sigma(P)$ for some automorphism $\sigma\in \Gal(\Fqbar/\Fq)$.
+We thus define the \emph{closed point}
+\[
+\overline{P}:=\{\sigma(P):\sigma\in \Gal(\Fqbar/\Fq)\}.
+\]
+The set $\overline{P}$ is the orbit of $P\in E(\Fqbar)$ under the action of $\Gal(\Fqbar/\Fq)$.
+It is a finite set because $P$ is necessarily defined over some finite extension $\F_{q^n}$ of $\Fq$.
+Indeed, if $\F_{q^n}$ is the minimal such extension, then $\#\overline{P}=n$ (because $\Gal(\F_{q^n}/\Fq)\simeq \Z/n\Z$).
+We now define $N(\overline{P}):=\#\F_{q^n}$ to be the cardinality of this minimal extension; this is well-defined because we must have $N(\overline{Q})=N(\overline{P})$ whenever $\overline{Q}=\overline{P}$ (the action of $\Gal(\Fqbar/\Fq)$ necessarily preserves the minimal field of definition).
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{9}
+\item Prove that
+\[
+\zeta_E(s) = \prod_{\overline{P}}\left(1-N(\overline{P})^{-s}\right)^{-1}
+\]
+where $\overline{P}$ ranges over all closed points of $E(\Fqbar)$.
+\end{enumerate}
+
+
+\subsection*{Problem 3. An elliptic curve with complex multiplication (79 points)}
+Let $E/\Q$ be the elliptic curve defined by
+\[
+y^2 = x^3-35x-98.
+\]
+We wish to consider the endomorphism $\phi(x,y)=\left(\frac{u(x)}{v(x)},\frac{s(x)}{t(x)}y\right)$, where
+\begin{align*}
+u(x) &= 2x^2 + (7 - \sqrt{-7})x + (-7 - 21\sqrt{-7}),\\
+v(x) &=(-3+\sqrt{-7})x + (-7+5\sqrt{-7}),\\
+s(x) &= 2x^2 + (14-2\sqrt{-7})x + (28+14\sqrt{-7}),\\
+t(x) &= (5+\sqrt{-7})x^2 + (42+2\sqrt{-7})x + (77 - 7\sqrt{-7}).
+\end{align*}
+The following block of sage code represents $\phi=(\frac{u}{v},\frac{s}{t})$ as a pair of rational functions in~$x$, with the factor $y$ in the second coordinate implicit.
+It then verifies that $\phi$ is an endomorphism of $E$ by checking that its coordinate functions satisfy the curve equation $y^2=f(x)=x^3-35x-98$:
+\begin{lstlisting}
+R.<t>=PolynomialRing(Rationals())
+N.<d>=NumberField(t^2+7)
+F.<x>=PolynomialRing(N)
+u=2*x^2 + (-d + 7)*x -(7+21*d)
+v=(-3+d)*x +(-7+5*d)
+s=2*x^2 + (-2*d + 14)*x + (14*d + 28)
+t=(5+d)*x^2 + (42+2*d)*x + (77-7*d)
+phi = (u/v,s/t)
+f=x^3-35*x-98
+assert phi[1]^2*f == f.subs(phi[0])
+\end{lstlisting}
+Note: on the LHS of the \texttt{assert} we also squared the implicit $y$ and replaced $y^2$ by $f(x)$.
+
+\begin{enumerate}[{\bf (a)}]
+\item
+Determine the characteristic polynomial of $\phi$.
+\item
+Let $p$ be a prime of good reduction for $E$.
+Prove that the reduction of $E$ at $p$ is ordinary if and only if $-7$ is a square modulo $p$ (equivalently, if and only if $p$ is a square modulo $7$, by quadratic reciprocity).
+\item
+Determine $\End(E_{\overline{\Q}})$.  Be sure to justify your answer.
+\item
+Let $p$ be the least prime greater than the last two digits of your student ID where $E$ has supersingular reduction.
+Prove that the geometric endomorphism algebra of the reduction of $E$ modulo $p$ is a quaternion algebra $\Q(\alpha,\beta)$ with $\alpha^2,\beta^2<0$ and $\alpha\beta=-\beta\alpha$.
+Give $\alpha^2$ and $\beta^2$ explicitly, and express $\alpha$ and $\beta$ in terms of $\phi$ and the Frobenius endomorphism $\pi$.
+\item
+Prove that every prime $p$ where $E$ has ordinary reduction satisfies the norm equation
+\[
+4p=t^2+7v^2,
+\]
+where $t=\tr\pi$ is the trace of Frobenius and $v$ is a positive integer.
+\item
+Find a pair of primes $p,q>2^{512}$ for which the reduction $E_p$ of $E$ modulo $p$ has exactly $4q$ rational points.
+Be sure to format your answer so that the primes $p$ and~$q$ both fit on the page (line wrapping is fine).
+\item
+Describe a probabilistic algorithm that, given a sufficiently large integer $n$, outputs two integers $p$ and $q$ that have passed 100 Miller Rabin tests with $p\in [2^n,2^{n+1}]$ such that if $p$ is prime, then $\#E_p(\Fp)=4q$ (we can be morally certain that both $p$ and $q$ are in prime, but the algorithm is not required to guarantee this).
+
+Under the heuristic model that each integer~$m$ is prime with probability $1/\log m$, bound the expected running time of your algorithm and compare it an alternative approach that generates random curves and counts points using Schoof's algorithm (your algorithm should be significantly faster; in fact, it is faster than any method known for proving the primality of a general $n$-bit integer --- this is why we do not want to require the algorithm to guarantee that $p$ and $q$ are prime).\footnote{There are randomized primality proving algorithms with heuristic running times that are similar up to a polylogarithmic factor in $n$, but this polylogarithmic factor is significant and the space complexity is much worse.}
+\end{enumerate}
+
+\subsection*{Problem 4. Survey (2 points)}
+
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found the problem (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found the problem (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|r}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+4/5 & Ordinary / supersingular curves & & & & \\\hline
+4/7 & Elliptic curves over $\C$ (part 1) & & & & \\\hline
+\end{tabular}
+\end{center}
+
+\noindent
+Please feel free to record any additional comments you have on the problem sets or lectures, in particular, ways in which they might be improved.
+
+\end{document}

@@ -1,0 +1,23 @@
+{
+  "course_title":"Elliptic Curves",
+  "course_description":"This course is a computationally focused introduction to elliptic curves, with applications to number theory and cryptography. While this is an introductory course, we will (gently) work our way up to some fairly advanced material, including an overview of the proof of Fermat's last theorem.\n",
+  "course_description_html":"This course is a computationally focused introduction to elliptic curves, with applications to number theory and cryptography. While this is an introductory course, we will (gently) work our way up to some fairly advanced material, including an overview of the proof of Fermat&rsquo;s last theorem.",
+  "site_uid":"8d95b1bd-9660-46ec-b8e6-43de87cf7f8d",
+  "legacy_uid":"a3889a9d-f7b9-f422-1d87-c5d1a409a83f","instructors": [{
+    "first_name":"Andrew",
+    "last_name":"Sutherland",
+    "middle_initial":"V.",
+    "salutation":"",
+    "title":"Andrew V. Sutherland"}],"department_numbers":["18"],
+  "learning_resource_types":["Problem Sets","Lecture Notes","Instructor Insights","Editable Files"],
+  "topics":[["Engineering","Computer Science"],["Mathematics","Algebra and Number Theory"],["Mathematics","Computation"]],
+  "mit_learn_topics":[],
+  "primary_course_number":"18.783",
+  "extra_course_numbers":"18.7831",
+  "term":"Spring",
+  "year":"2021",
+  "level":["Undergraduate"],
+  "hide_download":false,
+  "image_src":"./static_resources/743cf5e3ad82e7f2cbd2bd75b454dc5d_18-783s21.jpg",
+  "course_image_metadata":{"content_type":"resource","description":"","draft":false,"file":"/courses/18-783-elliptic-curves-spring-2021/743cf5e3ad82e7f2cbd2bd75b454dc5d_18-783s21.jpg","file_size":61510,"file_type":"image/jpeg","image_metadata":{"caption":"A visualization of the Modularity theorem, which states that elliptic curves (left) and modular forms (right) are related via their L-functions (center). (Image courtesy of Dr. Andrew Sutherland.)","credit":"","image-alt":"A donut shape object, a arrow pointing to two directions, and a circle filled with different colors and patterns."},"iscjklanguage":false,"learning_resource_types":[],"license":"https://creativecommons.org/licenses/by-nc-sa/4.0/","ocw_type":"OCWImage","resourcetype":"Image","title":"18-783s21.jpg","uid":"743cf5e3-ad82-e7f2-cbd2-bd75b454dc5d"}}
+

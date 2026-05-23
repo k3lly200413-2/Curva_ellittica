@@ -1,0 +1,645 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{courier}
+\usepackage{tikz}
+\usetikzlibrary{calc,matrix,arrows,decorations.markings}
+\usepackage{array}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{nicefrac}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{empty}
+
+% growing list of useful macros, use these where appropriate and add to this list as needed
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fptwo}{\mathbb{F}_{p^2}}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fqn}{\mathbb{F}_{q^n}}
+\newcommand{\Fqbar}{\overline{\mathbb{F}}_q}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\renewcommand{\H}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\Z/n\Z}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\PGL}{{\rm PGL}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\DFT}{{\rm DFT}}
+\newcommand{\dy}{\,dy}
+\newcommand{\dx}{\,dx}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}[2]{\bigl(\frac{#1}{#2}\bigr)}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\softO}{\widetilde{O}}
+\newcommand{\ceil}[1]{\lceil{#1}\frac{1}eil}
+\newcommand{\Exp}{{\rm E}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\OK}{\O_K}
+\newcommand{\T}{{\rm T}}
+\newcommand{\N}{{\rm N}}
+\newcommand{\re}{\operatorname{re}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\ord}{{\rm ord}}
+\newcommand{\SL}{{\rm SL}}
+\newcommand{\PSL}{{\rm PSL}}
+\newcommand{\EllO}{{\rm Ell}_\O}
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakb}{\mathfrak{b}}
+\newcommand{\frakc}{\mathfrak{c}}
+\newcommand{\cl}{{\rm cl}}
+\newcommand{\disc}{{\rm disc}}
+\newcommand{\abcd}{\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)}
+\newcommand{\ABCD}{\left(\begin{smallmatrix}A&B\\C&D\end{smallmatrix}\right)}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\a}{\mathfrak{a}}
+\renewcommand{\b}{\mathfrak{b}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\lt}{{\rm lt}}
+\newcommand{\id}{{\rm id}}
+\newcommand{\sumprime}{\sideset{}{'}\sum}
+
+\newtheorem*{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem*{remark}{Remark}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hfill Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#12\due{05/19/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 22--24.  Problems 4 and 5 use material on the Weil pairing that is covered in the notes for Lecture 23 that we did not cover in class.
+\medskip
+
+\noindent\textbf{Instructions}: Solve any combination of Problems that sum to 100 points.  Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves code, please either include your code in your write up, or (better) the name of a notebook in your 18.783 CoCalc project containing you code (use a separate notebook for each problem).
+
+This \href{https://cocalc.com/share/public_paths/0b7033a172d16923c6c4fc2edea0accd5468b4bd}{Sage notebook} contains modular polynomials and helper functions from previous problem sets that you may find useful.
+
+\subsection*{Problem 1. Isogeny volcanoes (98 points)}
+
+For the purposes of this problem, an isogeny volcano is an ordinary component of an $\ell$-isogeny graph $G_\ell(\Fq)$ that does not contain $0$ or $1728$, where $\ell\nmid q$.
+This is a bi-directed graph that we regard as an undirected graph.
+
+\begin{enumerate}[{\bf (a)}]
+\item Use the CM method to explicitly construct isogeny volcanoes that meet each of the following sets of criteria:
+\begin{enumerate}[{\bf(i)}]
+\item $\ell=2$, $d=3$, $V_0$ is a 5-cycle;
+\item $\ell=3$, $d=2$, $V_0$ contains a single edge;
+\item $\ell=7$, $d=1$, $V_0$ contains a single vertex with two self-loops.
+\end{enumerate}
+In your answers, specify the finite field used, the discriminant of the order $\O_0$ corresponding to $V_0$, and list each bi-directed edge just once, as a pair $(v_1,v_2)$ of $j$-invariants corresponding to a horizontal or descending edge.
+\item Use the CM method to construct a single ordinary elliptic curve $E/\Fq$ that simultaneously satisfies all of the following criteria:
+\begin{enumerate}[{\bf (i)}]
+\item $j(E)$ is on the floor of its $2$-volcano, which has depth 6.
+\item $j(E)$ is on the surface of its $3$-volcano, which has depth 3.
+\item $j(E)$ is on the middle level of its $5$-volcano, which has depth 2.
+\item $j(E)$ is on the floor of its $7$-volcano, which has depth 5.
+\item $j(E)$ is one of exactly two vertices in its $11$-volcano.
+\item $j(E)$ is the only vertex in its $13$-volcano.
+\end{enumerate}
+In your answer, specify the finite field $\Fq$, the $j$-invariant $j(E)$, and the discriminant~$D$ of the order $\O\simeq\End(E)$.
+
+\item
+Prove that the cardinality of a $2$-isogeny volcano with an odd number of vertices must be a Mersenne number (an integer of the form $2^n-1$).  Give an explicit example of a $2$-isogeny volcano with 15 vertices.
+\item
+Prove that every ordinary elliptic curve $E/\Fq$ is isogenous to an elliptic curve $E'/\Fq$ for which $E'(\Fq)$ is a cyclic group.
+\end{enumerate}
+
+\subsection*{Problem 2. Computing modular polynomials (98 points)}
+As we have seen, the modular polynomials $\Phi_\ell(X,Y)$ play a key role in many theoretical and practical applications of elliptic curves.
+One can compute them using the $q$-expansions of the modular functions $j(z)$ and $j(\ell z)$, but this is approach is difficult to implement efficiently and extremely memory intensive.
+In this problem you will implement a more efficient algorithm that uses isogeny volcanoes.
+The strategy is to use a CRT approach, working modulo primes $p$ that are carefully selected to achieve a configuration of $\ell$-volcanoes similar to that depicted below:
+
+\vspace{6pt}
+\begin{figure}[h!]
+\begin{center}
+\begin{tikzpicture}
+\draw (-4.5,0) ellipse (1 and 0.1);
+\draw (-1.5,0) ellipse (1 and 0.1);
+\draw (1.5,0) ellipse (1 and 0.1);
+\draw (-4.5,0.1) -- (-4.6,-0.06);
+\draw (-4.5,0.1) -- (-4.56,-0.06);
+\draw (-4.5,0.1) -- (-4.52,-0.06);
+\draw (-4.5,0.1) -- (-4.48,-0.06);
+\draw (-4.5,0.1) -- (-4.44,-0.06);
+\draw (-4.5,0.1) -- (-4.4,-0.06);
+\draw[fill=red] (-4.5,0.1) circle (0.04);
+\draw (-1.5,0.1) -- (-1.6,-0.05);
+\draw (-1.5,0.1) -- (-1.56,-0.05);
+\draw (-1.5,0.1) -- (-1.52,-0.05);
+\draw (-1.5,0.1) -- (-1.48,-0.05);
+\draw (-1.5,0.1) -- (-1.44,-0.05);
+\draw (-1.5,0.1) -- (-1.4,-0.05);
+\draw[fill=red] (-1.5,0.1) circle (0.04);
+\draw (1.5,0.1) -- (1.6,-0.05);
+\draw (1.5,0.1) -- (1.56,-0.05);
+\draw (1.5,0.1) -- (1.52,-0.05);
+\draw (1.5,0.1) -- (1.48,-0.05);
+\draw (1.5,0.1) -- (1.44,-0.05);
+\draw (1.5,0.1) -- (1.4,-0.05);
+\draw (-5,-0.1) -- (-5.35,-0.7);
+\draw[fill=red] (-5.35,-0.7) circle (0.04);
+\draw (-5,-0.1) -- (-5.21,-0.7);
+\draw[fill=red] (-5.21,-0.7) circle (0.04);
+\draw (-5,-0.1) -- (-5.07,-0.7);
+\draw[fill=red] (-5.07,-.7) circle (0.04);
+\draw (-5,-0.1) -- (-4.93,-0.7);
+\draw[fill=red] (-4.93,-0.7) circle (0.04);
+\draw (-5,-0.1) -- (-4.79,-0.7);
+\draw[fill=red] (-4.79,-0.7) circle (0.04);
+\draw (-5,-0.1) -- (-4.65,-0.7);
+\draw[fill=red] (-4.65,-0.7) circle (0.04);
+\draw[fill=red] (-5,-0.1) circle (0.04);
+
+\draw (-4,-0.1) -- (-4.35,-0.7);
+\draw[fill=red] (-4.35,-0.7) circle (0.04);
+\draw (-4,-0.1) -- (-4.21,-0.7);
+\draw[fill=red] (-4.21,-0.7) circle (0.04);
+\draw (-4,-0.1) -- (-4.07,-0.7);
+\draw[fill=red] (-4.07,-0.7) circle (0.04);
+\draw (-4,-0.1) -- (-3.93,-0.7);
+\draw[fill=red] (-3.93,-0.7) circle (0.04);
+\draw (-4,-0.1) -- (-3.79,-0.7);
+\draw[fill=red] (-3.79,-0.7) circle (0.04);
+\draw (-4,-0.1) -- (-3.65,-0.7);
+\draw[fill=red] (-3.65,-0.7) circle (0.04);
+\draw[fill=red] (-4,-0.1) circle (0.04);
+
+\draw (-2,-0.1) -- (-2.35,-0.7);
+\draw[fill=red] (-2.35,-0.7) circle (0.04);
+\draw (-2,-0.1) -- (-2.21,-0.7);
+\draw[fill=red] (-2.21,-0.7) circle (0.04);
+\draw (-2,-0.1) -- (-2.07,-0.7);
+\draw[fill=red] (-2.07,-0.7) circle (0.04);
+\draw (-2,-0.1) -- (-1.93,-0.7);
+\draw[fill=red] (-1.93,-0.7) circle (0.04);
+\draw (-2,-0.1) -- (-1.79,-0.7);
+\draw[fill=red] (-1.79,-0.7) circle (0.04);
+\draw (-2,-0.1) -- (-1.65,-0.7);
+\draw[fill=red] (-1.65,-0.7) circle (0.04);
+\draw[fill=red] (-2,-0.1) circle (0.04);
+
+\draw (-1,-0.1) -- (-1.35,-0.7);
+\draw[fill=red] (-1.35,-0.7) circle (0.04);
+\draw (-1,-0.1) -- (-1.21,-0.7);
+\draw[fill=red] (-1.21,-0.7) circle (0.04);
+\draw (-1,-0.1) -- (-1.07,-0.7);
+\draw[fill=red] (-1.07,-0.7) circle (0.04);
+\draw (-1,-0.1) -- (-0.93,-0.7);
+\draw[fill=red] (-0.93,-0.7) circle (0.04);
+\draw (-1,-0.1) -- (-0.79,-0.7);
+\draw[fill=red] (-0.79,-0.7) circle (0.04);
+\draw (-1,-0.1) -- (-0.65,-0.7);
+\draw[fill=red] (-0.65,-0.7) circle (0.04);
+\draw[fill=red] (-1,-0.1) circle (0.04);
+
+\draw (1,-0.1) -- (1.35,-0.7);
+\draw[fill=red] (1.35,-0.7) circle (0.04);
+\draw (1,-0.1) -- (1.21,-0.7);
+\draw[fill=red] (1.21,-0.7) circle (0.04);
+\draw (1,-0.1) -- (1.07,-0.7);
+\draw[fill=red] (1.07,-0.7) circle (0.04);
+\draw (1,-0.1) -- (0.93,-0.7);
+\draw[fill=red] (0.93,-0.7) circle (0.04);
+\draw (1,-0.1) -- (0.79,-0.7);
+\draw[fill=red] (0.79,-0.7) circle (0.04);
+\draw (1,-0.1) -- (0.65,-0.7);
+\draw[fill=red] (0.65,-0.7) circle (0.04);
+\draw[fill=red] (1,-0.1) circle (0.04);
+
+\draw (2,-0.1) -- (2.35,-0.7);
+\draw[fill=red] (2.35,-0.7) circle (0.04);
+\draw (2,-0.1) -- (2.21,-0.7);
+\draw[fill=red] (2.21,-0.7) circle (0.04);
+\draw (2,-0.1) -- (2.07,-0.7);
+\draw[fill=red] (2.07,-0.7) circle (0.04);
+\draw (2,-0.1) -- (1.93,-0.7);
+\draw[fill=red] (1.93,-0.7) circle (0.04);
+\draw (2,-0.1) -- (1.79,-0.7);
+\draw[fill=red] (1.79,-0.7) circle (0.04);
+\draw (2,-0.1) -- (1.65,-0.7);
+\draw[fill=red] (1.65,-0.7) circle (0.04);
+\draw[fill=red] (2,-0.1) circle (0.04);
+
+\end{tikzpicture}
+\end{center}
+\end{figure}
+\noindent
+Here we have a configuration of three $\ell$-volcanoes, with $\ell=7$, each of depth $d=1$.  There are a total of $\ell+2$ vertices on the surface (any value greater than $\ell+1$ suffices).
+
+Provided we have completely ``mapped" this configuration of $\ell$-volcanoes, meaning that we know the $j$-invariants of every vertex in the figure and the edges between them, we can compute $\Phi_\ell(X,Y)$ as follows.
+For any particular $j$-invariant $j_i$ on the surface, we know the values of all the roots of $\phi_i(Y)=\Phi_\ell(j_i,Y)$, since we know the $\ell+1$ neighbors of $j_i$ in $G_\ell(\Fp)$.
+We can therefore compute each $\phi_i$ as the product of its linear factors.
+If we then consider the coefficient of  $Y^k$ in $\phi_i$, we know (at least) $\ell+2$ values $c_{ik}$ of this coefficient, corresponding to $\ell+2$ distinct $j_i$.  This suffices to uniquely determine the polynomial $\psi_k(X)$ of degree at most $\ell+1$ for which $\psi_k(j_i)=c_{ik}$, via Lagrange interpolation:
+\[
+\psi_k(X) = \sum_{i=1}^{\ell+2} c_{ik}\prod_{m\ne i}\frac{(X-j_m)}{(j_i-j_m)}
+\]
+
+\begin{enumerate}[{\bf (a)}]
+\item Prove that $\Phi_\ell(X,Y)=\sum_{k=0}^{\ell+1}\psi_k(X)Y^k$.
+\end{enumerate}
+
+To make things simpler, we will use a configuration with (at least) $\ell+2$ isomorphic $\ell$-volcanoes, each with one vertex on the surface and $\ell+1$ neighbors on the floor.
+This can be achieved using a fundamental discriminant $D$ with $(\frac{D}{\ell})=-1$ and $h(D)\ge \ell+2$.
+The vertex on the surface of each $\ell$-volcano will have endomorphism ring equal to the maximal order for $K=\Q(\sqrt{D})$, and the vertices on the floor will then have endomorphism ring equal to the order $\O'$ with discriminant $\ell^2D$ (note that $\O'$ has index $\ell$ in $\O$).  For convenience, we will choose $D$ so that both $\cl(D)$ and $\cl(\ell^2D)$ are cyclic groups generated by prime forms of norm $\ell_0=3$ (so we can use $\ell_0$-volcanoes of depth 0; see part (d) of Problem 1).  This idealized setup is not always achievable, but it will work for our example using $\ell=17$ and $D=-2339$, with class number $h(D)=19$.
+
+The key challenge is to map our set of $\ell$-volcanoes without using the polynomial $\Phi_\ell$.
+Mapping the surface is easy: the vertices on the surface of our set of $\ell$-volcanoes are the roots of the Hilbert class polynomial $H_D$ (each root constitutes the surface of its own volcano).
+The vertices on the floor are the roots of the Hilbert class polynomial $H_{\ell^2D}$, but this polynomial is much larger than $H_D$ and we don't want to compute it, since it would take time $\softO(\ell^4)$.
+Instead we will use V\'{e}lu's formulas from Lecture 5 to compute a descending isogeny from each vertex on the surface.
+The kernel of this isogeny is a cyclic subgroup of $E[\ell]$, and V\'{e}lu's formulas require us to enumerate the points in the kernel, which may lie in an extension field of degree as large as $\ell^2-1$ (the degree of the $\ell$-division polynomial).
+But we will choose primes $p\equiv 1\bmod \ell$ that satisfy the norm equation $4p=t^2-\ell^2D$.  This ensures that the elliptic curves $E/\Fp$ with endomorphism ring $\O_K$ have rational $\ell$-torsion (provided we choose the correct twist); in this situation V\'{e}lu's formulas are very efficient.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{1}
+\item With $\ell=17$ and $D=-2339$, find a prime $p\equiv 1\bmod \ell$ that satisfies $4p=t^2-\ell^2D$.  Note that this requires $t\equiv \pm 2\bmod \ell$, and with $t\equiv 2\bmod \ell$ we will have $p+1-t$ divisible by $\ell^2$.
+Use Sage to compute the Hilbert class polynomial $H_D(X)$ and find the roots of $H_D\bmod p$.
+For each of the roots $j_1,\ldots, j_h$ of $H_D$, construct an elliptic curve $E_i$ with $j$-invariant $j_i$, and attempt to find a point $P_i\in E(\Fp)$ with order $\ell$ by computing random $P_i=mP$ with $m=(p+1-t)/\ell^2$.  If you find $P_i\ne 0$ and $\ell P_i\ne 0$ then you will need to replace $E_i$ with a quadratic twist $y^2=x^3+d^2A+d^3B$, where~$d\in \Fp^\times$ is any non-square.
+\end{enumerate}
+
+We are now ready to apply V\'{e}lu's formulas to each pair $(E_i,P_i)$ to obtain an $\ell$-isogenous curve $E_i'$.
+Since every curve $E_i'$ that is $\ell$-isogenous to $E_i$ lies on the floor, it does not matter which $P_i$ we choose, any point of order $\ell$ will work.
+Below is a simplified algorithm that implements V\'{e}lu's formulas for the case where we have a cyclic subgroup generated by a point $P$ of odd order on an elliptic curve given in short Weierstrass form $y^2=x^3+Ax+B$ over a finite field $\Fp$ with $p>3$.
+
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\item
+Set $t\leftarrow 0$, $w\leftarrow 0$, and $Q\leftarrow P$.
+\item
+Repeat $(l-1)/2$ times:
+\begin{enumerate}[a.]
+\item
+Set $s\leftarrow 6Q_x^2+2A$, and then set $u\leftarrow 4Q_y^2 + sQ_x$.
+\item
+Set $t\leftarrow t + s$, $w\leftarrow w + u$, and $Q\leftarrow Q + P$.
+\end{enumerate}
+\item
+Set $A'=A-5t$ and $B'=B-7w$.
+\item
+Output the curve $E'/\Fp$ defined by $y^2=x^3+A'x+B'$.
+\end{enumerate}
+
+In the description above $Q_x$ and $Q_y$ are the affine coordinates $(x.y)$ of the point $Q$.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{2}
+\item Implement the above algorithm and use it to compute elliptic curves $E_i'$ that are $\ell$-isogenous to the curves $E_i$ you computed in step 2.  Let $j_1',\ldots,j_h'$ be the corresponding $j$-invariants.
+\end{enumerate}
+
+Now comes the interesting part.  We want to enumerate the vertices on the floor of our our $\ell$-volcano, but there are no horizontal $\ell$-isogenies between vertices on the floor!  Instead, we must go up to the surface and back down, which amounts to computing an isogeny of degree $\ell^2$.  If we return to the same vertex this is just the multiplication-by-$\ell$ map (the composition of an $\ell$-isogeny with its dual), but otherwise it is a cyclic isogeny of degree $\ell^2$,
+corresponding to the CM action of a proper $\O'$-ideal of norm $\ell^2$.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item For $(\frac{D}{\ell})=-1$, show that there are $\ell$ inequivalent integral primitive positive definite binary quadratic forms $(\ell^2,b,c)$ of discriminant $\ell^2D$ (in our example these will all be reduced forms).
+These forms generate a cyclic subgroup $G$ of $\cl(\ell^2D)$ of order $\ell+1$.
+For $\ell=17$ and $D=-2339$, determine a generator $f=(a,b,c)$ for $G$.
+\end{enumerate}
+
+We don't want to use $\Phi_{\ell^2}$ to compute the action of $f$ (we don't even know $\Phi_\ell$ yet!).
+But as in problem 1 of Problem Set 11, we can compute the action of an $\O'$-ideal of large norm using the action $\O'$-ideals of much smaller norm.  In our example, we can use an $\O'$-ideal of norm $\ell_0=3$ to enumerate all the vertices on the floor of our set of volcanoes, and then determine the action of $f$ by computing a discrete logarithm in $\cl(\ell^2D)$.
+Recall that we chose $D$ so that a prime form of norm 3 generates $\cl(\ell^2D)$, so this is easy.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{4}
+\item Use $\Phi_{\ell_0} = \Phi_3$ to enumerate all the vertices on the floor as a cycle of 3-isogenies.
+\item Compute the discrete logarithm $k$ of the form $f$ from part \textbf{(d)} with respect to a prime form of norm $\ell_0=3$ in $\cl(\ell^2 D)$.
+There is no need to distinguish inverses, and you should find that $(\ell+1)k\equiv 0\bmod h(\ell^2D)$.
+Feel free to use brute force (a linear search); the time will be dominated by later steps in any case.
+Knowing $k$, you can now identify the subsets in the enumeration of part \textbf{(e)} that correspond to cosets of $G$.
+Each of these subsets will contain exactly one the $j$-invariants $j_i'$ that you computed in step 3 and corresponds to the  $\ell+1$ ``children" of $j_i$ (its neighbors on the floor).
+\item For each of $\ell+2$ vertices $j_i$ on the surface, compute the polynomial $\phi_i(Y)=\Phi_\ell(j_i,Y)=\prod_n (Y-j_{im})$, where the $j_{im}$ range over the $\ell+1$ children of $j_i$ that you identified in part~\textbf{(f)}.
+Then, for $k$ ranging from $0$ to $\ell+1$,  interpolate the unique polynomial $\psi_k(X)$ of degree at most $\ell+1$ for which $\psi_k(j_i)$ is equal to the coefficient of $Y^k$ in $\phi_i(Y)$.  You can do this with Sage: first create the polynomial ring \texttt{R.<X>=PolynomialRing(GF(p))}, and then use
+\begin{center}
+\texttt{R.lagrange\_polynomial([(x0,y0),(x1,y1),\ldots,(xn,yn)])}
+\end{center}
+to compute the unique polynomial $f(X)$ of degree at most $n$ for which $f(x_i)=y_i$.   Note that $\psi_{\ell+1}(X)$ must be the constant polynomial 1.
+
+Finally, compute $\Phi_\ell(X,Y)=\sum_{k=0}^{\ell+1}\psi_k(X)Y^k\bmod p$.
+As a sanity check, verify that the coefficients are symmetric: $\Phi_\ell(X,Y)=\Phi_\ell(Y,X)$.
+\end{enumerate}
+If you need to debug your algorithm, you may find it helpful to compute the Hilbert class polynomial $H_{\ell^2D}(X)$  and then verify that the $j$-invariants~$j_i'$ computed in step 3 are actually roots of $H_{\ell^2D}\bmod p$.
+
+
+Provided that $D = O(\ell^2)$ and $\ell_0=O(\log\ell)$, one can show that the algorithm you have implemented takes time $O(\ell^2\log^3p\log\log p)$, which is nearly optimal, since it is quasi-linear in the size of $\Phi_\ell\bmod p$.  By applying the same algorithm to a sufficiently large set of suitable primes $p_i$ (it suffices to have $\sum \log p_i > 6\ell\log\ell + 18\ell$), one can then use the Chinese remainder theorem (as in problem 2 of Problem Set 11) to compute the coefficients of $\Phi_\ell\in\Z[X,Y]$.  Under the GRH, the total time to compute $\Phi_\ell$ over $\Z$ is $O(\ell^3\log^3\ell\log\log\ell)$; see \cite{BLS}.  In practical terms, this algorithm can be used to compute $\Phi_\ell$ even when $\ell$ is well into the thousands and $\Phi_\ell$ is hundreds of gigabytes.
+\bigskip
+
+To convince ourselves that $\Phi_{17}\bmod p$ is correct, let's use it to compute a 17-volcano.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{7}
+\item
+Using the same prime $p$, pick a different discriminant $D$ for which $4p=t^2-v^2D$, with $17\nmid v$ and $(\frac{D}{17})=1$, such that $h(D)\ge 10$.
+Use Sage to find a root $j_0\in\Fp$ of the Hilbert class polynomial $H_{D}(X)\bmod p$.
+Then use the polynomial $\Phi_{17}(X,Y)\bmod p$ to enumerate the vertices in the 17-volcano containing $j_0$, which has depth~0 and degree 2 (since $\ell\nmid v$ and $\left(\frac{D}{17}\right)=1$) and therefore consists of a single cycle.  List the $j$-invariants of this cycle in order.
+\item Let $\a$ be a prime ideal of norm $17$ in the order $\O$ of discriminant $D$.  Compute the order of $[\a]$ in $\cl(\O)$ and verify that it matches the length of the cycles you computed in part (h).  You can construct the the order $\O$ in Sage via \texttt{O=QuadraticField(D).maximal\_order()}) to create the order $\O$, then use \texttt{a=O.ideal(17).factor()[0][0]}) to construct $\a$.
+\end{enumerate}
+
+
+\subsection*{Problem 3. Supersingular isogeny graphs (49 points)}
+
+Let $p$ be and $\ell$ be distinct primes.
+Recall from Theorem 14.16 that the $j$-invariant of every supersingular elliptic curve over $\Fpbar$ lies in $\Fptwo$.
+In this problem you will explore some properties of the supersingular components of $G_\ell(\Fptwo)$.\footnote{There is in fact only one supersingular component of $G_\ell(\Fptwo)$, see \cite[Cor.\,78]{kohel}, but won't use this.}
+
+\begin{enumerate}[{\bf(a)}]
+\item Compute the graph of the component of $G_2(\F_{97^2})$ containing the supersingular $j$-invariant $1$.
+You may wish to draw the graph on paper, but in your write-up just give a complete list of directed edges.
+
+\item Prove that every supersingular vertex in $G_\ell(\Fptwo)$ has out-degree $\ell+1$, and conclude that no supersingular component of $G_\ell(\Fptwo)$ is an $\ell$-volcano.
+Show by example that the in-degree need not be $\ell+1$.
+
+\item Design an efficient \emph{Las Vegas} algorithm that, given an arbitrary $j$-invariant in $\Fptwo$, determines whether it lies in an ordinary or supersingular component of $G_\ell(\Fptwo)$ by detecting the difference between these components as abstract graphs.  Prove that if $\ell=O(1)$ then the expected running time of your algorithm is $\tilde{O}(n^3)$, where $n=\log p$.\footnote{As usual, the soft $\tilde{O}$-notation ignores factors that are polylogarithmic in $n$.}
+\end{enumerate}
+
+The fastest known algorithms for computing the trace of Frobenius all have complexity $\Omega(n^4)$, so your algorithm provides a way to determine whether a given elliptic curve over a finite field is ordinary or supersingular that is asymptotically more efficient than checking whether the trace of Frobenius is divisible by $p$, and in practice, it should be \emph{much} faster.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{3}
+\item By applying your algorithm to $G_2(\Fptwo)$, determine which of the following $j$-invariants is supersingular.
+List the running time of your algorithm in each case.
+\begin{enumerate}[{\bf (i)}]
+\item $p=2^{64}+81$:
+\begin{lstlisting}
+p=2^64+81
+R.<t> = PolynomialRing(GF(p))
+F.<a> = GF(p^2, modulus=t^2+5)
+j1=8326557536028784306*a + 13186271742734526835
+j2=17095442389470987916*a + 5391379569813173462
+j3=8201451720284342414*a + 1239990603471114829
+j4=3832397532494683106*a + 3456346199771023610
+j5=6995663267023152807*a + 5118305496003400382
+\end{lstlisting}
+\item $p=2^{498}(2^{17}-1)+5^2\cdot11^2$:
+\begin{lstlisting}
+p=2^498*(2^17-1)+5^2*11^2
+F.<a>=GF(p^2)
+j1=F(1068730309040382537178579357918315740437237673601\
+46365282990696994391226239701748935923381766723513633\
+617314116677847252974815762274295992015602852450016138)
+j2=F(9307837638889485802864130889597342112431240717617\
+79743203146570670576874073881819468942290046762690325\
+81122360838583736151525289450839654218958090187901480)
+\end{lstlisting}
+\end{enumerate}
+Be patient, it may take a while for your program to run on the last two examples (but it should not take more than an hour).
+\end{enumerate}
+
+
+\subsection*{Problem 4. Pairing attack on the discrete logarithm problem (49 points)}
+In the early days of elliptic curve cryptography supersingular curves were initially considered ideal candidates for discrete logarithm based cryptography (using a prime order subgroup of the rational points) because for these curves it is easy to determine the group order ($p+1$ over prime fields for $p>3$) and there are special techniques to speed up scalar multiplication.
+However, supersingular curves were quickly ruled out once it was discovered by Menezes, Okamato, and Vanstone \cite{MOV} that one can use the Weil pairing to reduce the computation of a discrete logarithm in an order $n$ subgroup of $E(\Fq)$ to the computation of a discrete logarithm in a finite field $\F_{q^k}$ that contains the group $\mu_n\subseteq \Fqbar$ of $n$th roots of unity.
+As we saw in Lecture 10, there are subexponential-time algorithms to solve the discrete logarithm problem in a finite field, whereas no such algorithm is known for the discrete logarithm problem on an elliptic curve.
+In general $k$ will be very large (exponential in $\log q$) and this reduction does not make the problem of computing discrete logarithms in $E(\Fq)$ any easier.  But for supersingular curves this is not the case.
+
+Let $p>3$ be a prime, let $E/\Fp$ be a supersingular curve, let $n>2$ be a divisor of $p+1$, and let $\mu_n$ denote the multiplicative group of $n$th roots of unity in $\Fpbar$.
+
+\begin{enumerate}[{\bf(a)}]
+\item Prove that $\mu_n\not\subseteq \Fp^\times$ and $E[n]\not\subseteq E(\Fp)$, but $\mu_n\subseteq \Fptwo^\times$ and $E[n]\subseteq E(\Fptwo)$.
+\end{enumerate}
+
+Let $P\in E(\Fp)$ be a point of prime order $n$, and let $Q\in \langle P\rangle$.\footnote{For composite $n$ one uses the Pohlig-Hellman algorithm (see Lecture 9) to reduce to the prime case.}
+Consider the following algorithm Las Vegas algorithm to compute $\log_P Q$:
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\item Generate a random point $R\in E(\F_{p^2})$ and compute $S=mR$ with $m:=\#E(\F_{p^2})/n$.
+\item Compute $a=e_n(S,P)$, and if $a=1$ then return to step 1.
+\item Compute $b=e_n(S,Q)$.
+\item Compute $\log_a b$ in $\F_{p^2}^\times$ and output the result.
+\end{enumerate}
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item Prove that the expected number of times the algorithm executes step 1 is $1+o(1)$.
+\item Prove that the algorithm outputs $\log_P Q$.
+\end{enumerate}
+
+The expected running time the algorithm is completely dominated by the time to compute $\log_a b $ in $\Fptwo^\times$, which is heuristically $L[1/3,c]$.
+\medskip
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{3}
+\item Let $E$ be an elliptic curve over a number field $L$ with CM by a maximal order in an imaginary quadratic field $K$ of discriminant $D$  and let $\p$ be a prime ideal of $\O_L$ with prime norm $p$ such that $E$ has good reduction at $\p$.  Prove that if $\left(\frac{D}{p}\right)=-1$ then the reduction of $E$ modulo $\p$ is a supersingular elliptic curve over~$\Fp$.
+\end{enumerate}
+
+\noindent
+Let $n=10^{14}+2367$ (which is prime) and let $p=2n-1$ (also prime).
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{4}
+\item Construct an elliptic curve $E/\Fp$ such that $E[n]\subseteq E(\Fptwo)$.
+\end{enumerate}
+
+Representing $\Fp$ by integers in $[0,p-1]$, choose $P_0\in E(\Fp)$ so that $x(P_0)$ is the least integer greater than your student ID and $y(P_0)$ is minimal, and let $P=2P_0$.
+In the unlikely event that $P=0$, increment your student ID and repeat until $P\ne 0$.
+Then choose $Q_0\in E(\Fp)$ so that $x(Q_0)$ is the least integer greater than twice your student ID and $y(Q_0)$ is minimal, and let $Q=2Q_0$.
+Then both $P$ and $Q$ lie in $E[n]$ and you can use the above algorithm to compute $\log_P Q$, with $m=2$.
+Here are a few tips to help you:
+
+\begin{itemize}
+\item To create the field $\F_{p^2}$ in Sage use \texttt{F2 = GF(p**2)}.
+\item To generate $R$ use \texttt{E.change\_ring(F2).random\_element()}.
+\item To compute $e_n(S,P)$ use \texttt{S.weil\_pairing(P.change\_ring(F2),N)}.
+\item To compute $\log_a b$ use \texttt{b.log(a)}.
+\end{itemize}
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{5}
+\item Compute $\log_P Q$.  In your answer list the points $P_0,P,Q_0,Q$, the values of $a$ and~$b$, the integer $n=\log_a b$, and the running time of your algorithm (which should be well under a minute).
+Be sure to check your answer by verifying that $nP=Q$.
+\end{enumerate}
+
+\begin{remark}
+You should not be particularly impressed by this running time, since you can easily beat it with a careful implementation of the baby-steps giant-steps or Pollard rho algorithms.
+But for larger values of $p$ and $N$ this algorithm will easily outperform any generic method.
+Unfortunately Sage does not have a particularly fast implementation for discrete logarithms in non-prime finite fields, so I intentionally chose a small example.
+\end{remark}
+
+\subsection*{Problem 5. A fast Las Vegas algorithm to compute ${E(\Fp)}$ (49 points)}
+
+Problem 2 of Problem Set 5 gave a Las Vegas algorithm to compute the structure of the group $E(\Fp)\simeq \Z/m\Z\oplus\Z/n\Z$, but its running time was $\exp(\frac{1}{4}\log p+o(1))$, exponential in $\log p$.
+In this problem, following Miller \cite{miller}, you will develop a much faster algorithm to compute $E(\Fp)$.
+Strictly speaking it is not polynomial-time because it requires the factoring the integer $d=\gcd(\#E(\Fp),p-1)$, but typically $d$ will either be small (in which case the problem is easy), or it will have only one large prime factor $\ell$, in which case factoring $d$ is easy but computing the structure of $E(\Fp)$ with the algorithm from Problem Set 5 will be very difficult if $\ell^2$ divides $\#E(\Fp)$.
+In any case, this does give a subexponential-time Las Vegas algorithm, since we can always factor $d$ in subexponential time using a Las Vegas algorithm (the best proven bound is $L[1/2,c]$, but heuristically this can be done in time $L[1/3,c]$).
+
+\begin{enumerate}[{\bf(a)}]
+\item Let $\ell\ne p$ be prime.  Prove that if $E[\ell]\subseteq E(\Fp)$ then $\ell|(p-1)$ and $\ell^2|\#E(\Fp)$.
+\end{enumerate}
+
+Let $N=\#E(\Fp)$ and write $N$ as $N=N_0N_1$, where $N_0$ and $N_1$ are relatively prime and $N_1$ is divisible only by primes $\ell$ that divide $p-1$ and whose square divides $N$.
+By part \textbf{(a)}, when computing the structure of $E(\Fp)$, we can restrict our attention to $E(\Fp)[N_1]$.
+Consider the following algorithm to compute the structure of $E(\Fp)$, which takes as input the elliptic curve $E/\Fp$, the integers $N_0$ and $N_1$, and the prime factorizations of $N_1$.
+
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\item Generate random points $P_0,Q_0\in E(\Fp)$ and put $P:=N_0P_0$ and $Q:=N_0Q_0$.
+\item Using the prime factorization of $N_1$, compute $s:=|P|$ and $t:=|Q|$.
+\item Let $r=\lcm(s,t)$ and compute $\zeta:=e_r(P,Q)$.
+\item Using the prime factorization of $N_1$, compute $n:=|\zeta|$.
+\item If $rn = N_1$ then put $m=rN_0$ and output $\Z/m\Z\oplus\Z/n\Z$, otherwise go to step 1.
+\end{enumerate}
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item Prove that when the algorithm terminates we have $E(\Fp)\simeq \Z/m\Z\oplus \Z/n\Z$.
+\item Prove that in step 3 we have $\zeta\in\Fp^\times$.
+\item Prove that the expected number of times the algorithm repeats step 1 is  $O(\log \log p)$.
+You may use Mertens' bound $\sum_{\ell\le x} \frac{1}{\ell} =\log\log x+O(1)$, where $\ell$ ranges over primes.\footnote{One can modify the algorithm so that the expected number of repeats is actually $O(1)$.}
+\item Let $g\in G$ be an element of a generic group with exponent $\lambda$ (so $\lambda g =0$).
+Prove that, given the prime factorization of $\lambda$ you can compute the order of $g$ using $(\log\lambda)^{1+o(1)}$ group operations.
+(You may wish to review Lecture 9 on generic algorithms).
+\item Prove that the running time of the algorithm above is $(\log p)^{2+o(1)}$.
+\end{enumerate}
+
+\begin{remark}
+As noted above, this only gives a subexponential-time algorithm to compute $E(\Fp)$ if we are not given the factorization of $N_1$.
+But it is known that we can do this in \emph{average polynomial time} \cite{FPS}, in the following sense: for any prime $p$, if we pick a random $A,B\in \Fp$ the expected time to compute $E(\Fp)\simeq \Z/m\Z\oplus\Z/n\Z$ for the curve $E\colon y^2=x^2+Ax+B$ is polynomial in $\log p$.
+\end{remark}
+
+\subsection*{Problem 6. The Birch and Swinnerton-Dyer Conjecture (49 points)}
+
+The goal for this problem is to lead you to a formulation of the (weak) Birch and Swinnerton-Dyer conjecture.
+The main difficulty here is not for you to prove a precisely stated question, but rather for you to formulate a precise question, starting from some data and some general suggestions.
+This means that parts of the problem are deliberately vague; making the questions more precise is part of the problem.
+Other than part~\textbf{(a)}, you are not expected to prove anything; heuristic arguments are fine.
+
+One of the outstanding \href{http://www.claymath.org/millennium-problems/millennium-prize-problems}{Millennium Prize Problems} is the famous conjecture of Birch and Swinnerton-Dyer, which concerns the ranks of elliptic curves over $\Q$.  Recall from Lecture 1 that the Mordell-Weil theorem implies
+\[E(\Q) = E(\Q)_{\text{tors}} \oplus \Z^r. \]
+As opposed to the torsion subgroup, the rank $r$ of the Mordell-Weil group $E(\Q)$ is far less understood; we do not have a fully general algorithm to compute $r$, and mathematicians do not even agree on whether $r$ should be bounded or not (so not only can't we prove a conjecture, we don't even know what the right conjecture is!).  However, in the 1960s, Birch and Swinnerton-Dyer carried out computations on the EDSAC computer at Cambridge University that led them to conjecture a deep relationship between the $L$-series of $E$ and the rank $r$ of the Mordell-Weil group.
+In this problem you will develop a conjecture and investigate the evidence for it.
+
+Recall from Lecture 24 that the $L$-series of $E/\Q$ is defined by
+\[L_E(s) = \prod_p L_p(p^{-s})^{-1} = \prod_p (1 -a_p p^{-s} + \chi(p)p^{-2s+1})^{-1}, \]
+where the Dirichlet character $\chi(p) = 0$ if $E$ has bad reduction at $p$ and $1$ otherwise.\footnote{Recall that this assumes a minimal Weierstrass model for $E$.}  This converges for $\Re(s) >3/2$; however by the modularity theorem, it admits an analytic continuation to the entire complex plane.
+
+\begin{enumerate}[{\bf(a)}]
+
+\item Assume that $E$ is given in affine coordinates by the equation $y^2 = x^3 + Ax + B$ with $A, B \in \Z$.\footnote{This need not be a minimal Weierstrass model, but you may assume it is if you wish.}  A rational point $(x_0:y_0:z_0)\in E(\Q)$ gives a solution to
+\[y^2z \equiv x^3 + Axz^2 +Bz^3 \pmod{p^n}, \]
+and hence a point on $E$ modulo $p^n$ for all $p\nmid \Delta(E)$ and $n\ge 1$.  Let $N_{p^n}$ denote the number of projective solutions $(x_0:y_0:z_0)$ to this congruence (over $\Z/p^n\Z$).  Using Hensel's lemma (see problem~5 of Problem Set~2) prove that 
+\[N_{p^n} = p^{n-1}N_p \]
+for all $p \nmid \Delta(E)$.  Conclude that
+\[ \lim_{n \to \infty} \frac{N_{p^n}}{p^{n}} = \frac{N_p}{p},\]
+except for finitely many $p$.  This quantity $\lim_{n \to \infty} \frac{N_{p^n}}{p^{n}}$ represents the density of $p$-adic points on $E$.  Give a plausible relation with $r$.  
+
+\item Let $S$ be the set of primes of bad reduction of $E$.  Define
+\[f_E(X) = \prod_{\substack{p \not\in S\\p \leq X}} \frac{N_p}{p}, \]
+What is the relationship between $f_E(X)$ and $L_E(s)$?
+
+\item Consider the elliptic curve\footnote{In 1938, this was the highest rank known, due to Billings.} $E$ with rank $3$ given by
+\[ y^2 = x^3 - 82x.\]
+Compute and plot the values of 
+\[f_E(X) = \prod_{\substack{p \not\in S \\ p\leq X}} \frac{N_p}{p} \]
+for $X$ up to at least $10^6$ (or further if you like).  You can use the Sage method \texttt{E.aplist} to efficiently compute a list of $a_p$ values at all primes $p\le X$ (including primes of bad reduction).  For primes of good reduction $a_p$ is the trace of Frobenius of $E\bmod p$, from which you can derive $N_p$.
+What appears to be the asymptotic growth of the function $f_E(X)$?
+Make a plot of your results with an appropriate choice of scale on the coordinate axes so your answer is apparent.
+Attach relevant plots in your solutions.
+
+\item Repeat part \textbf{(c)} for the following curves of the form
+\[E_i : y^2 = x^3 - d_i^2 x,\]
+for the values:
+\begin{center}
+\begin{tabular}{c | c | c}
+ & $d_i$ & rank \\ \hline \hline
+$E_1$ & 1 & 0 \\
+$E_2$ & 5 & 1\\
+$E_3$ & 34 & 2\\
+$E_4$ & 1254 & 3 \\
+$E_5$ & 29274 & 4\\
+\end{tabular}
+\end{center}
+Display your final plots (with the appropriate scaling of the axes) together.
+
+\item Combining your results from parts \textbf{(b)}, \textbf{(c)}, and \textbf{(d)} above, make a precise conjecture on the relationship between $L_E(s)$ and the rank of $E$. Your conjecture should be precise enough that different ranks give rise to different behaviors of the $L$-function. (Hint: You might need to do more work in \textbf{(b)} in order to give a more precise relationship -- there is a natural interplay between conjecture and computation.)
+
+\item Choose $5$ random elliptic curves with $|A|, |B| < 100$ and conjecturally assign their ranks.  Note: you can use Sage to check your answer, but you must provide evidence based upon your work in previous parts to receive full credit.\footnote{While we do not have a general algorithm to compute the rank of $E/\Q$, for small $|A|$ and $|B|$, Sage can easily do so.}
+
+\end{enumerate}
+
+\subsection*{Problem 7. Survey (2 points)}
+
+Complete the following survey by rating each problem you attempted on a scale of 1 to~10 according to how interesting you found it (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found it (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+Problem 5 & & & \\\hline
+Problem 6 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|r}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+5/12 & Isogeny volcanoes & & & & \\\hline 
+5/15 & Modular forms & & & & \\\hline 
+5/17 & Fermat's Last Theorem & & & & \\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Finally, if you have any comments about the course as a whole, in particular, things that you think would improve it in the future, please let me know!
+
+\begin{thebibliography}{9}
+\bibitem{BLS} R. Br\"oker,  K. Lauter, and A.V. Sutherland, \href{http://www.ams.org/journals/mcom/2012-81-278/S0025-5718-2011-02508-1/}{\textit{Modular polynomials via isogeny volcanoes}}, Mathematics of Computation \textbf{81} (2012), 1201--1231.
+\bibitem{FPS} J.B. Friedlander, C. Pomerance, I.E. Shparlinski, \href{https://doi.org/10.1017/S0004972700035048}{\textit{Finding the group structure of elliptic curves over finite fields}}, Bulletin of the Australian Mathematical Society \textbf{72} (2005), 251--263.
+\bibitem{kohel} David Kohel, \href{http://iml.univ-mrs.fr/~kohel/pub/thesis.pdf}{\textit{Endomorphism rings of elliptic curves over finite fields}}, PhD thesis, University of California at Berkeley, 1996.
+\bibitem{MOV} A.J. Menezes, T. Okamato, and S.A. Vanstone, \href{https://doi.org/10.1145/103418.103434}{\textit{Reducing elliptic curve logarithms to logarithms in a finite field}}, IEEE Transactions on Information Theory \textbf{39} (1993), 1639--1646.
+\bibitem{miller} V.S. Miller, \href{http://link.springer.com/article/10.1007/s00145-004-0315-8}{\textit{The Weil pairing and its efficient calculation}}, J. Cryptology \textbf{17} (2004), 235--261.
+\bibitem{washington} L.C. Washington, \href{https://doi.org/10.1201/9781420071474}{\textit{Elliptic curves: Number theory and cryptography}}, second edition, CRC Press, 2008.
+\end{thebibliography}
+
+\end{document}

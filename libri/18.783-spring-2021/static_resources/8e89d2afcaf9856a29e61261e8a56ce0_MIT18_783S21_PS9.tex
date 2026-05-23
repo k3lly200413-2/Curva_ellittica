@@ -1,0 +1,548 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{courier}
+\usepackage{tikz}
+\usetikzlibrary{calc,matrix,arrows,decorations.markings}
+\usepackage{array}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{nicefrac}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{plain}
+
+% growing list of useful macros, use these where appropriate and add to this list as needed
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fqn}{\mathbb{F}_{q^n}}
+\newcommand{\Fqbar}{\overline{\mathbb{F}}_q}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\renewcommand{\H}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\Z/n\Z}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\PGL}{{\rm PGL}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\DFT}{{\rm DFT}}
+\newcommand{\dy}{\,dy}
+\newcommand{\dx}{\,dx}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}[2]{\bigl(\frac{#1}{#2}\bigr)}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\softO}{\widetilde{O}}
+\newcommand{\ceil}[1]{\lceil{#1}\frac{1}eil}
+\newcommand{\Exp}{{\rm E}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\OK}{\O_K}
+\newcommand{\T}{{\rm T}}
+\newcommand{\N}{{\rm N}}
+\newcommand{\re}{\operatorname{re}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\ord}{{\rm ord}}
+\newcommand{\SL}{{\rm SL}}
+\newcommand{\PSL}{{\rm PSL}}
+\newcommand{\EllO}{{\rm Ell}_\O}
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakb}{\mathfrak{b}}
+\newcommand{\frakc}{\mathfrak{c}}
+\newcommand{\cl}{{\rm cl}}
+\newcommand{\disc}{{\rm disc}}
+\newcommand{\abcd}{\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)}
+\newcommand{\ABCD}{\left(\begin{smallmatrix}A&B\\C&D\end{smallmatrix}\right)}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\a}{\mathfrak{a}}
+\renewcommand{\b}{\mathfrak{b}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\lt}{{\rm lt}}
+\newcommand{\id}{{\rm id}}
+\newcommand{\sumprime}{\sideset{}{'}\sum}
+
+\newtheorem*{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem*{remark}{Remark}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{4pt}
+\textbf{Problem Set \#9\due{04/28/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 15--17.
+\medskip
+
+\noindent\textbf{Instructions}: Pick any combination of problems to solve that sums to 100 points.
+Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves writing code, please either include your code in your write up (as part of the pdf), or the name of a notebook in your 18.783 CoCalc project containing you code (use a separate notebook for each problem).
+
+\subsection*{Problem 1. Complex multiplication (49 points)}
+
+Let $\tau=(1+\sqrt{-7})/2$.
+In problem 1 of Problem Set 8 you computed $j(\tau)=-3375$.
+In problem 3 of Problem Set 7 you proved that the endomorphism ring of the elliptic curve $y^2=x^3-35x-98$ with $j$-invariant $-3375$ is equal to $[1,\tau]$, the maximal order (ring of integers) of $\Q(\sqrt{-7})$.
+Let us now set $g_2:=-4(-35)=140$ and $g_3:=-4(-98)=392$ and work with the isomorphic elliptic curve $E/\C$ defined by
+\[
+y^2=4x^3-g_2x-g_3,
+\]
+which is isomorphic to $y^2=x^3-35x-98$.
+
+We should note that $g_2([1,\tau])$ and $g_3([1,\tau])$ are not equal to $140$ and $392$, but there is a lattice~$L$ homothetic to $[1,\tau]$ for which $g_2(L)=140$ and $g_3(L)=392$ (you computed this lattice $L$ in problem 2 of Problem Set 8).
+In particular, $\tau L\subseteq L$, thus $\tau$ satisfies condition (1) of Theorem 17.4.
+The goal of this problem is to compute the polynomials $u,v\in\C[x]$ for which condition (2) of Theorem 17.4 holds, and the endomorphism $\phi$ for which condition~(3) of Theorem 17.4 holds, and to explicitly confirm that the diagram
+\begin{center}
+\begin{tikzpicture}[descr/.style={fill=white,inner sep=2.5pt}]
+\matrix (m) [matrix of math nodes, row sep=3em,column sep=3em]
+{ \C/L & E(\C) \\
+\C/L& E(\C) \\ };
+\path[->,font=\scriptsize] (m-1-1) edge node[descr] {$ \Phi $} (m-1-2) edge node[descr] {$ \tau $} (m-2-1);
+\path[->,font=\scriptsize] (m-1-2) edge node[descr] {$ \phi $} (m-2-2);
+\path[->,font=\scriptsize] (m-2-1) edge node[descr] {$ \Phi $} (m-2-2);
+\end{tikzpicture}
+\end{center}
+commutes, where $\tau$ denotes the multiplication-by-$\tau$ map $z\mapsto \tau z$.
+
+Recall that the Weierstrass $\wp$-function satisfying the differential equation
+\begin{equation}\label{eq:wp}
+\wp'(z)^2 = 4\wp(z)^3 - g_2\wp(z) - g_3
+\end{equation}
+has a Laurent series expansion about 0 of the form $\wp(z) = z^{-2} +\sum_{n=1}^\infty a_{2n}z^{2n}$.
+
+\begin{enumerate}[{\bf (a)}]
+\item
+Use $g_2$ and $g_3$ to determine $a_2$ and $a_4$, and then determine $a_6$ by comparing coefficients in the Laurent expansions of both sides of \eqref{eq:wp}.
+\end{enumerate}
+We now wish to compute the polynomials $u,v\in\C[x]$ for which
+\[
+\wp(\tau z)=\frac{u\bigl(\wp(z)\bigr)}{v\bigl(\wp(z)\bigr)},
+\]
+as in condition (2) of Theorem 17.4.
+Following Corollary 17.5, we have $\N(\tau)=\tau\bar{\tau}=2$, so $\deg u=2$ and $\deg v=1$.
+We can make $u=x^2+ax+b$ monic, and with $v=cx+d$ we must have
+\begin{equation}\label{eq:uv}
+(c\wp(z)+d)\wp(\tau z)=\wp(z)^2+a\wp(z)+b
+\end{equation}
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{1}
+\item Use \eqref{eq:uv} to determine the coefficients $a,b,c,d$, expressing your answers in terms of~$\tau$.
+It will be convenient to work in the subfield $K=\Q(\tau)$, rather than $\C$.  To define the field $K$ and the polynomial ring $K[x]$ in Sage, use
+\begin{lstlisting}
+RQ.<w>=PolynomialRing(QQ)
+K.<tau>=NumberField(w^2-w+2)
+RK.<x>=PolynomialRing(K)
+\end{lstlisting}
+Once you have determined $a,b,c,d\in K$, you can verify $u,v\in K[x]$ via\footnote{Sage effectively computes $\wp(z)$ using $y^2=4x^3-g_2x-g_3$ when we define $E\colon y^2=x^3+Ax+B$ with $g_2=-4A$ and $g_3=-4B$.}
+\begin{lstlisting}
+RL.<z>=LaurentSeriesRing(K,100)
+wp=EllipticCurve([-35,-98]).weierstrass_p(100).change_ring(K)
+assert wp(tau*z) == u(wp(z))/v(wp(z))
+\end{lstlisting}
+\item Following the proof of Theorem 17.4, construct polynomials $s,t\in K[x]$ that satisfy
+\[
+\wp'(\tau z) = \frac{s\bigl(\wp(z)\bigr)}{t\bigl(\wp(z)\bigr)}\wp'(z).
+\]
+You can verify your results in Sage via
+\begin{lstlisting}
+wpp = wp.derivative()
+assert wpp(tau*z) == s(wp(z))/t(wp(z))*wpp(z)
+\end{lstlisting}
+
+\item Now let $\phi=\bigl(\frac{u(x)}{v(x)},\frac{s(x)}{t(x)}y\bigr)$.
+Use Sage to verify that $\phi$ is an endomorphism by checking that its coordinate functions satisfy the curve equation $y^2=4x^3-g_2x-g_3$.
+\end{enumerate}
+
+The symbolic verifications in parts (b) and (d) confirm that $\Phi(\tau z) =\phi(\Phi(z))$, showing that the diagram commutes (at least for the first 100 terms in the Laurent expansion of $\wp(z)$).
+But we would like to explicitly check this for some specific values of $z\in \C$.
+In order to do this in Sage, we need to redefine $\tau$ and the polynomials $u,v,s,t$ over $\C$, rather than~$K$.
+You can use the following Sage script to do this:
+\begin{lstlisting}
+R.<X>=PolynomialRing(CC)
+pi = K.embeddings(CC)[0]
+tauC = pi(tau)
+def coerce(f,pi,X):
+    c = f.coefficients(sparse=False)
+    return sum([pi(c[i])*X^i for i in range(len(c))])
+uC = coerce(u,pi,X)
+vC = coerce(v,pi,X)
+sC = coerce(s,pi,X)
+tC = coerce(t,pi,X)
+\end{lstlisting}
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{4}
+\item Pick three ``random" nonzero complex numbers $z_1,z_2,z_3$ of norm less than $0.1$ (they need to be close to $0$ in order for the Laurent series of $\wp(x)$ to converge quickly).
+You can approximate the point $P_1=\Phi(z_1)=\bigl(\wp(z_1),\wp'(z_1)\bigr)$ on the elliptic curve $y^2=4x^3-g_2x-g_3$ in Sage using\footnote{You need to use the \texttt{laurent\_polynomial} method in order to evaluate \texttt{wp} at a complex number.}
+
+\begin{lstlisting}
+wp = EllipticCurve([CC(-35),CC(-98)]).weierstrass_p(100)
+wpp = wp.derivative()
+P1=(wp.laurent_polynomial()(z1),wpp.laurent_polynomial()(z1))
+\end{lstlisting}
+For $i=1,2,3$, compute  the points $P_i=\Phi(z_i)$ and $Q_i=\Phi(\tau z_i)$ (remember to use the embedding of $\tau$ in $\C$).
+Check that the points all approximately satisfy the curve equation $y^2=4x^3-g_2x-g_3$ (if not, use $z_i$ with smaller norms).
+Then verify that $Q_i$ and $\phi(P_i)$ are approximately equal in each case.
+Report the values of $z_i,P_i,Q_i$ and $\phi(P_i)$.
+\end{enumerate}
+
+
+\subsection*{Problem 2. Binary quadratic forms (49 points)}
+
+A \emph{binary quadratic form} is a homogeneous polynomial of degree 2 in two variables:
+\[
+f(x,y)=ax^2+bxy+cy^2,
+\]
+which we identify by the coefficient vector $(a,b,c)$.
+We are interested in a particular set of binary quadratic forms, those that are
+\emph{integral} ($a,b,c\in\Z$), \emph{primitive} ($\gcd(a,b,c)=1$), and \emph{positive definite} ($b^2-4ac<0$ and $a>0$).
+Henceforth we shall use the word $\emph{form}$ to refer to an integral, primitive, positive definite, binary quadratic form.
+The \emph{discriminant} of a form is the negative integer $D=b^2-4ac$, which is evidently a square modulo $4$.
+We call such integers (imaginary quadratic) discriminants, and let $F(D)$ denote the set of forms with discriminant $D$.
+
+\begin{enumerate}[{\bf(a)}]
+\item For each $\gamma = \left(\begin{smallmatrix}s&t\\u&v\end{smallmatrix}\right)\in \SL_2(\Z)$ and $f(x,y)\in F(D)$ define
+\[
+f^\gamma(x,y) := f(sx+ty,\,ux+vy).
+\]
+Show that $f^\gamma\in F(D)$, and that this defines a right group action of $\SL_2(\Z)$ on the set $F(D)$ (this means $f^I=f$ and $f^{(\gamma_1\gamma_2)}=(f^{\gamma_1})^{\gamma_2}$).
+\end{enumerate}
+
+Forms $f$ and $g$ are (properly) \emph{equivalent} if $g=f^\gamma$ for some $\gamma\in\SL_2(\Z)$.
+In this problem and the next, you will prove that the set $\cl(D)$ of $\SL_2(\Z)$-equivalence classes of $F(D)$ forms a finite abelian group, and develop algorithms to compute in this group.
+
+The group $\cl(D)$ is called the \emph{class group}, and it plays a key role in the theory of complex multiplication.
+Our first objective is to prove that $\cl(D)$ is finite, and to develop an algorithm to enumerate unique representatives of its elements (which also allows us to determine its cardinality).
+We define the (principal) \emph{root} $\tau$ of a form $f=(a,b,c)$ to be the unique root of $f(x,1)$ in the upper half plane:
+\[
+\tau=\frac{-b+\sqrt{D}}{2a}.
+\]
+Recall that $\SL_2(\Z)$ acts on the upper half plane $\H$ via linear fractional transformations
+\[
+\begin{pmatrix}s&t\\u&v\end{pmatrix}\tau= \frac{s\tau+t}{u\tau+v},
+\]
+and that the set
+\[
+\mathcal{F}=\bigl\{\tau\in\H: \re(\tau)\in[-1/2,0] \text{ and } |\tau|\ge 1\bigr\} \\\cup \bigl\{\tau\in\H: \re(\tau)\in(0,1/2) \text{ and } |\tau|> 1\bigr\}
+\]
+is a fundamental region for $\H$ modulo the $\SL_2(\Z)$-action.
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item Prove that $\gamma\in\SL_2(\Z)$ acts compatibly on forms and their roots by showing that if $\tau$ is the root of $f$, then $\gamma^{-1}\tau$ is the root of $f^\gamma$.  Conclude that two forms are equivalent if and only if their roots are equivalent.
+\end{enumerate}
+
+A form $f=(a,b,c)$ is said to be \emph{reduced} if
+\[
+-a<b\le a< c\qquad\text{or}\qquad0\le b \le a = c.
+\]
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{2}
+\item
+Prove that a form is reduced if and only if its root lies in the fundamental region $\mathcal{F}$.
+Conclude that each equivalence class in $F(D)$ contains exactly one reduced form.
+\item
+Prove that if $f$ is reduced then $a\le \sqrt{|D|/3}$.  Conclude that the set $\cl(D)$ is finite, and show that in fact its cardinality $h(D)$ satisfies $h(D)\le |D|/3$.  Prove that $F(D)$ contains a unique reduced form $(a,b,c)$ with $a=1$,
+and conclude that $h(-3)=h(-4)=1$.
+\end{enumerate}
+
+The positive integer $h(D)$ is called the \emph{class number} of the discriminant $D$.
+The bound $h(D)\le|D|/3$ is a substantial overestimate.
+In fact, $h(D)=O(|D|^{1/2}\log|D|)$, but proving this requires some analytic number theory that is beyond the scope of this course.
+Under the generalized Riemann hypothesis one can show $h(D)=O(|D|^{1/2}\log\log|D|)$.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{4}
+\item
+Give an algorithm to enumerate the reduced forms in $F(D)$.
+Using the upper bound $h(D)=O(|D|^{1/2}\log|D|)$, prove that your algorithm runs in $O(|D|\M(\log|D|))$ time.
+\item
+Implement your algorithm and use it to enumerate the five reduced forms in $F(-103)$ and the six reduced forms in $F(-396)$.
+Then use it to compute $h(D)$ for the first three discriminants $D<-N$, where $N$ is the integer formed by the first four digits of your student ID.
+\end{enumerate}
+
+\subsection*{Problem 3. The class group (98 points)}
+In Problem 2 we proved that $\cl(D)$ is a finite set.
+In this problem you will prove that it is an abelian group, and develop an algorithm for computing the group operation.
+
+To each form $f(x,y)=ax^2+bxy+cy^2$ in $F(D)$ with root $\tau=(-b+\sqrt{D})/(2a)$, we associate the lattice $L(f)=L(a,b,c)=a[1,\tau]$.
+\begin{enumerate}[{\bf(a)}]
+\item Show that two forms $f,g\in F(D)$ are equivalent if and only if the lattices $L(f)$ and $L(g)$ are homothetic (use may use part (b) of problem 2 if you wish).
+\end{enumerate}
+
+For any lattice $L$, the \emph{order} of $L$ is the set
+\[
+\O(L)=\{\alpha\in\C:\alpha L\subseteq L\}.
+\]
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item Prove that either $\O(L)=\Z$ or $\O(L)$ is an order in an imaginary quadratic field, and that homothetic lattices have the same order.
+Prove that if $L$ is the lattice of a form in $F(D)$, then $\O(L)$ is the order of discriminant $D$ in the field $K=\Q(\sqrt{D})$.
+\end{enumerate}
+
+For the rest of this problem let $\O$ denote the (not necessarily maximal) imaginary quadratic order of discriminant $D$,
+which may be represented as a lattice $[1,\omega]$, where $\omega$ is an algebraic integer whose minimal polynomial $x^2+bx+c$ has discriminant $b^2-4c=D$.
+
+Recall that an (integral) $\O$-\emph{ideal} $\a$ is an additive subgroup of~$O$ that is closed under multiplication by $\O$.
+Every $\O$-ideal $\a$ is necessarily a sublattice of $\O$, and its \emph{norm} $N(\a)$ is the index $[\O:\a]=|\O/\a|$.
+An $\O$-ideal $\a$ is said to be \emph{proper} if $\O(\a)=\O$.
+In Lecture~18 we showed that $\a$ is proper if and only if it is invertible as a fractional ideal, which explains our interest in this property.
+Note that we always have $\O\subseteq \O(\a)$, so when $\O$ is maximal every nonzero $\O$-ideal is proper.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{2}
+\item Prove that if $L(a,b,c)=a[1,\tau]$ is the lattice of a form in $F(D)$, then $L$ is a proper $\O$-ideal of norm $a$, where $\O=\O(L)=[1,a\tau]$.
+
+\item Conversely prove that every proper $\O$-ideal $\a$ is homothetic to the lattice of a form in~$F(D)$.
+Show that the assumption that $\a$ is proper is necessary by giving an explicit example of an $\O$-ideal $\a$ that is not proper (so by (c) it cannot be homothetic to the lattice of a form in $F(d)$).
+
+\item Prove that if the norm of $\a$ is relatively prime to the conductor $u=[\O_K\colon \O]$ of $\O$ then $\a$ is proper.
+Give an explicit example showing that the converse is not true.
+\end{enumerate}
+
+
+The product of two lattices $[\omega_1,\omega_2]$ and $[\omega_3,\omega_4]$ in $\C$ is the additive group generated by $\{\omega_1\omega_3,\, \omega_1\omega_4,\, \omega_2\omega_3,\, \omega_2\omega_4\}$.
+
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{5}
+\item Show that, in general, the product of two lattices need not be a lattice, but the product of two lattices that are $\O$-ideals is a lattice.
+
+\item
+Let $\cl(\O)$ denote the set of equivalence classes (under homothety) of lattices that are proper $\O$-ideals.
+Prove that the lattice product makes $\cl(\O)$ into an abelian group.
+Conclude that the corresponding operation on the equivalence classes of $F(D)$ makes $\cl(D)$ into an abelian group that is isomorphic to $\cl(\O)$.
+\end{enumerate}
+
+To do explicit computations in $\cl(D)$ we need to translate the product operation on lattices $L(f_1)$ and $L(f_2)$ into a corresponding product operation on forms $f_1,f_2\in F(D)$.  This is known as \emph{composition} of forms, and is performed as follows.
+If $f_1=(a_1,b_1,c_1)$ and $f_2=(a_2,b_2,c_2)$ are forms in $F(D)$, then let $s=(b_1+b_2)/2$ (this is an integer because $b_1, b_2$ and $D$ all have the same parity).
+Use the extended Euclidean algorithm (twice) to compute integers $u,v,w$, and $d$ such that $ua_1+va_2+ws=d=\gcd(a_1,a_2,s)$.  The composition of $f_1$ and $f_2$ is then given by
+\[
+f_1*f_2 = (a_3,b_3,c_3) = \left(\frac{a_1a_2}{d^2},\ b_2+\frac{2a_2}{d}(v(s-b_2)-wc_2),\ \frac{b_3^2-D}{4a_3}\right).
+\]
+It is a straight-forward but tedious task to verify that this composition formula satisfies $L(f_1*f_2)=L(f_1)*L(f_2)$; you are not required to do this.
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{7}
+\item
+Verify that the inverse of $(a,b,c)$ is $(a,-b,c)$ and that the unique reduced from with $a=1$ acts as the identity (see Problem 2 for the definition of a reduced form).
+\end{enumerate}
+Unfortunately, even if $f_1$ and $f_2$ are reduced forms, the composition of $f_1$ and $f_2$ need not be reduced.
+In order to compute in $\cl(D)$ effectively, we need a reduction algorithm.
+Recall the matrices $S=\left(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\right)$ and $T=\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$ that generate $\SL_2(\Z)$.
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{8}
+\item Let $f$ be the form $(a,b,c)$.  Compute the forms $f^S$, $f^{T^m}$, and $f^{T^{-m}}$, for a positive integer $m$.
+\end{enumerate}
+A form $(a,b,c)$ with $-a<b\le a$ is said to be \emph{normalized}.
+
+\begin{enumerate}[{\bf (a)}]
+\setcounter{enumi}{9}
+\item Show that for any form $f$ there is an integer $m$ such that $f^{T^m}$ is normalized, and give an explicit formula for $m$.
+Let us call $f^{T^m}$ the \emph{normalization} of $f$.
+Now let $f=(a,b,c)$ be a normalized form and prove the following:
+\begin{enumerate}
+\item If $a < \sqrt{|D|}/2$ then $f$ is reduced.
+\item If $a<\sqrt{|D|}$ and $f$ is not reduced, then the normalization of $Sf$ is reduced.
+\item If $a \ge \sqrt{|D|}$ then the normalization $(a',b',c')$ of $Sf$ has $a'\le a/2$.
+\end{enumerate}
+
+\item
+Give an algorithm to compute the reduction of a form $f$ in $F(D)$, and bound its complexity as a function of $n=\log|D|$, assuming that its coefficients are $O(n)$ bits in size.
+Then bound the complexity of computing the reduction of the product of two reduced forms (this corresponds to performing a group operation in $\cl(D)$).\footnote{A quasi-linear bound is known \cite{schonhage}, but your bound does not need to be this tight.  However it should be polynomial  in $n$.}
+
+\item
+Implement your algorithm and then use it to compute the reduction of a form $(a,b,c)\in F(D)$, with $a$ equal to the least prime greater than $|D|^2$ for which $(\frac{D}{a})=1$.  Do this for the discriminants $D=-103$ and $D=-396$, and for the first three discriminants $D<-N$, where $N$ is the first four digits of your student ID.   For the largest $|D|$, list the sequence of normalized forms computed during the reduction.
+\end{enumerate}
+
+
+\subsection*{Problem 4. Subgroups of $\GL_2(\F_\ell)$ (49 points)}
+
+Let $E$ be an elliptic curve defined over $\Q$.
+Recall that for each integer $n>1$, the $n$-torsion subgroup of $E(\Qbar)$ is a rank $2$ $(\Z/n \Z)$-module we denote $E[n]$.
+As explained in Problem Sets 3 and 6, the action of the absolute Galois group $G_\Q := \Gal(\Qbar/\Q)$ on the coordinates of points gives rise to an action on the set $E(\Qbar)$ that commutes with the group law.
+Hence the $G_\Q$-action preserves $E[n]$ and gives rise to a linear representation of the absolute Galois group
+\[
+\rho_{E,n} \colon G_\Q \to \Aut(E[n]) \simeq \GL_2(\Z/n\Z),
+\]
+which we call the \emph{mod-$n$ Galois representation} attached to $E$.
+In this problem we restrict our attention to prime $n  = \ell$, in which case we have following theorem of Serre.
+
+\begin{theorem}[Serre, 1972]
+Let $E$ be an elliptic curve over $\Q$ for which $\End(E_{\overline{\Q}})=\Z$.  For all but finitely many primes $\ell$, the image of the mod-$\ell$ Galois representation is surjective:
+\[\rho_{E, \ell}(G_\Q) = \GL_2(\F_\ell). \]
+\end{theorem}
+
+\begin{remark}
+For an elliptic curve over $\Q$ (or any number field) we know that $\End(E_{\overline{\Q}})$ is either $\Z$ or an order in an imaginary quadratic field.
+The latter case is quite special: it applies to only 13 $\overline{\Q}$-isomorphism classes of elliptic curves over $\Q$, corresponding to the 13 imaginary quadratic orders of class number one.\footnote{Elliptic curves $E/\Q$ with $\End(E_{\overline{\Q}})\ne \Z$ are often said to have complex multiplication and called CM curves, even though this is not strictly true: the extra endomorphisms are only defined over a quadratic extension (it would be more correct to say these curves have ``potential complex multiplication'').}
+\end{remark}
+\begin{remark}
+It is conjectured that Serre's theorem actually applies to all primes $\ell > 37$ (independent of $E$).  There is ample evidence and some recent progress toward a proof of this conjecture, but it remains a major open question.
+\end{remark}
+
+A key component of the proof of Serre's theorem is understanding the maximal subgroups of $\GL_2(\F_\ell)$
+In order to discuss subgroups of $\GL_2(\F_\ell)$ in a basis-free manner, it is often convenient to write $\GL(V)$ where $V$ is a $2$-dimensional vector space over $\F_\ell$ and $\GL(V)$ denotes its group of automorphisms.
+In this problem you will give a complete classification of the maximal subgroups of $\GL_2(V)$.
+
+
+Let $L_1$ and $L_2$ be distinct $1$-dimensional subspaces of $V$, which we can think of as lines through the origin in $V$, and let $C_s$ be the subgroup of $\GL(V)$ that preserves both $L_1$ and $L_2$ (individually, no swapping allowed).
+
+\begin{enumerate}[{\bf(a)}]
+
+\item Show that for $\ell \neq 2$, the subgroup $C_s$ uniquely determines the lines $L_1, L_2 \subset	 V$ (and hence is equivalent to specifying two such lines).
+
+\end{enumerate}
+
+We call such a $C$ a \emph{split Cartan subgroup} of $\GL(V)$.  If we choose a basis for $V$ compatible with the decomposition $V = L_1 \oplus L_2$, we then have
+\[
+C_s = \begin{pmatrix} \ast & 0 \\ 0 & \ast \end{pmatrix},
+\]
+where $\ast$ indicates any element of $\F_\ell^\times$.  From this we see that $C \simeq \big(\F_\ell^\times \big)^2$ is an abelian group of order $(\ell-1)^2$.
+
+As an $\F_\ell$-vector space, $\F_{\ell^2} \simeq \F_\ell^2$; but $\F_{\ell^2}$ also has a multiplicative structure, and so the action of the multiplicative group $\F_{\ell^2}^\times$ on $\F_{\ell^2} \simeq V$ gives a cyclic subgroup $C_{ns}$ of $\GL(V)$ isomorphic to $\F_{\ell^2}^\times$.  Such a subgroup $C_{ns}$ is called a \emph{non-split Cartan subgroup}.
+We collectively refer to split and non-split Cartan subgroups as Cartan subgroups.
+ 
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+ 
+\item Show that for $\ell \neq 2$, if we fix a quadratic non-residue $\epsilon \in \F_\ell^\times$, then in an appropriate basis we have
+\[
+C_{ns} = \left\{ \begin{pmatrix} x &  \epsilon y \\ y & x \end{pmatrix} : x, y \in \F_\ell, (x,y) \neq (0,0) \right\}.
+\]
+
+\item Show that the intersection of any two distinct Cartan subgroups (either split or non-split) is the group of scalar matrices $Z=\left(\begin{smallmatrix}z&0\\0&z\end{smallmatrix}\right)$ with $z\in\F_\ell^\times$.
+
+\item Show that any element $s \in \GL(V)$ with $\Delta(s) = \tr(s)^2 - 4 \cdot \det(s) \neq 0$ is contained in a unique Cartan subgroup, and determine a condition involving $\Delta(s)$ that specifies the type of Cartan.  Deduce that the union of all Cartan subgroups of $\GL(V)$ is the set of elements of order prime to $\ell$.  (If you are stuck, look at part {\bf{(h)}} below.)
+
+\item Let $N$ denote the normalizer of a Cartan subgroup $C$ in $\GL(V)$, that is all elements $s \in \GL(V)$ such that $s C s^{-1} = C$.  Show that $(N : C) = 2$ and give an explicit description of this group in the split and non-split cases separately.
+
+\end{enumerate}
+
+It is easy to show that the group $Z$ of scalar matrices forms the center of $\GL(V)$.
+We define $\PGL(V)$ to be the quotient of $\GL(V)$ by its center, so $\PGL(V) := \GL(V)/Z$.
+Let $\varphi \colon \GL(V) \to \PGL(V)$ denote the quotient map.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{5}
+\item Show that if $C$ is a split (resp. non-split) Cartan subgroup, then $\varphi(C) \subset \PGL(V)$ is cyclic of order $\ell-1$ (resp. $\ell +1$).    Show that the image in $\PGL(V)$ of a normalizer of a Cartan subgroup is a dihedral group.\footnote{For this problem, the product of two cyclic groups of order 2 (the Klein group) is a dihedral group.}
+\end{enumerate}
+
+By part {\bf{(d)}} above, it remains to understand the elements of $\GL(V)$ of order divisible by $\ell$.
+A Borel subgroup $B$ of $\GL(V)$ is the group of automorphisms of $V$ fixing a specified line (through the origin).
+A Borel subgroup of $\GL(V)$ has order $\ell (\ell-1)^2$.  After choosing an appropriate basis, this has the form
+\[
+B = \begin{pmatrix} \ast & \ast \\ 0 & \ast \end{pmatrix}.
+\]
+ 
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{6}
+ \item Show that any element $s \in \GL(V)$ of order $\ell$ is conjugate to the matrix $\left(\begin{smallmatrix} 1 & 1 \\ 0 & 1\end{smallmatrix}\right)$.
+ 
+ \item Using the fact that $\SL(V)$ is generated $\left(\begin{smallmatrix} 1 & 1\\ 0& 1\end{smallmatrix}\right)$ and $\left(\begin{smallmatrix} 1 & 0\\ 1 & 1\end{smallmatrix}\right)$, deduce that any subgroup of $\GL(V)$ of order divisible by $\ell$  either lies in a Borel subgroup, or contains $\SL(V)$.
+ 
+\end{enumerate}
+
+Let $k$ be any field.  If $H$ is a finite subgroup of $\PGL_2(k)$ of order prime to the characteristic of $k$ that is not cyclic or dihedral, then $H$ is isomorphic to either $A_4, S_4, $ or $A_5$.  (In the case $k = \C$, this result is well known; these subgroups correspond to the symmetry groups of the regular polyhedra: tetrahedron, cube/octahedron, and icosahedron/dodecahedron, respectively.)
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{8}
+\item Use parts (a) to (h) to prove the following classification theorem.
+\end{enumerate}
+
+\begin{theorem}[Maximal subgroups of $\GL_2(\F_\ell)$]
+Let $G$ be a subgroup of $\GL_2(\F_\ell)$; let $H$ denote the image of $G$ in $\PGL_2(\F_\ell)$.  Then one of the following holds:
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\item $G$ has order prime to $\ell$ and either:
+\begin{enumerate}[(i)]
+\setlength{\itemsep}{0pt}
+\item $H$ is cyclic and $G$ is contained in a Cartan subgroup of $\GL_2(\F_\ell)$;
+\item $H$ is dihedral and $G$ is contained in the normalizer of a Cartan subgroup $C$ of $\GL_2(\F_\ell)$ but not in $C$;
+\item $H$ is isomorphic to $A_4, S_4$ or $A_5$ and we call $G$ exceptional;
+\end{enumerate}
+\item $G$ has order divisible by $\ell$ and either:
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+\item[(iv)] $G$ is contained in a Borel subgroup;
+\item[(v)] $G$ contains $\SL_2(\F_\ell)$.
+\end{enumerate}
+\end{enumerate}
+\end{theorem}
+\smallskip
+
+\noindent
+Serre's theorem states that except for elliptic curves $E/\Q$ with (potential) complex multiplication, for all but finitely many primes $\ell$ we are in case (v) of the classification above.
+On later problem sets we will see that for $\ell\ne 2$ this never happens if $E$ has complex multiplication, so the hypothesis $\End(E_{\overline{\Q}})=\Z$ in Serre's theorem is necessary.
+
+
+\subsection*{Problem 5. Survey (2 points)}
+
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found the problem (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found it (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+Problem 4 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|r}
+Date & Lecture Topic & Material &\!Presentation\! & Pace & Novelty\\\hline
+4/21 & The CM torsor & & & & \\\hline 
+4/26 & Riemann surfaces, modular curves & & & & \\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Please feel free to record any additional comments you have on the problem sets or lectures, in particular, ways in which they might be improved.
+
+\begin{thebibliography}{9}
+\bibitem{schonhage} A. Sch\"{o}nhage, \emph{Fast reduction and composition of binary quadratic forms}, in International Symposium on Symbolic and Algebraic Computation--{ISSAC}'91, ACM, 1991, 128--133.
+\end{thebibliography}
+\end{document}

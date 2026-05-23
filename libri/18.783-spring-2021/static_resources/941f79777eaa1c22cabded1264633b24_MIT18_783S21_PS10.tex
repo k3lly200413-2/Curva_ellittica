@@ -1,0 +1,533 @@
+% MIT OpenCourseWare: https://ocw.mit.edu
+% 18.783 / 18.7831 Elliptic Curves Spring 2021
+% License: Creative Commons BY-NC-SA 
+% For information about citing these materials or our Terms of Use, visit: https://ocw.mit.edu/terms.
+\newif\ifOCW
+\OCWtrue
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,citecolor=blue,linkcolor=blue}
+\ifOCW\usepackage{soul}\let\oldhref\href\renewcommand{\href}[2]{\oldhref{#1}{\ul{#2}}}\fi
+\ifOCW\newcommand{\due}[1]{\hfill\phantom{Due: #1}}\else\newcommand{\due}[1]{\hfill{Due: #1}}\fi
+\usepackage{courier}
+\usepackage{tikz}
+\usetikzlibrary{calc,matrix,arrows,decorations.markings}
+\usepackage{array}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{nicefrac}
+\usepackage{listings}
+\lstset{
+	basicstyle=\small\ttfamily,
+	keywordstyle=\color{blue},
+	language=python,
+	xleftmargin=16pt,
+}
+
+\textwidth=5.8in
+\textheight=9in
+\topmargin=-0.5in
+\headheight=0in
+\headsep=.5in
+\hoffset  -.4in
+\pagestyle{plain}
+
+% growing list of useful macros, use these where appropriate and add to this list as needed
+\newcommand{\kbar}{\bar{k}}
+\newcommand{\Fp}{\mathbb{F}_p}
+\newcommand{\Fpbar}{\overline{\mathbb{F}}_p}
+\newcommand{\Fq}{\mathbb{F}_q}
+\newcommand{\Fqn}{\mathbb{F}_{q^n}}
+\newcommand{\Fqbar}{\overline{\mathbb{F}}_q}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Qbar}{\overline{\mathbb{Q}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\renewcommand{\H}{\mathbb{H}}
+\newcommand{\D}{\mathbb{D}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\ZnZ}{\Z/n\Z}
+\newcommand{\M}{\textsf{M}}
+\newcommand{\Aut}{{\rm Aut}}
+\newcommand{\Gal}{{\rm Gal}}
+\newcommand{\GL}{{\rm GL}}
+\newcommand{\PGL}{{\rm PGL}}
+\newcommand{\End}{{\rm End}}
+\newcommand{\DFT}{{\rm DFT}}
+\newcommand{\dy}{\,dy}
+\newcommand{\dx}{\,dx}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\kron}[2]{\bigl(\frac{#1}{#2}\bigr)}
+\newcommand{\lcm}{\operatorname{lcm}}
+\newcommand{\softO}{\widetilde{O}}
+\newcommand{\ceil}[1]{\lceil{#1}\frac{1}eil}
+\newcommand{\Exp}{{\rm E}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\OK}{\O_K}
+\newcommand{\T}{{\rm T}}
+\newcommand{\N}{{\rm N}}
+\newcommand{\re}{\operatorname{re}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\ord}{{\rm ord}}
+\newcommand{\SL}{{\rm SL}}
+\newcommand{\PSL}{{\rm PSL}}
+\newcommand{\EllO}{{\rm Ell}_\O}
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakb}{\mathfrak{b}}
+\newcommand{\frakc}{\mathfrak{c}}
+\newcommand{\cl}{{\rm cl}}
+\newcommand{\disc}{{\rm disc}}
+\newcommand{\abcd}{\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)}
+\newcommand{\ABCD}{\left(\begin{smallmatrix}A&B\\C&D\end{smallmatrix}\right)}
+\newcommand{\p}{\mathfrak{p}}
+\renewcommand{\a}{\mathfrak{a}}
+\renewcommand{\b}{\mathfrak{b}}
+\newcommand{\Frob}{{\rm Frob}}
+\newcommand{\lt}{{\rm lt}}
+\newcommand{\id}{{\rm id}}
+
+\newtheorem*{theorem}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem*{remark}{Remark}
+
+\begin{document}
+\setlength{\unitlength}{1in}
+\begin{center}
+\large
+\textbf{18.783 Elliptic Curves\hspace{220pt}Spring~2021}\\\vspace{2pt}
+\textbf{Problem Set \#10\due{05/05/2021}}\\\vspace{-6pt}
+\normalsize
+\begin{picture}(5.8,.1) 
+\put(0,0) {\line(1,0){5.8}}         
+\end{picture}
+\end{center}
+
+\noindent\textbf{Description}: These problems are related to the material covered in Lectures 17--19.
+\medskip
+
+\noindent\textbf{Instructions}: Pick any combination of problems to solve that sums to 100 points.
+Your solutions are to be written up in latex and submitted as a pdf-file\ifOCW\else to \href{https://www.gradescope.com/courses/238945}{Gradescope}\fi.
+
+Collaboration is permitted/encouraged, but you must identify your collaborators or your group\ifOCW\else\ on \href{https://psetpartners.mit.edu}{pset partners}\fi, as well any references you consulted that are not listed in the \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/syllabus}{syllabus}\else\href{http://math.mit.edu/classes/18.783/2021/syllabus.html}{syllabus}\fi\ or \ifOCW\href{https://ocw.mit.edu/courses/mathematics/18-783-elliptic-curves-spring-2021/lecture-notes-and-worksheets}{lecture notes}\else\href{http://math.mit.edu/classes/18.783/2021/lectures.html}{lecture notes}\fi. If there are none write ``\textbf{Sources consulted: none}'' at the top of your solutions.  Note that each student is expected to write their own solutions; it is fine to discuss the problems with others, but your writing must be your own.
+
+The first person to spot each non-trivial typo/error in the problem sets or lecture notes will receive 1-5 points of extra credit.
+
+In cases where your solution involves code, please either include your code in your write up, or (better) the name of a notebook in your 18.783 CoCalc project containing you code (use a separate notebook for each problem).
+
+\subsection*{Problem 1. Congruence subgroups (98 points)}
+
+Let $\Gamma(1):=\SL_2(\Z)$ denote the modular group and $\H^*:=\{\tau:\im\tau>0\}\cup \Q\cup \{\infty\}$ the extended upper half plane.
+The diagram on the next page depicts a fundamental region $\mathcal{F}$ for $\H^*/\Gamma(1)$ in $\H^*$, along with nine of its translates.
+Each translate~$\gamma \mathcal F$ is labeled by $\gamma$, where $\gamma$ is expressed in terms of the generators $S=\bigl(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\bigr)$ and $T=\bigl(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\bigr)$ for $\Gamma(1)$.
+
+The colored labels $\rho,i,\infty$ within the region labeled by $\gamma$ indicate the points $\gamma\rho$, $\gamma i$, and $\gamma\infty$, respectively (where $\rho=e^{2\pi i/3}$).
+Note that the red, black, and blue colored $\infty$ along the top of the diagram are all the same point, but there are three distinct translates of $\infty$ on the real axis (at $-1,0,1$), each of which lies in two translates of $\mathcal{F}$ (this illustrates a key point: translates of $\mathcal{F}$ may overlap at points whose stabilizers act non-trivially, namely, the points $i,\rho,\infty$).
+The region $\mathcal F$ includes the arc from $i$ to $\rho$ along the unit circle and the line from $\rho$ to $\infty$ along the imaginary axis, but no other points on its boundary other than $\infty$; translates of these have been colored and oriented.
+
+\begin{remark}
+The lines/arcs connecting $i,\rho,\infty$ in each translate of $\mathcal F$ are \emph{geodesics}, meaning they are shortest paths between two points, under the \emph{hyperbolic metric} in which the length of a continuously differentiable path $\gamma\colon [a,b]\to\mathbb H$ is given by $\int_a^b\frac{|\gamma'(t)|}{\mathrm{Im}(\gamma(t))}dt$.  Such paths are necessarily either vertical lines or arcs on a semicircle that intersects the real axis in right angles.  For more background on hyperbolic geometry see \cite[Ch.~33]{voight}.
+\end{remark}
+
+
+We recall the following subgroups of $\SL_2(\Z)$, defined for each integer $N\ge 1$:
+\begin{align*}
+\Gamma(N)&:=\{\gamma\in \SL_2(\Z):\gamma\equiv \left(\begin{smallmatrix}1&0\\0&1\end{smallmatrix}\right)\bmod N\},\\
+\Gamma_1(N)&:=\{\gamma\in \SL_2(\Z):\gamma\equiv \left(\begin{smallmatrix}1&*\\0&1\end{smallmatrix}\right)\bmod N\},\\
+\Gamma_0(N)&:=\{\gamma\in \SL_2(\Z):\gamma\equiv \left(\begin{smallmatrix}*&*\\0&*\end{smallmatrix}\right)\bmod N\},
+\end{align*}
+and corresponding modular curves
+\[
+X(N):=\H^*/\Gamma(N),\qquad X_1(N):=\H^*/\Gamma_1(N),\qquad X_0(N):=\H^*/\Gamma_0(N).
+\]
+For any congruence subgroup $\Gamma$ we call the $\Gamma(1)$-translates of $\infty$ in $\H^*$ or $\H^*/\Gamma$ \emph{cusps}.
+
+\begin{center}
+\begin{tikzpicture}[scale=3]
+\fill[color=red!10] (-1,1) arc (90:120:1) -- (-1.5, 3) -- (-0.5,3) -- (-0.5,0.866) arc (60:90:1) -- cycle; 
+\fill[color=black!10] (0,1) arc (90:120:1) -- (-0.5, 3) -- (0.5,3) -- (0.5,0.866) arc (60:90:1) -- cycle; 
+\fill[color=blue!10] (1,1) arc (90:120:1) -- (0.5, 3) -- (1.5,3) -- (1.5,0.866) arc (60:90:1) -- cycle;
+
+\fill[color=cyan!10] (-1,0) arc (0:60:1) -- (-1.5,0.866) arc (120:60:1) -- (-0.5,0.866) arc (120:180:1) -- cycle;
+\fill[color=green!10] (0,0) arc (0:60:1) -- (-0.5,0.866) arc (120:60:1) -- (0.5,0.866) arc (120:180:1) -- cycle;
+\fill[color=orange!10] (1,0) arc (0:60:1) -- (0.5,0.866) arc (120:60:1) -- (1.5,0.866) arc (120:180:1) -- cycle;
+
+\fill[color=magenta!10] (-1,0) arc (180:120:1) -- (-0.5,0.866) -- (-0.5,0.287) arc (60:180:1/3) -- cycle;
+\fill[color=olive!10] (0,0) arc (0:60:1) -- (-0.5,0.866) -- (-0.5,0.287) arc (120:0:1/3) -- cycle;
+\fill[color=violet!10] (0,0) arc (180:120:1) -- (0.5,0.866) -- (0.5,0.287) arc (60:180:1/3) -- cycle;
+\fill[color=teal!10] (1,0) arc (0:60:1) -- (0.5,0.866) -- (0.5,0.287) arc (120:0:1/3) -- cycle;
+
+\draw [help lines,<->] (-2,0) -- (2,0);
+
+\begin{scope}[very thick,decoration={
+    markings,
+    mark=at position 0.5 with {\arrow{>}}}
+    ] 
+
+\draw[red,thick,postaction={decorate},->] (-1.5,0.866) -- (-1.5,3);
+\draw[red,thick,postaction={decorate}] (-1,1) arc(90:120:1);
+\draw[black,thick,postaction={decorate},->] (-0.5,0.866) -- (-0.5,3);
+\draw[black,thick,postaction={decorate}] (0,1) arc(90:120:1);
+\draw[blue,thick,postaction={decorate},->] (0.5,0.866) -- (0.5,3);
+\draw[blue,thick,postaction={decorate}] (1,1) arc(90:120:1);
+\draw[dotted,thin,postaction={decorate},->] (1.5,0.866) -- (1.5,3);
+
+\draw[dotted,thin,postaction={decorate}] (-1.5,0.866) arc(60:0:1);
+\draw[cyan,thick,postaction={decorate}] (-1,1) arc(90:60:1);
+\draw[cyan,thick,postaction={decorate}] (-0.5,0.866) arc(120:180:1);
+\draw[green,thick,postaction={decorate}] (0,1) arc(90:60:1);
+\draw[green,thick,postaction={decorate}] (0.5,0.866) arc(120:180:1);
+\draw[orange,thick,postaction={decorate}] (1,1) arc(90:60:1);
+\draw[orange,thick,postaction={decorate},] (1.5,0.866) arc(120:180:1);
+
+\draw[magenta,thick,postaction={decorate}] (-0.5,0.577) -- (-0.5,0.287);
+\draw[magenta,thick,postaction={decorate}] (-0.5,0.287) arc(60:180:1/3);
+\draw[olive,thick,postaction={decorate}] (-0.5,0.577) -- (-0.5,0.866);
+\draw[olive,thick,postaction={decorate}] (-0.5,0.866) arc(60:0:1);
+\draw[dotted,thin,postaction={decorate}] (-0.5,0.287) arc(120:0:1/3);
+
+\draw[violet,thick,postaction={decorate}] (0.5,0.577) -- (0.5,0.287);
+\draw[violet,thick,postaction={decorate}] (0.5,0.287) arc(60:180:1/3);
+\draw[teal,thick,postaction={decorate}] (0.5,0.577) -- (0.5,0.866);
+\draw[teal,thick,postaction={decorate}] (0.5,0.866) arc(60:0:1);
+\draw[dotted,thin,postaction={decorate}] (0.5,0.287) arc(120:0:1/3);
+
+\draw[] (-1,2) node[red] {{\footnotesize $\boldsymbol{T^{-1}}$}};
+\draw[] (0,2) node[black] {{\footnotesize $\boldsymbol I$}};
+\draw[] (1,2) node[blue] {{\footnotesize $\boldsymbol T$}};
+\draw[] (-1,0.75) node[cyan] {{\footnotesize $\boldsymbol{(ST)^2}$}};
+\draw[] (0,0.75) node[green] {{\footnotesize $\boldsymbol{S}$}};
+\draw[] (1,0.75) node[orange] {{\footnotesize $\boldsymbol{TS}$}};
+\draw[] (-0.67,0.46) node[magenta] {{\footnotesize $\boldsymbol{STS}$}};
+\draw[] (-0.35,0.46) node[olive] {{\footnotesize $\boldsymbol{ST}$}};
+\draw[] (0.31,0.46) node[violet] {{\footnotesize $\boldsymbol{(TS)^2}$}};
+\draw[] (0.67,0.46) node[teal] {{\footnotesize $\boldsymbol{TST}$}};
+
+\node[draw,circle,inner sep=0.5,fill] at (-1,1) {};
+\draw[] (-1,0.99) node[red,above] {{\scriptsize $i$}};
+\draw[] (-1,1.01) node[cyan,below] {{\scriptsize $i$}};
+\node[draw,circle,inner sep=0.5,fill] at (0,1) {};
+\draw[] (0,0.99) node[black,above] {{\scriptsize $i$}};
+\draw[] (0,1.01) node[green,below] {{\scriptsize $i$}};
+\node[draw,circle,inner sep=0.5,fill] at (1,1) {};
+\draw[] (1,0.99) node[blue,above] {{\scriptsize $i$}};
+\draw[] (1,1.01) node[orange,below] {{\scriptsize $i$}};
+\node[draw,circle,inner sep=0.5,fill] at (-0.5,0.577) {};
+\draw[] (-0.5,0.577) node[magenta,left] {{\scriptsize $i$}};
+\draw[] (-0.5,0.577) node[olive,right] {{\scriptsize $i$}};
+\node[draw,circle,inner sep=0.5,fill] at (0.5,0.577) {};
+\draw[] (0.5,0.577) node[violet,left] {{\scriptsize $i$}};
+\draw[] (0.5,0.577) node[teal,right] {{\scriptsize $i$}};
+
+\node[draw,circle,inner sep=0.5,fill] at (-1.5,0.866) {};
+\draw[] (-1.46,0.85) node[red,above] {{\scriptsize $\rho$}};
+\node[draw,circle,inner sep=0.5,fill] at (-0.5,0.866) {};
+\draw[] (-0.46,0.85) node[black,above] {{\scriptsize $\rho$}};
+\node[draw,circle,inner sep=0.5,fill] at (0.5,0.866) {};
+\draw[] (0.54,0.85) node[blue,above] {{\scriptsize $\rho$}};
+\draw[] (-0.58,0.85) node[cyan] {{\scriptsize $\rho$}};
+\draw[] (0.5,0.85) node[green,left] {{\scriptsize $\rho$}};
+\node[draw,circle,inner sep=0.5,fill] at (1.5,0.866) {};
+\draw[] (1.42,0.85) node[orange] {{\scriptsize $\rho$}};
+\node[draw,circle,inner sep=0.5,fill] at (-0.5,0.287) {};
+\draw[] (-0.545,0.287) node[magenta,above] {{\scriptsize $\rho$}};
+\draw[] (-0.46,0.78) node[olive] {{\scriptsize $\rho$}};
+\node[draw,circle,inner sep=0.5,fill] at (0.5,0.287) {};
+\draw[] (0.455,0.287) node[violet,above] {{\scriptsize $\rho$}};
+\draw[] (0.54,0.86) node[teal,below] {{\scriptsize $\rho$}};
+
+\node[draw,circle,inner sep=0.5,fill] at (-1,3) {};
+\draw[] (-1,2.87) node[red,above] {{\scriptsize $\infty$}};
+\node[draw,circle,inner sep=0.5,fill] at (0,3) {};
+\draw[] (0,2.87) node[black,above] {{\scriptsize $\infty$}};
+\node[draw,circle,inner sep=0.5,fill] at (1,3) {};
+\draw[] (1,2.87) node[blue,above] {{\scriptsize $\infty$}};
+
+\node[draw,circle,inner sep=1,fill] at (-1,0) {};
+\draw[] (-1,0.25) node[cyan,above] {{\scriptsize $\infty$}};
+\draw[] (-0.88,0.25) node[magenta,above] {{\scriptsize $\infty$}};
+\node[draw,circle,inner sep=1,fill] at (0,0) {};
+\draw[] (-0.12,0.25) node[olive,above] {{\scriptsize $\infty$}};
+\draw[] (0,0.25) node[green,above] {{\scriptsize $\infty$}};
+\draw[] (0.12,0.25) node[violet,above] {{\scriptsize $\infty$}};
+\node[draw,circle,inner sep=1,fill] at (1,0) {};
+\draw[] (0.88,0.25) node[teal,above] {{\scriptsize $\infty$}};
+\draw[] (1,0.25) node[orange,above] {{\scriptsize $\infty$}};
+
+\end{scope}
+
+\draw[] (-1.5,0.03) -- (-1.5,-0.03) node[below] {{\scriptsize -$\nicefrac{3}{2}$}};
+\draw[] (-1,0.03) -- (-1,-0.03) node[below] {{\scriptsize -$1$}};
+\draw[] (-0.5,0.03) -- (-0.5,-0.03) node[below] {{\scriptsize -$\nicefrac{1}{2}$}};
+\draw[] (0,0.03) -- (0,-0.03) node[below] {{\scriptsize $0$}};
+\draw[] (0.5,0.03) -- (0.5,-0.03) node[below] {{\scriptsize $\nicefrac{1}{2}$}};
+\draw[] (1,0.03) -- (1,-0.03) node[below] {{\scriptsize $1$}};
+\draw[] (1.5,0.03) -- (1.5,-0.03) node[below] {{\scriptsize $\nicefrac{3}{2}$}};
+\end{tikzpicture}
+\end{center}
+
+
+\begin{enumerate}[{\bf(a)}]
+\item
+Determine the index of $\Gamma(2)$ in $\Gamma(1)$, and the number of $\Gamma(2)$ cusp orbits.  Then give a connected fundamental region for $\H^*/\Gamma(2)$ by listing a subset of the translates of $\mathcal{F}$ in the diagram above and identify the cusps that lie in your region.  Compute the genus of $X(2)$ by triangulating your fundamental region and applying Euler's formula $V-E+F=2-2g$.  Be careful to count vertices and edges correctly ---  initially specify vertices and edges as $\H^*$-points in the diagram (e.g. $ST\rho$), then determine which vertices and edges are $\Gamma(2)$-equivalent (note that edges whose end points are equivalent need not be equivalent).
+Do the same for $\Gamma_0(2)$ and $X_0(2)$.
+
+\item
+For each of the following congruence subgroups, determine its index in $\Gamma(1)$, the number of cusp orbits, and a set of cusp representatives: $\Gamma_0(3)$, $\Gamma_1(3)$, $\Gamma(3)$.
+
+\item
+Prove that for each integer $N\ge 1$ we have an exact sequence
+\[
+1\longrightarrow \Gamma(N)\longrightarrow\SL_2(\Z)\longrightarrow \SL_2(\Z/N\Z)\longrightarrow 1.
+\]
+Show that in general one cannot replace $\SL_2$ with $\GL_2$ in the sequence above (so your proof for $\SL_2$ needs to use more than the fact that $\Z\to \Z/N\Z$ is surjective).
+
+\item
+Derive formulas for the index $[\Gamma(1):\Gamma]$ for $\Gamma=\Gamma(N)$, $\Gamma_1(N),\Gamma_0(N)$ and any $N\ge 1$.  Use the Euler function $\phi(N):=\#(\Z/N\Z)^\times$ where appropriate.
+\end{enumerate}
+
+For any congruence subgroup $\Gamma$, let $\nu_2(\Gamma)$ and $\nu_3(\Gamma)$ count the number of $\SL_2(\Z)$ translates of $i$ and $\rho$, respectively, that lie in a fundamental region of $\H^*$ for $\Gamma$ and are fixed by some $\gamma\in \Gamma$ other than $\pm I$.
+Let $\nu_\infty(\Gamma)$ be the number of cusp-orbits for $\Gamma$.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{4}
+\item
+For $\Gamma=\Gamma(p),\Gamma_1(p),\Gamma_0(p)$ derive formulas for $\nu_2(\Gamma),\nu_3(\Gamma),\nu_\infty(\Gamma)$, where $p$ is a prime (hint: show that for any $\delta\in \SL_2(\Z)$, if $\gamma\in \SL_2(\Z)-\{\pm I\}$ stabilizes $\delta i$ then it has trace $0$, and if it stabilizes $\delta\rho$ then it has trace $\pm 1$).
+\end{enumerate}
+
+Let $\overline{\Gamma}(N),\overline{\Gamma}_1(N),\overline{\Gamma}_0(N)$ denote the images of the groups $\Gamma(N),\Gamma_1(N),\Gamma_0(N)$ in $\PSL_2(\Z):=\SL_2(Z)/\{\pm I\}$ respectively, and for any congruence subgroup $\Gamma$ with image $\overline{\Gamma}$ in $\PSL_2(\Z)$ define
+\[
+\mu(\Gamma):=[\overline{\Gamma}(1):\overline{\Gamma}] = \begin{cases}
+[\Gamma(1):\Gamma] &\text{if }-I\in \Gamma\\
+[\Gamma(1):\Gamma]/2 &\text{if }-I\not\in \Gamma
+\end{cases}
+\]
+Using the Riemann-Hurwitz genus formula one can prove that for any congruence subgroup $\Gamma$ the genus of the modular curve $X_\Gamma:=\H^*/\Gamma$ is given by the formula
+\[
+g(X_\Gamma) = 1 + \frac{\mu(\Gamma)}{12} - \frac{\nu_2(\Gamma)}{4} - \frac{\nu_3(\Gamma)}{3} - \frac{\nu_\infty(\Gamma)}{2}.
+\]
+For convenience we may write $g(\Gamma)$ for $g(X_\Gamma)$.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{5}
+\item Use your answers to (d) and (e) to give asymptotic approximations for $g(\Gamma)$ for $\Gamma=\Gamma(p),\Gamma_1(p),\Gamma_0(p)$ and increasing primes $p$ that have an exact leading term (so of the form $f(p)+O(g(p))$ for some functions $f$ and $g$ with $g=o(f)$).
+Conclude that the set of primes $p$ for which $g(\Gamma)$ takes any fixed value is finite.
+\end{enumerate}
+
+Modular curves of genus 0 and 1 are of particular interest because we can use these curves to obtain infinite families of elliptic curves over $\Q$ (or a number field) that have particular properties, for example, a torsion point of order $p$.
+By Faltings' Theorem, over a number field a curve of genus $g\ge 2$ has only a finite number of rational points.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{6}
+\item For $\Gamma=\Gamma(p),\Gamma_1(p),\Gamma_0(p)$ determine the primes $p$ for which $g(\Gamma)=0$, and the primes $p$ for which $g(\Gamma)=1$.
+\end{enumerate}
+
+You may use Sage to check your answers (and gain intuition), but your proofs must stand on their own.  To create the congruence subgroups $\Gamma(N),\Gamma_1(N),\Gamma_0(N)$ in Sage use \texttt{Gamma(N)},\ \texttt{Gamma1(N)},\ \texttt{Gamma0(N)}, respectively.  The returned objects support \texttt{index()}, \texttt{nu2()}, \texttt{nu3()}, \texttt{cusps()}, and \texttt{genus()} methods that you may find useful.
+
+
+\subsection*{Problem 2. Non-congruence subgroups of finite index (98 points)}
+
+Recall that a \emph{congruence subgroup} is a subgroup of $\Gamma(1)=\SL_2(\Z)$ that contains $\Gamma(N)$ for some $N\ge 1$.
+Every congruence subgroup is a finite index subgroup of $\SL_2(\Z)$.
+In this problem you will prove that the converse does not hold; there exist finite index subgroups of $\SL_2(\Z)$ that are not congruence subgroups.
+\bigskip
+
+Let $\PSL_2(\Z):=\SL_2(\Z)/\{\pm I\}$, let $\alpha$ be the image of $S=\bigl(\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\bigr)$ in $\PSL_2(\Z)$, and let~$\beta$ be the image of $ST=\bigl(\begin{smallmatrix}0&-1\\1&1\end{smallmatrix}\bigr)$ in $\PSL_2(\Z)$.
+
+\begin{enumerate}[{\bf(a)}]
+\item
+Let $\mathbf{Z}_{2,3}$ be the finitely presented group with generators $x,y$ satisfying the relations $x^2=y^3=1$ (and no others).
+Prove that the map $\mathbf{Z}_{2,3}\to \PSL_2(\Z)$ defined by $x\mapsto \alpha$ and $y\mapsto \beta$ is an isomorphism.  You may find the diagram from Problem 1 helpful.
+\end{enumerate}
+
+Part (a) implies that for any finite group $H=\langle a,b\rangle$ with $|a|=2$ and $|b|=3$ we have a surjective group homomorphism
+\[
+\SL_2(\Z)\twoheadrightarrow\PSL_2(\Z)\twoheadrightarrow H,
+\]
+where the first map is quotient map $\SL_2(\Z)\to\PSL_2(\Z)$ and the second is the composition of the isomorphism $\PSL_2(\Z)\overset{\sim}{\longrightarrow} \mathbf Z_{2,3}$ and the surjective homomorphism $\mathbf{Z}_{2,3}\to H$ defined by $x\mapsto a$, $y\mapsto b$.
+The kernel $\Gamma_H$ of such a homomorphism is a finite index subgroup of $\SL_2(\Z)$.
+Our strategy is to show that for many finite groups $H=\langle a,b\rangle$, this kernel cannot contain $\Gamma(N)$ for any integer $N$, and is therefore not a congruence subgroup.
+To simplify matters, we will focus on cases where $H$ is a \emph{simple} group, meaning that $H$ is a non-trivial group that contains no normal subgroups other than the trivial group and itself.
+Every non-trivial finite group $G$ has a \emph{composition series}
+\[
+1=G_0 \triangleleft G_1\triangleleft \cdots\triangleleft G_{k-1}\triangleleft G_k = G
+\]
+in which each $G_i$ is a normal subgroup of $G_{i+1}$ and each quotient $G_{i+1}/G_i$ is simple.
+The quotients $G_{i+1}/G_i$ are called the \emph{simple factors} of $G$ (analogous to prime factors of an integer).
+This composition series is not unique, but the Jordan-H\"older theorem states that the simple factors $G_{i+1}/G_i$ that appear in any composition series for $G$ are unique up to isomorphism (and occur with the same multiplicity).
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item
+Prove that if a finite simple group $S$ is a quotient of $G$ (meaning $S=G/K$ for some $K\triangleleft G$) then $S$ is a simple factor of $G$ but that the converse does not hold in general.
+\item
+Prove that if a finite group $G$ is the direct product of non-trivial groups $H_1,\ldots, H_n$ then the factors of $G$ are precisely the factors of the $H_i$ (counted with multiplicity).
+Conclude that if $S$ is a simple quotient of $G$ then it is a quotient of one of the $H_i$.
+\item
+Prove part (c) of Problem 1.
+\item
+Let $N=p_1^{e_1}\cdots p_r^{e_r} > 1$ by with $p_1,\ldots,p_r$ distinct primes.  Prove that every simple quotient of $\SL_2(\Z/N\Z)$ is a simple quotient of $\SL_2(\Z/p_i^{e_i}\Z)$ for some $i$.
+\item
+Using the fact that $\PSL_2(\Z/p\Z)$ is a non-abelian simple group for primes $p\ge 5$, show that the simple factors of $\SL_2(\Z/p^e\Z)$ are: a cyclic group of order 2, $\PSL_2(\Z/p\Z)$, and $3e-3$ cyclic groups of order $p$, and that in particular, $\PSL_2(\Z/p\Z)$ is the unique non-abelian simple factor of $\SL_2(\Z/p^e\Z)$, for all primes $p\ge 5$.
+\item
+Using the fact that the alternating group $A_n$ is a non-abelian simple group for all $n\ge 5$, prove that $A_n$ is not a quotient of $\SL_2(\Z/N\Z)$ for any $N$ and any $n>5$.
+\item
+Using Sage, find elements $a$ of order 2 and $b$ of order 3 that generate $A_9$ and list them in cycle notation.
+You don't need to write down a proof that they generate $A_9$ but you should verify this in Sage.
+To create $A_9$ use \texttt{A9=AlternatingGroup(9)}, and to check whether $a$ and $b$ generate $A_9$ use \texttt{A9.subgroup([a,b]) == A9}.
+\end{enumerate}
+In fact, $A_n$ is generated by an element of order 2 and an element of order 3 for all $n\ge 9$ (see \cite{dw}), but you are not asked to prove this.
+It follows from the discussion after (a) that there is a surjective homomorphism $\SL_2(\Z)\twoheadrightarrow A_9$ that sends $\pm \alpha$ to $a$ and $\pm \beta$ to $b$.
+The kernel $\Gamma$ of this homomorphism is a finite index subgroup of $\SL_2(\Z)$.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{8}
+\item Prove that $\Gamma$ is not a congruence subgroup.
+\end{enumerate}
+We now want to construct a short list of generators for $\Gamma$.
+The first step is to convert the representation of $A_9$ with generators $a$ and $b$ of orders 2 and 3 into a finitely presented group that is a finite quotient of $\mathbf{Z}_{2,3}$ specified by relations.  To do this use the Sage command:
+\begin{lstlisting}
+H=A9.subgroup([a,b]).as_finitely_presented_group().simplified()
+\end{lstlisting}
+This may take a few seconds.  The second step is to plug $S$ and $ST$ into all the relations in the finite presentation of $H$ you created above.
+\textbf{Important}: Sage may swap the roles of $a$ and $b$ when it constructs the finite presentation -- check the relations to see if this happened (if you see $a^3$ and $b^2$ in the list of relations rather than $a^2$ and $b^3$ then you know they were swapped).
+Assuming $a^2$ and $b^3$ are the first two relations, you can use
+\begin{lstlisting}
+G=SL(2,Integers()); S=G([0,-1,1,0]); T=G([1,1,0,1])
+for i in range(2,len(H.relations())):
+	print(H.relations()[i].subs(a=S,b=S*T))
+\end{lstlisting}
+to get a list of matrices in $\SL_2(\Z)$ that, together with $S$ and $T$ generate $\Gamma$.
+Note that the length of the list you get will depend on your choice of $a$ and $b$, but shouldn't be more than 10 or 20 matrices (in fact one can do it with 4).
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{9}
+\item Record the number of matrices in your list above (not including $S$ and $T$), and a smallest and largest matrix in your list according to the $L^\infty$-norm (maximum of absolute values of matrix entries).
+\end{enumerate}
+
+\subsection*{Problem 3. Polycyclic presentations (98 points)}
+
+Let $\vec{\alpha}=(\alpha_1,\ldots,\alpha_k)$ be a sequence of generators for a finite abelian group $G$, and let
+$G_i=\langle\alpha_1,\ldots,\alpha_i\rangle$ be the subgroup generated by $\alpha_1,\ldots,\alpha_i$.
+The subnormal series
+\begin{equation*}
+1=G_0\ \triangleleft\  G_1\ \triangleleft\ \cdots\ \triangleleft\ G_{k-1}\ \triangleleft\ G_{k} = G,
+\end{equation*}
+is a \emph{polycyclic series}: each $G_{i-1}$ is a normal subgroup of $G_i$ and each of the quotients $G_i/G_{i-1}=\langle\alpha_iG_{i-1}\rangle$ is a cyclic group (which we don't require to have prime order, but one can always further decompose the series so that they are).
+Every finite solvable group admits a polycyclic series, but we restrict ourselves here to abelian groups (written multiplicatively).
+
+When $G$ is the internal direct product of the cyclic groups $\langle\alpha_i\rangle$, we have $G_i/G_{i-1}\cong\langle\alpha_i\rangle$ and call $\vec{\alpha}$ a \emph{basis} for $G$, but this is a special case.  For abelian groups, $G_i/G_{i-1}$ is isomorphic to a subgroup of $\langle\alpha_i\rangle$, but it may be a proper subgroup, even when $G$ is cyclic.
+
+The sequence $r(\vec{\alpha})=(r_1,\ldots,r_k)$ of \emph{relative orders} for $\vec{\alpha}$ is defined by
+\begin{equation*}
+r_i=|G_i:G_{i-1}|,
+\end{equation*}
+and satisfies $r_i=\min\{r:\alpha_i^r\in G_{i-1}\}$.
+We necessarily have $r_i\le |\alpha_i|$, but equality typically does not hold ($\vec{\alpha}$ is a basis precisely when $r_i=|\alpha_i|$ for all $i$).
+In any case, we always have $\prod_i r_i=|G|$, thus computing the $r_i$ determines the order of $G$.
+
+\begin{enumerate}[{\bf (a)}]
+\item
+Let $\vec{\alpha}=(\alpha_1,\ldots,\alpha_k)$ be a sequence of generators for a finite abelian group $G$, with relative orders $r(\vec{\alpha})=(r_1,\ldots,r_k)$.  Prove that every $\beta\in G$ can be uniquely represented in the form
+\[
+\beta = \vec{x}\cdot\vec{\alpha} = \alpha_1^{x_1} \cdots \alpha_k^{x_k},
+\]
+where each $x_i\in\Z$ satisfies $0\le x_i < r_i$.  Show that if $\beta=\alpha_i^{r_i}$, then $x_j=0$ for $j\ge i$.
+\end{enumerate}
+By analogy with the case $r=1$, we call $\vec{x}$ the \emph{discrete logarithm} of $\beta$ with respect to~$\vec{\alpha}$ (but note that  the discrete logarithm of the identity element is now the zero vector).
+The vector $\vec{x}$ can be conveniently encoded as an integer $x$ in the interval $[0,|G|-1]$ via
+\[
+x = \sum_{1\le i\le k}x_iN_i,\qquad\qquad N_i=\prod_{1\le j< i}r_j,
+\]
+and we may simply write $x=\log_{\vec{\alpha}}\beta$ to indicate that $x$ is the integer encoding the vector $\vec{x}=\log_{\vec{\alpha}}\beta$.
+Note that $x_i=\left\lfloor x/N_i\right\rfloor \bmod r_i$, so it is easy to recover $\vec{x}$ from its encoding $x$.
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{1}
+\item
+Design  a generic group algorithm that given generators $\vec{\alpha}=(\alpha_1,\ldots,\alpha_k)$ for a finite abelian group $G$, constructs a table $T$ with entries $T[0],...,T[|G|-1]$ with the property that if $T[n]=\beta$, then $n=\log_{\vec{\alpha}}\beta$.  Your algorithm should also output the relative orders~$r_i$, and the integers $s_i$ for which $T[s_i]=\alpha_i^{r_i}$.
+\end{enumerate}
+
+This allows us to compute a \emph{polycyclic presentation} for $G$, which consists of the sequence $\vec{\alpha}$, the relative orders $r(\vec{\alpha})=(r_1,\ldots,r_k)$, and the vector of integers $s(\vec{\alpha})=(s_1,\ldots,s_k)$.
+With this presentation in hand, we can effectively simulate any computation in $G$ without actually performing any group operations (i.e. calls to the black box).  This can be very useful when the group operation is expensive.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{2}
+\item Let $\vec{\alpha}$, $r(\vec{\alpha})$, and $s(\vec{\alpha})$ be a polycyclic presentation for a finite abelian group $G$.
+Given integers $x=\log_{\vec{\alpha}}\beta$ and $y=\log_{\vec{\alpha}}\gamma$, explain how to compute the integer $z=\log_{\vec{\alpha}}\beta\gamma$ using $r(\vec{\alpha})$ and $s(\vec{\alpha})$, without performing any group operations.
+Also explain how to compute the integer $w=\log_{\vec{\alpha}}\beta^{-1}$.
+\end{enumerate}
+
+As a side benefit, the algorithm you designed in part (b) gives a more efficient way to enumerate the class group $\cl(D)$ than we used in Problem Set 9, since the class number $h(D)$ is asymptotically on the order of $\sqrt{|D|}$ (this is a theorem of Siegel).
+
+But first we need to figure out how to construct a set of generators for~$G$.
+We will do this using \emph{prime forms}.  These are forms $f=(a,b,c)$ for which $a$ is prime and $-a < b \le a$ (but we do not require $a\le c$, so prime forms need not be reduced).
+Prime forms correspond to prime ideals whose norm is prime (degree-1 primes).
+Recall that imaginary quadratic orders $\O$ are determined by their discriminant $D$, which can always be written in the form $D=u^2D_K$, where $D_K$ is the discriminant of the maximal order $\O_K$ and $u=[\O_K:\O]$ is the conductor of $\O$.
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{3}
+\item
+Let $a$ be a prime.  Prove that if $a$ divides the conductor then there are no prime forms of norm $a$, and that otherwise there are exactly $1+(\frac{D}{a})$ prime forms of norm $a$, where $(\frac{D}{a})$ is the Kronecker symbol.\footnote{Thus $(\frac{D}{2})$ is 0 if $D$ is even, $1$ if $D\equiv 1\bmod 8$, and $-1$ if $D\equiv 5\bmod 8$.
+Note that we refer to $a$ as the "norm" of the form $(a,b,c)$, since the corresponding ideal has norm $a$.}
+Write a program that, given a prime $a$, either outputs a prime form $(a,b,c)$ with $b\ge 0$ or determines that none exist.
+\end{enumerate}
+
+When $D$ is fundamental, we can generate $\cl(D)$ using prime forms of norm at most $\sqrt{|D|/3}$; this follows from the bound proved in Problem Set 9 and the fact that the maximal order $\O_K$ is a Dedekind domain (so ideals can be uniquely factored into prime ideals).
+We can still generate $\cl(D)$ with prime forms when $D$ is non-fundamental, but bounding the primes involved is slightly more complicated, so we will restrict ourselves to fundamental discriminants for now.
+
+\begin{enumerate}[{\bf(a)}]
+\setcounter{enumi}{4}
+\item
+Implement the algorithm you designed in part (b), using the program from part~(d) to enumerate the prime forms of norm $a\le \sqrt{|D|/3}$ in increasing order by $a$.  Use the prime forms as generators, but use a table lookup to discard prime forms that are already present in your table so that your $\alpha_i$ all have relative orders $r_i > 1$ (\textbf{warning}: prime forms need not be reduced: be sure to reduce them before making any comparisons).
+For the group operation, you can create binary quadratic forms in Sage using \texttt{BinaryQF([a,b,c])}, and then compose forms $f$ and $g$ using \texttt{h=f*g}.  Use \texttt{h.reduced\_form()} to get the reduced form.
+You will only be using this code on small examples, so don't worry about the efficiency of your implementation.
+
+\item
+Run your algorithm on $D=-5291$, and then run it on the first fundamental discriminant $D<-N$, where $N$ is the first five digits of your student ID.
+Don't list all the elements of $\cl(D)$, just give the reduced forms for the elements of $\vec{\alpha}$ and the integer vectors $r(\vec{\alpha})$ and $s(\vec{\alpha})$.
+Sanity check your results by verifying that you at least get the right class number for $D$ (you can check this in Sage using \texttt{NumberField(x**2-D,'t').class\_number()}).
+
+\item
+Recall that every finite abelian group is isomorphic to a unique product of non-trivial cyclic groups $\Z/n_1\Z\times\Z/n_2\Z\times\cdots\times\Z/n_r\Z$ for which $n_1|n_2|\cdots|n_r$.
+The sequence of integers $(n_1,\ldots,n_r)$ are the \emph{invariant factors} of $G$ and uniquely identify its isomorphism class.  Design an algorithm that takes a polycyclic presentation for a finite abelian group $G$ as input and outputs its invariant factors along with a corresponding basis $\alpha_1,\ldots,\alpha_r$ for $G$ with $|\alpha_i|=n_i$.
+
+\item Use your algorithm from part (g) to compute the invariant factors of the two class groups you computed in part (f), along with corresponding generators. Express each generator as a reduced form and give its discrete logarithm with respect to the generators for the polycyclic presentations you computed in part (f).  
+\end{enumerate}
+
+\subsection*{Problem 4. Survey (2 points)}
+
+Complete the following survey by rating each of the problems you attempted on a scale of 1 to~10 according to how interesting you found the problem (1 = ``mind-numbing," 10 = ``mind-blowing"), and how difficult you found it (1 = ``trivial," 10 = ``brutal").  Also estimate the amount of time you spent on each problem to the nearest half hour.
+
+\begin{center}
+\begin{tabular}{l|r|r|r|}
+& Interest & Difficulty & Time Spent\\\hline
+Problem 1 & & & \\\hline
+Problem 2 & & & \\\hline
+Problem 3 & & & \\\hline
+\end{tabular}
+\end{center}
+\noindent
+Also, please rate each of the following lectures that you attended, according to the quality of the material (1=``useless", 10=``fascinating"), the quality of the presentation (1=``epic fail", 10=``perfection"), the pace (1=``way too slow", 10=``way too fast", 5=``just right") and the novelty of the material (1=``old hat", 10=``all new").
+
+\begin{center}
+\begin{tabular}{l|l|r|r|r|r|r}
+Date & Lecture Topic & Material & Presentation & Pace & Novelty\\\hline
+4/28 & The modular equation & & & & \\\hline 
+5/3 & The Hilbert class polynomial & & & & \\\hline 
+\end{tabular}
+\end{center}
+
+\noindent
+Please feel free to record any additional comments you have on the problem sets or lectures, in particular, ways in which they might be improved.
+
+\begin{thebibliography}{}
+\bibitem{dw}
+I.M.S. Dey and J. Wiegold, \href{https://doi.org/10.1017/S1446788700008302}{\textit{Generators for alternating and symmetric groups}}, J. Australian Mathematical Society \textbf{12} (1971), 63--68.
+\bibitem{voight}
+J. Voight, \href{https://math.dartmouth.edu/~jvoight/quat-book.pdf}{\textit{Quaternion algebras}}, Springer, 2021.
+\end{thebibliography}
+
+\end{document}

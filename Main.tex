@@ -8,6 +8,7 @@
 
 \newtheorem{definition}{Definizione}
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{proposition}[section]
 
 \title{Curve Ellittiche}
 \author{Applebee Kelly}
@@ -261,7 +262,7 @@ Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota com
 \begin{center}
     \begin{tabular}{|c|c|c|}
         \hline
-        TDEA, AES  & \textit{RSA e DH} & \textit{ECC}\\
+        \textit{TDEA, AES} & \textit{RSA e DH} & \textit{ECC}\\
         (bit della chiave) & (bit del modulo) & (bit dell'ordine)\\
         \hline
         80 & 1024 & 160 \\
@@ -272,6 +273,135 @@ Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota com
         \hline
     \end{tabular}
 \end{center}
+
+\subsection{Problema del logaritmo discreto}
+\label{sec: Discrete Logarithm}
+Il problema del logaritmo discreto ellittico (ECDLP) richiede di trovare 
+un intero $m$ tale che
+\begin{equation}
+    mP = Q
+\end{equation}
+per dati punti $P, Q \in E(\mathbb{F}_q)$.
+Questo problema viene considerato computazionalmente difficile: 
+i migliori algoritmi noti, come Pollard's $\rho$ e Baby-step Giant-step, 
+hanno complessità $O(\sqrt{n})$, dove $n$ è l'ordine del punto $P$. 
+Inoltre, è stato dimostrato che nessun algoritmo generico può 
+superare questo limite \cite{silverman}
+
+\subsection{Algoritmi di attacco}
+\begin{theorem}[Baby-step Giant-step -- Shanks]
+    Dato un gruppo $G$, siano $x, y \in G$ e $n$ l'ordine di $x$. 
+    Il seguente algoritmo risolve il PLD in $O(\sqrt{n})$ operazioni 
+    e $O(\sqrt{n})$ spazio \cite{silverman}:
+\end{theorem}
+
+\begin{enumerate}
+    \item Poniamo $N = \lceil \sqrt{n} \rceil$.
+    \item Calcoliamo i \textit{babystep}:
+    \begin{equation}
+        x,\ x^2,\ x^3,\ \dots,\ x^N.
+    \end{equation}
+    \item Poniamo $z = (x^N)^{-1}$ e calcoliamo i \textit{giantstep}:
+    \begin{equation}
+        yz,\ yz^2,\ yz^3,\ \dots,\ yz^N.
+    \end{equation}
+    \item Se esiste un'uguaglianza $x^i = yz^j$ tra le due liste, 
+    allora $y = x^{i + jN}$; altrimenti $y$ non è una potenza di $x$.
+\end{enumerate}
+La dimostrazione si può trovare in \cite{silverman}.
+\begin{proposition}[Pohlig-Hellman attack]
+    L'algoritmo di Pohlig-Hellman \cite{Hankerson} riduce l'ECDLP 
+in un gruppo di ordine $n$ a sottoproblemi nei sottogruppi di ordine 
+primo di $\langle P \rangle$, utilizzando il Teorema Cinese del Resto 
+per ricostruire la soluzione. La complessità dell'algoritmo dipende 
+dal fattore primo più grande di $n$: se $n$ è $B$-smooth, l'attacco 
+diventa efficiente. Per questa ragione, i parametri della curva 
+devono essere scelti in modo che $n$ sia divisibile da un primo grande.
+\end{proposition}
+
+\chapter{Protocolli basati su Curve Ellittiche}
+In questa sezione si affronteranno due protocolli applicati alle curve ellittiche: \textit{firma digitale} e \textit{cifratura integrata}
+\section{Firma digitale}
+Con lo sviluppo di internet si sono venuti a creare nuovi problemi, quelli che verranno discussi in questa sezione sono:
+\begin{itemize}
+\item \textbf{Identificazione}: un sistema di elaborazione deve essere in grado di accertare l'identità di un utente che richiede di accedere ai suoi servizi.
+\item \textbf{Autenticazione}: il destinatario di un messaggio deve essere in grado di accertare l'identità del mittente e l'integrità del crittogramma ricevuto.
+\end{itemize}
+Le firme digitali sono utilizzate per rappresentare una versione digitale della firma cartacea. Queste sono rappresentate da un numero basato su un segreto noto solamente all'utente che intende firmare (chiave privata), e in aggiunta sul contenuto del documento che viene firmato.
+Un aspetto fondamentale delle firme digitali è che ogni firma deve essere verificabile — se dovesse sorgere una controversia, un'entità terza imparziale deve essere in grado di risolvere la questione in modo equo senza la necessità di avere accesso alla chiave privata del mittente. Queste dispute possono sorgere nei seguenti casi:
+\begin{itemize}
+\item il mittente intende negare di aver firmato un messaggio da lui effettivamente firmato.
+\item il destinatario sostiene di aver ricevuto un messaggio diverso da quello inviatogli dal mittente.
+\end{itemize}
+La proprietà di sicurezza fondamentale di uno schema di firma digitale è l'\textit{existential unforgeability under chosen-message attack}: un attaccante in grado di ottenere la firma dell'utente \textit{A} per qualunque messaggio a sua scelta non deve essere in grado di falsificare la firma di \textit{A} su un nuovo messaggio. \cite{Johnson}
+\subsection{Generazione delle chiavi per comunicare}
+
+\subsubsection{prerequisiti}
+Per assicurarsi di utilizzare una curva ellittica che non sia vulnerabile ad attacchi crittografici noti è importante tenere in considerazione questi aspetti quando durante la scelta della curva:
+\begin{enumerate}
+    \item un campo finito di ordine \textit{q}, dove o $q = p\footnote{\textit{p} rappresenta la caratteristica del campo, importante quando si tratta campi come $F_{2^m}$}$, un numero primo dispari, oppure $q = 2^m$
+    \item un'indicazione FR (\textit{field representation}) della rappresentazione usata per gli elementi di $\mathbb{F}_q$
+    \item due elementi \textit{a}, \textit{b} che definiscono la curva ellittica \textit{E} definita su $\mathbb{F}_q$ (es. $y^2 = x^3 + ax + b$ nel caso di $p > 3$, e $y^2 + xy = x^3 + ax^2 + b$ in caso $p = 2$)
+    \item due elementi del campo $x_G$ e $y_G$ su $\mathbb{F}_q$ i quali definiscono un punto finito $G = (x_G, y_G)$ di ordine primo in $E(\mathbb{F}_q)$
+    \item l'ordine \textit{n} del punto \textit{G}, con $n > 2^160$ e $n > 4\sqrt{q}$
+    \item il cofattore $h = \frac{\#E(\mathbb{F}_q)}{n}$
+\end{enumerate}
+Per una spiegazione più dettagliata della motivazione dietro alla scelta di questi requisiti consultare \cite{Johnson}
+
+\subsubsection{calcolo effettivo}
+Le coppie di chiavi di un dato utente \textit{A, chiave publbica - chiave privata} sono associate ad un insieme specifico dei parametri del dominio di una curva ellittica denominati $D = (q, FR, a, b, G, n, h)$, i valori che questi devono assumeri sono stati discussi precedentemente. È necessario che ogni utente si assicuri che i parametri del dominio siano validi prima della creazione delle chiavi \cite{Johnson}
+Per generare una coppia di chiavi, \textit{pubblica - privata}, ogni utente deve seguire tre passi:
+\begin{enumerate}
+    \item Selezionare un numero casuale, o pseudo-casuale, \textit{d} compreso nell'intervallo $[1, n - 1]$.
+    \item Calcolare $Q = dG$.
+    \item La chiave privata dell'utente è \textit{Q}; la chiave pubblica è \textit{d}
+\end{enumerate}
+\subsection{Verifica della chiave pubblica}
+
+Per validare una chiave pubblica \textit{Q} ricevuta da un utente \textit{A}, si possono usare uno di questi metodi:
+\begin{enumerate}
+    \item \textit{A} utilizza un algoritmo di validazione delle chiavi pubbliche, come \ref{sec: validare_chiave_pubblica}
+    \item \textit{A} genera \textit{Q} utilizzando un sistema affidabile
+    \item \textit{A} riceve conferma da un'entità affidabile \textit{T} la quale ha validato la chiave utilizzando un algoritmo simile a \ref{sec: validare_chiave_pubblica}
+    \item \textit{A} riceve conferma da un'entità affidabile \textit{T} che \textit{Q} è stato generato utilizzando un sistema affidabile
+\end{enumerate}
+
+\subsubsection{Algoritmo di validazione della chiave pubblica}
+\label{sec: validare_chiave_pubblica}
+INPUT: Una chiave pubblica $Q = (x_Q, y_Q)$ associata a parametri di dominio validi \textit{(q, FR, a, b, G, n, h)}.
+\\ OUTPUT: Accettazione o rifiuto della validità di \textit{Q}.
+\begin{enumerate}
+    \item Controllare che $Q \neq O$
+    \item Controllare che $x_Q$ e $y_Q$ sono elementi correttamente rappresentati su $\mathbb{F}_q$ (es., interi compresi nell'intervallo $[0, p - 1]$ nel caso $q = p$, e stringhe di bit di lunghezza \textit{m} nel caso di $q = 2^m$).
+        \item Controllare che \textit{Q} appartiene alla curva ellittica definita da \textit{a} e \textit{b}
+        \item Controllare che $nQ = O$
+        \item Se qualunque di questi controlli risultano falsi, allora \textit{Q} \textit{non è valido}; altrimenti
+\end{enumerate}
+
+\subsection{Creazione di una firma digitale}
+Per firmare un messaggio \textit{m}, un utente \textit{A} con parametri di dominio $D = (q, FR, a, b, G, n, h)$ con chiavi \textit{(d, Q)} deve seguire i seguenti passaggi:
+\begin{enumerate}
+    \item Selezionare un numero casuale, o pseudocasuale, \textit{k} all'interno dell'intervallo $1 \leq k \leq n - 1$.
+    \item Calcolare $kG = (x_1, y_1) \text{e convertire } x_1 \text{ in un intero } \bar{x}_1 $.
+    \item Calcolare $r = x_1 \mod n$. Se $r = 0$ allora tornare allo step 1.
+    \item Calcolare $k^{-1} \mod n$.
+    \item Calcolare SHA-1(\textit{m})e convertire la stringa di bit in un intero \textit{e}.
+    \item Calcolare $s = k^{-1}(e + dr) \mod n$. Se $s = 0$ allora tornare allo step 1.
+    \item La firma dell'utente \textit{A} per il messaggio \textit{m} è  \textit{(r, s)}.
+\end{enumerate}
+
+\subsection{Verifica di una firma digitale}
+Per verificare la firma \textit{(r, s)} dell'utente \textit{A} per il messaggio \textit{m}, l'utente \textit{B} ottiene una copia autentica dei parametri di dominio di $A: D = (q, FR, a, b, n, h)$ e la chiave pubblica \textit{Q} ad esso associata.
+\\ Una volta validati sia \textit{B} che \textit{Q} (per una dimostrazione formale consultare \cite{Johnson}), \textit{B} deve procedere in questa maniera:
+\begin{enumerate}
+    \item Verificare che \textit{r} e \textit{s} siano interi che appartengono all'intervallo $[1, n - 1]$.
+    \item Calcolare SHA-1(\textit{m}) e convertire la string di bit in un intero \textit{e}.
+    \item Calcolare $w = s^{-1} \mod n$.
+    \item Calcolare $w_1 = ew \mod n \text{e} w_2 = rw \mod n$.
+    \item Calcolare $X = w_1G + u_2Q$.
+    \item Se $X = O$, allora rifiutare la firma. Altrimenti conertire la coordinata \textit{x} di \textit{X} in un intero $\bar x_1$ e calcolare $v = \bar{x_1} \mod n$
+    \item Accettare la firma solo e soltanto se $v = r$
+\end{enumerate}
 
 \begin{thebibliography}{9}
 
@@ -290,7 +420,13 @@ Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota com
     Enciclopedia Treccani, \textit{Punto all'infinito},
     \url{https://www.treccani.it/enciclopedia/punto-all-infinito_(Enciclopedia-della-Matematica)/},
     consultato il \today.
+    \bibitem{Hankerson}
+    Darrel Hankerson, Alfred Menezes, Scott Vanstone \textit{Guide to Elliptic Curve Cryptography}, Springer, 2004
 
+    \bibitem{Biryukov}
+    Alex Biryukov, \textit{Encyclopedia of Cryptography, Security and Privacy}, Springer, 2025
+    \bibitem{Johnson}
+    Don Johnson, Alfred Menezes, Scott Vanstone \textit{The Elliptic Curve Digital Signature Algorithm (ECDSA)}, Springer, 2001
 \end{thebibliography}
 
 \end{document}
