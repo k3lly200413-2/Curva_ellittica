@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.5.9)  19 JUL 2026 20:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.5.9)  21 JUL 2026 23:53
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -550,6 +550,11 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 {C:/Users/Kellylap/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Chapter 1.
 
+Overfull \hbox (4.4447pt too wide) in paragraph at lines 53--62
+[]\OT1/cmr/m/n/12 Uno dei di-versi mod-elli di at-tacco crit-tografico ^^Re noto come \OT1/cmr/m/it/12 known-plaintext
+ []
+
+
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
@@ -573,40 +578,60 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 
 [6
 
-] [7] [8] [9] [10] [11] [12]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 468.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 468.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 468.
-
-
-Overfull \hbox (82.18256pt too wide) in paragraph at lines 526--527
- [][] 
- []
-
-[13] [14
+] [7
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.554 \end{equation}
-                    ] [15]
+l.250     \begin{equation}
+                          ] [8] [9
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.364 
+      ] [10
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.381 \end{equation}
+                    ] [11
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.432 \begin{definition}
+                        ]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 451.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 451.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 451.
+
+[12]
+Overfull \hbox (82.18256pt too wide) in paragraph at lines 509--510
+ [][] 
+ []
+
+[13
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.530 \end{center}
+                  ] [14] [15]
 Chapter 3.
 [16
 
 ] [17]
-Overfull \hbox (17.85004pt too wide) in paragraph at lines 627--628
+Overfull \hbox (17.85004pt too wide) in paragraph at lines 612--613
 []\OT1/cmr/m/n/12 Selezionare un nu-mero ca-suale, o pseudo-casuale, \OT1/cmr/m/it/12 d \OT1/cmr/m/n/12 com-preso nell'intervallo
  []
 
 [18]
-Overfull \hbox (17.88478pt too wide) in paragraph at lines 656--657
+Overfull \hbox (17.88478pt too wide) in paragraph at lines 641--642
 []\OT1/cmr/m/n/12 Selezionare un nu-mero ca-suale, o pseu-do-ca-suale, \OT1/cmr/m/it/12 k \OT1/cmr/m/n/12 all'interno dell'intervallo
  []
 
@@ -614,78 +639,83 @@ Overfull \hbox (17.88478pt too wide) in paragraph at lines 656--657
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.709 \begin{enumerate}
+l.694 \begin{enumerate}
                        ]
-Overfull \hbox (6.25583pt too wide) in paragraph at lines 742--744
+Overfull \hbox (6.25583pt too wide) in paragraph at lines 727--729
 \OT1/cmr/m/n/12 tiene una copia au-t-en-tica dei parametri di do-minio di $\OML/cmm/m/it/12 A \OT1/cmr/m/n/12 : \OML/cmm/m/it/12 D \OT1/cmr/m/n/12 = (\OML/cmm/m/it/12 q; FR; a; b; n; h\OT1/cmr/m/n/12 )$
  []
 
 [21] [22]
-Overfull \hbox (3.02925pt too wide) in paragraph at lines 769--770
+Overfull \hbox (3.02925pt too wide) in paragraph at lines 754--755
 []\OT1/cmr/m/n/12 Alice deve gener-are una cop-pia di chi-avi ef-fimera com-posta dall'elemento
  []
 
-[23] [24]
+[23] [24
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.839 \chapter
+              {ECC nei Dispositivi IoT}]
 Chapter 4.
 
-Overfull \hbox (4.54457pt too wide) in paragraph at lines 867--868
+Overfull \hbox (4.54457pt too wide) in paragraph at lines 853--854
 []\OT1/cmr/m/n/12 Wireless con-nec-tiv-ity: Wi-Fi: 802.11 b/g/n + Blue-tooth: v4.2 BR/EDR
  []
 
 [25
 
 ]
-Overfull \hbox (25.83736pt too wide) in paragraph at lines 882--895
+Overfull \hbox (25.83736pt too wide) in paragraph at lines 868--881
 \OT1/cmr/m/n/12 Questo ^^Re con-fer-mato da mis-urazioni di-rette su hard-ware AVR: un'implementazione
  []
 
-Package pgfplots info on input line 924: Using 'lua backend=false' for axis: x coord trafo unsupported.
+Package pgfplots info on input line 907: Using 'lua backend=false' for axis: x coord trafo unsupported.
 [26]
-Package pgfplots info on input line 954: Using 'lua backend=false' for axis: x coord trafo unsupported.
+Package pgfplots info on input line 942: Using 'lua backend=false' for axis: x coord trafo unsupported.
  [27
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4.1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.962 
+l.950 
       ] [28
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.979 \section
+l.967 \section
               {Protocolli di comunicazione}]
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 1053.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 1041.
  (C:\Users\Kellylap\AppData\Local\Programs\MiKTeX\tex/latex/base\omscmr.fd
 File: omscmr.fd 2024/11/19 v2.5n Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1053.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1041.
  [29] [30
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1088 \end{verbatim}
+l.1076 \end{verbatim}
                      ]
-Overfull \hbox (66.48727pt too wide) in paragraph at lines 1121--1125
+Overfull \hbox (66.48727pt too wide) in paragraph at lines 1109--1113
 [][] 
  []
 
 
-Overfull \hbox (65.8345pt too wide) in paragraph at lines 1127--1131
+Overfull \hbox (65.8345pt too wide) in paragraph at lines 1115--1119
 [][] 
  []
 
 
-Overfull \hbox (87.21477pt too wide) in paragraph at lines 1133--1137
+Overfull \hbox (87.21477pt too wide) in paragraph at lines 1121--1125
 [][] 
  []
 
 [31]
-Overfull \hbox (32.47505pt too wide) in paragraph at lines 1140--1144
+Overfull \hbox (32.47505pt too wide) in paragraph at lines 1128--1132
 [][] 
  []
 
 
-Overfull \hbox (100.23698pt too wide) in paragraph at lines 1146--1150
+Overfull \hbox (100.23698pt too wide) in paragraph at lines 1134--1138
 [][] 
  []
 
@@ -694,29 +724,34 @@ Chapter 5.
 [33
 
 ] [34]
-Underfull \hbox (badness 7099) in paragraph at lines 1247--1250
+Underfull \hbox (badness 7099) in paragraph at lines 1236--1239
 []\OT1/cmr/m/n/12 Espressif Sys-tems, \OT1/cmr/m/it/12 mbedTLS -- ESP-IDF Pro-gram-ming Guide\OT1/cmr/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1247--1250
+Underfull \hbox (badness 10000) in paragraph at lines 1236--1239
 []$\OT1/cmtt/m/n/12 https : / / docs . espressif . com / projects / esp-[]idf / en / stable / esp32 /
  []
 
 
-Underfull \hbox (badness 3690) in paragraph at lines 1252--1257
+Underfull \hbox (badness 2418) in paragraph at lines 1236--1239
+\OT1/cmtt/m/n/12 api-[]reference / protocols / mbedtls . html$[]\OT1/cmr/m/n/12 , con-sul-tato il 2 Giugno,
+ []
+
+
+Underfull \hbox (badness 3690) in paragraph at lines 1241--1246
 []\OT1/cmr/m/n/12 Espressif Sys-tems, \OT1/cmr/m/it/12 ESP32 Tech-ni-cal Ref-er-ence Man-ual\OT1/cmr/m/n/12 , Ver-sion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1252--1257
+Underfull \hbox (badness 10000) in paragraph at lines 1241--1246
 \OT1/cmr/m/n/12 5.4, []$\OT1/cmtt/m/n/12 https : / / documentation . espressif . com / esp32 _ technical _
  []
 
 [35
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 1259--1263
+Underfull \hbox (badness 10000) in paragraph at lines 1248--1252
 []$\OT1/cmtt/m/n/12 https : / / csa-[]iot . org / wp-[]content / uploads / 2023 / 10 / Matter-[]1 .
  []
 
@@ -729,17 +764,17 @@ Package rerunfilecheck Info: File `Main.out' has not changed.
 (rerunfilecheck)             Checksum: 425B4632F04887B2824DC75372064785;6988.
  ) 
 Here is how much of TeX's memory you used:
- 32731 strings out of 467691
- 779273 string characters out of 5413536
- 1317966 words of memory out of 5000000
- 61083 multiletter control sequences out of 15000+600000
+ 32733 strings out of 467691
+ 779263 string characters out of 5413536
+ 1320525 words of memory out of 5000000
+ 61079 multiletter control sequences out of 15000+600000
  642649 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  102i,20n,107p,776b,2409s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Kellylap\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb><C:/Users/Kellylap/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Main.pdf (37 pages, 451717 bytes).
+Output written on Main.pdf (37 pages, 445633 bytes).
 PDF statistics:
- 705 PDF objects out of 1000 (max. 8388607)
- 231 named destinations out of 1000 (max. 500000)
+ 717 PDF objects out of 1000 (max. 8388607)
+ 237 named destinations out of 1000 (max. 500000)
  341 words of extra memory for PDF output out of 10000 (max. 10000000)
 

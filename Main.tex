@@ -35,7 +35,7 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}{proposition}[section]
 
-\title{Curve Ellittiche}
+\title{Curve Ellittiche \\ \large Dalla Teoria alle Applicazioni IoT}
 \author{Applebee Kelly}
 \date{Maggio 2026}
 
@@ -46,11 +46,11 @@
 \chapter{Introduzione}
 La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate, tra cui i dispositivi IoT.
 
-La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicata senza utilizzare canali non protetti ( di solito comunicata in persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
+La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicata senza utilizzare canali non protetti ( di solito comunicata di persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
 
 La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usata per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
 
-L'attacco più comune compiuto contro sistemi a chiave pubblica si chiama \textit{known-plaintext}\ \cite{Biryukov}.
+Uno dei diversi modelli di attacco crittografico è noto come \textit{known-plaintext}\ \cite{Sabrina}.
 \\Si consideri il seguente scenario: due utenti vogliono comunicare attraverso un canale non sicuro,
 perciò utilizzano un cifrario per nascondere i messaggi inviati.
 \\Nonostante le precauzioni consideriamo l'evento in cui un attaccante sia stato in grado di accedere
@@ -60,7 +60,7 @@ Date abbastanza coppie diventa triviale risalire al messaggio originale dato un 
 crittogramma non visto prima di allora.
 \\Un esempio di known-plaintext attack è \textit{probable word}
 
-Alcuni degli algoritmi più popolari che utilizzano le chiavi pubbliche che rimangono al giorno d'oggi inviolati sono RSA e Diffie-Hellman;
+RSA e Diffie-Hellman, se implementati correttamente e con parametri adeguati, sono ancora considerati sicuri contro gli attacchi pratici noti.
 
 \section{Campi}
 Prima di parlare di algoritmi crittografici è necessario introdurre alcuni concetti matematici, primo tra i quali i \textit{campi}.
@@ -117,7 +117,7 @@ Un Destinatario deve compiere queste operazioni in modo da creare le chiavi pubb
 \begin{enumerate}
 	\item scegliere due numeri primi molto grandi p, q
 	
-	\item calcolare $n = p \cdot q $ e $\Phi (n) = (p - 1)*(q - 1)$
+	\item calcolare $n = p \cdot q $ e $\Phi (n) = (p - 1)\cdot(q - 1)$
 	
 	\item scegliere un numero intero e minore di $\Phi (n)$ e primo con esso
 
@@ -194,7 +194,7 @@ A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due 
     \caption{Scambio di chiavi Diffie-Hellman.}
 \end{figure}
 
-La sicurezza di questo protocollo è data dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ rispetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$.
+La sicurezza di questo protocollo è data dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ rispetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$ \ref{sec:logaritmo_discreto}.
 
 \chapter{Curve Ellittiche}
 \section{Curve ellittiche su $\mathbb{R}$}
@@ -217,6 +217,7 @@ appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui e
         \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
             plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
     \end{tikzpicture}
+    \caption{Raffigurazione di una curva ellittica}
 \end{figure}
 
 \subsection{Caratteristiche curve ellittiche}
@@ -252,39 +253,6 @@ appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui e
 Ponendo $Z = 0$ si ottiene $X = 0$, da cui il punto all'infinito è 
 $\mathcal{O} = [0:1:0]$ \cite{silverman}.
 
-
-\begin{tikzpicture}[scale=1, every node/.style={font=\sffamily}]
-    \centering
-    \begin{scope}
-    \clip (-2.6,-4.3) rectangle (3.0,4.3);
- 
-    % assi
-    \draw[black!70, ->] (-2.6,0) -- (3.0,0) node[right] {$x$};
-    \draw[black!40, -] (0,-4.0) -- (0,4.0);
- 
-    % curva y^2 = x^3 - 3x + 3
-    \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
-        plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
-    \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
-        plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
- 
-    % retta verticale per P e -P, con frecce ad entrambe le estremita'
-    \draw[red!60!orange!80!black , thick, <->] (1,-4.1) -- (1,4.1);
- 
-    % etichette O ad entrambe le estremita' (stesso punto sul piano proiettivo)
-    \node[red!60!orange!80!black ] at (1.35,3.85) {$\mathcal{O}$};
-    \node[red!60!orange!80!black ] at (1.35,-3.85) {$\mathcal{O}$};
- 
-    % punti P e -P
-    \filldraw[black] (1,1) circle (1.8pt) node[above right=1pt] {$P$};
-    \filldraw[black] (1,-1) circle (1.8pt) node[below right=1pt] {$-P$};
- 
-    \node[black, align=left, font=\sffamily\small] at (-1.1,-3.3)
-        {$P+(-P)=\mathcal{O}$};
-\end{scope}
-\end{tikzpicture}
- 
-
 \subsection{Somma su curve ellittiche}
 \label{sec:Somma}
 
@@ -292,7 +260,8 @@ $\mathcal{O} = [0:1:0]$ \cite{silverman}.
     Ogni retta interseca una curva ellittica in al più tre punti \cite{Margara}
 \end{definition}
 
-Dalla definizione sopra si può dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R} nel caso $P \neq Q$; altrimenti la retta interseca soltanto due punti. \\Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
+A questo si aggiunge un secondo fatto, non implicato dalla definizione precedente: se una retta interseca una curva $E(a, b)$ in due punti distinti \textit{P} e \textit{Q}, allora interseca sempre anche un terzo punto \textit{R}.
+\\Se la retta è invece verticale, oltre ai punti \textit{P} e \textit{Q} essa interseca anche il punto all'infinito $\mathcal{O}$, che viene considerato come terzo punto di intersezione.
 \\Dati tre punti \textit{P, Q, R} di una curva ellittica $E(a, b)$ se \textit{P, Q} e \textit{R} sono disposti su una retta, allora la loro somma si pone uguale al punto all'infinito:
 \begin{equation}
     P + Q + R = \mathcal{O}
@@ -325,28 +294,39 @@ $-\mathcal{O} = \mathcal{O}$ (essendo l'elemento neutro), si ottiene:
 \begin{equation}
     P + Q = P + (-P) = \mathcal{O}
 \end{equation}
+
 \begin{figure} [H]
     \centering
-    \begin{tikzpicture}[scale=1]
-        \draw[black!70, ->] (-4, 0) -- (4.0, 0) node[right] {$x$};
-        \draw[black!70, ->] (0, -4.0) -- (0, 4.0) node[above] {$y$};
+    \begin{tikzpicture}[scale=1, every node/.style={font=\sffamily}]
+        \begin{scope}
+        \clip (-2.6,-4.3) rectangle (3.0,4.3);
+    
+        % assi
+        \draw[black!70, ->] (-2.6,0) -- (3.0,0) node[right] {$x$};
+        \draw[black!40, -] (0,-4.0) -- (0,4.0);
+    
+        % curva y^2 = x^3 - 3x + 3
         \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
             plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
         \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
             plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
-            % retta secante per P e Q, prolungata fino a toccare R
-            \draw[red!60!orange!80!black , thin]
-                (-2.4, {2.236 - 0.3467*(-2.4+1)}) -- (2.4, {2.236 - 0.3467*(2.4+1)});
-
-            % riflessione verticale da R a -R = P+Q
-            \draw[black!60, dashed] (-0.380, 2.021) -- (-0.380, -2.021);
-
-            % punti
-            \filldraw[black] (-1, 2.236) circle (1.6pt) node[above left=1pt] {$P$};
-            \filldraw[black] (1.5, 1.369) circle (1.6pt) node[above right=1pt] {$Q$};
-            \filldraw[black] (-0.380, 2.021) circle (1.6pt) node[above=2pt] {$R$};
-            \filldraw[orange] (-0.380, -2.021) circle (1.6pt) node[below=2pt] {$P+Q=-R$};
+    
+        % retta verticale per P e -P, con frecce ad entrambe le estremita'
+        \draw[red!60!orange!80!black , thick, <->] (1,-4.1) -- (1,4.1);
+    
+        % etichette O ad entrambe le estremita' (stesso punto sul piano proiettivo)
+        \node[red!60!orange!80!black ] at (1.35,3.85) {$\mathcal{O}$};
+        \node[red!60!orange!80!black ] at (1.35,-3.85) {$\mathcal{O}$};
+    
+        % punti P e -P
+        \filldraw[black] (1,1) circle (1.8pt) node[above right=1pt] {$P$};
+        \filldraw[black] (1,-1) circle (1.8pt) node[below right=1pt] {$-P$};
+    
+        \node[black, align=left, font=\sffamily\small] at (-1.1,-3.3)
+            {$P+(-P)=\mathcal{O}$};
+    \end{scope}
     \end{tikzpicture}
+    \caption{Somma di punti con la stessa ascissa}
 \end{figure}
 
 \textbf{Caso 2 -- Raddoppio di un punto ($P = Q$).} Quando i due punti da sommare coincidono, 
@@ -379,6 +359,7 @@ punto di vista pratico:
             \filldraw[black] (1.6597, 1.6101) circle (1.6pt) node[above right=1pt] {$R$};
             \filldraw[orange] (1.6597, -1.6101) circle (1.6pt) node[below right=1pt] {$2P$};
     \end{tikzpicture}
+    \caption{Somma di punti con la ascissa diversa}
 \end{figure}
 
 \subsection{Moltiplicazione scalare}
@@ -439,6 +420,8 @@ Il termine $2^iP$ rappresenta il punto \textit{P} raddoppiato \textit{i} volte. 
     \draw[arr] (dec2.west) -- (-3.9,2.9) -- (-3.9,6.8)
         -- node[lbl, above, pos=0.5]{s\`i, $i\leftarrow i-1$} (dbl.west);
     \end{tikzpicture}
+    \caption{Algoritmo Double-and-add schematizzato}
+
 \end{figure}
 
 \section{Curve su campo finito}
@@ -547,6 +530,7 @@ Mettendo a confronto i metodi crittografici visti fino ad ora si nota come le cu
 \end{center}
 
 \subsection{Problema del logaritmo discreto}
+\label{sec:logaritmo_discreto}
 Il problema del logaritmo discreto ellittico (ECDLP) richiede di trovare 
 un intero $m$ tale che
 \begin{equation}
@@ -585,9 +569,10 @@ La dimostrazione si può trovare in \cite{silverman}.
 in un gruppo di ordine $n$ a sottoproblemi nei sottogruppi di ordine 
 primo di $\langle P \rangle$, utilizzando il Teorema Cinese del Resto 
 per ricostruire la soluzione. La complessità dell'algoritmo dipende 
-dal fattore primo più grande di $n$: se $n$ è $B$-smooth, l'attacco 
-diventa efficiente. Per questa ragione, i parametri della curva 
-devono essere scelti in modo che $n$ sia divisibile da un primo grande.
+dal fattore primo più grande di $n$: se $n$ è $B$-smooth\footnote{con n-smooth si intende un numero 
+i quali fattori primi sono tutti $\leq$ di n}, l'attacco diventa efficiente. 
+Per questa ragione, i parametri della curva devono essere scelti in modo che 
+$n$ sia divisibile da un primo grande.
 \end{proposition}
 
 \chapter{Protocolli basati su Curve Ellittiche}
@@ -620,7 +605,7 @@ Per assicurarsi di utilizzare una curva ellittica che non sia vulnerabile ad att
 \end{enumerate}
 Per una spiegazione più dettagliata della motivazione dietro alla scelta di questi requisiti consultare \cite{Johnson}
 
-\subsubsection{calcolo effettivo}
+\subsubsection{Calcolo effettivo}
 Le coppie di chiavi di un dato utente \textit{A, chiave pubblica - chiave privata} sono associate ad un insieme specifico dei parametri del dominio di una curva ellittica denominati $D = (q, FR, a, b, G, n, h)$, i valori che questi devono assumere sono stati discussi precedentemente. È necessario che ogni utente si assicuri che i parametri del dominio siano validi prima della creazione delle chiavi \cite{Johnson}
 Per generare una coppia di chiavi, \textit{pubblica - privata}, ogni utente deve seguire tre passi:
 \begin{enumerate}
@@ -697,7 +682,7 @@ Per firmare un messaggio \textit{m}, un utente \textit{A} con parametri di domin
     \draw[arr] (calc_s)  -- (dec_s);
     \draw[arr] (dec_s)   -- node[lbl, right] {no} (out);
     \draw[arr] (dec_r.west) -- node[lbl, above] {s\`i} (-3.6,4.2) -- (-3.6,9.5) -- (pick_k.west);
-    \draw[arr] (dec_s.west) -- node[lbl, above] {s\`i} (-3.6,-1.8) -- (-3.6,9.5);
+    \draw[arr] (dec_s.west) -- node[lbl, above] {s\`i} (-3.6,-1.8) -- (-3.6,9.5) -- (pick_k.west);
     \end{tikzpicture}
     \caption{Flowchart per la creazione di una firma digitale ECDSA.}
 \end{figure}
@@ -847,6 +832,7 @@ Per quanto riguarda la decodifica del messaggio ricevuto da Alice Bob deve segui
     %     -- node[lbl, above, pos=0.5]{s\`i, $i\leftarrow i-1$} (dbl.west);
     \end{tikzpicture}
     }
+    \caption{Codifica e decodifica di messaggi inviati tra Alice e Bob}
 \end{figure}
 
 
@@ -903,9 +889,6 @@ le operazioni necessarie per utilizzare l'algoritmo di RSA, risulta inefficiente
     \hline
 \end{tabular}
 \end{center}
-Studiando più nel dettaglio un confronto tra i due argomenti si può notare in quali 
-aspetti algoritmi ECC siano più efficienti di algoritmi RSA, e invece in quali ambiti sia il contrario.
-I dati utilizzati in questa sezione si possono controllare in questo paper \cite{Vahdati}.
 
 \begin{figure}[H]
 \centering
@@ -931,6 +914,11 @@ I dati utilizzati in questa sezione si possono controllare in questo paper \cite
 \end{tikzpicture}
 \caption{Occupazione della RAM di Arduino Uno per le operazioni RSA-2048 \cite{Gura}.}
 \end{figure}
+
+Studiando più nel dettaglio un confronto tra i due argomenti si può notare in quali 
+aspetti algoritmi ECC siano più efficienti di algoritmi RSA, e invece in quali ambiti sia il contrario.
+I dati utilizzati in questa sezione si possono controllare in questo paper \cite{Vahdati}.
+
 
 \subsection{Requisiti di memoria}
 Considerando un livello di sicurezza pari a 128 e 160 si nota un vantaggio notevole da parte degli algoritmi ECC:
@@ -1182,12 +1170,13 @@ risorse relativamente limitate di questi dispositivi. Grazie agli sviluppi e ai 
 separato da quello di IoT si è visto che i metodi di comunicazione più efficienti per dispositivi simili a quelli usati nell'IoT sono
 i protocolli asimmetrici. Il problema quindi si è trasformato nel cercare di sviluppare algoritmi crittografici 
 in grado di operare efficacemente su dispositivi con risorse limitate.
-\\ Algoritmi quali \textit{RSA \text{o} Diffie-Hellman}, i quali si basano sulla difficoltà computazionale di fattorizzare grandi numeri, 
+\\ Algoritmi quali \textit{RSA \text{o} Diffie-Hellman}, i quali si basano sulla difficoltà computazionale di fattorizzare grandi numeri
 nonostante molto efficaci su dispositivi in confronto potenti, 
 risultano inadatti in quanto la dimensione elevata delle chiavi comporta un severo rallentamento delle operazioni
 rendendole praticamente inutili quando applicate a comunicazioni in tempo reale tra dispositivi.
 \\La soluzione a questo problema la si trova nella forma delle \textit{curve ellittiche} le quali si basano sulla difficoltà di risolvere
-il problema del logaritmo discreto, questi algoritmi sono stati ideati con l'obiettivo di raggiungere livelli di sicurezza 
+il problema del logaritmo discreto;
+questi algoritmi sono stati ideati con l'obiettivo di raggiungere livelli di sicurezza 
 comparabili ma utilizzando chiavi di dimensione notevolmente ridotta in modo da rendere possibile l'utilizzo di questi sui dispositivi nominati sopra
 \\Alcune delle applicazioni più note di questi algoritmi sono la firma digitale, \textit{ECDH}, \textit{DTLS}, \textit{Matter}, 
 utilizzati su dispositivi come \textit{Arduino UNO} e \textit{ESP-32} come esempi menzionati sopra.
@@ -1200,7 +1189,7 @@ proprio dove le risorse computazionali sono più scarse.
 
 \begin{thebibliography}{9}
 
-    \bibitem{Biryukov}
+    \bibitem{Sabrina}
     Sabrina De Capitani di Vimercati, Pierangela Samarati 
     \textit{Encyclopedia of Cryptography, Security and Privacy}, Springer, 2025
 
@@ -1246,14 +1235,14 @@ proprio dove le risorse computazionali sono più scarse.
     \bibitem{espressif_mbedtls}
     Espressif Systems, \textit{mbedTLS -- ESP-IDF Programming Guide},
     \url{https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mbedtls.html},
-    consultato il June 2, 2026.
+    consultato il 2 Giugno, 2026.
 
     \bibitem{esp32_trm}
     Espressif Systems,
     \textit{ESP32 Technical Reference Manual},
     Version 5.4,
     \url{https://documentation.espressif.com/esp32_technical_reference_manual_en.pdf},
-    consultato il June 3, 2026.
+    consultato il 3 Giugno, 2026.
 
     \bibitem{matter}
     Connectivity Standards Alliance,
