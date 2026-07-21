@@ -4,8 +4,33 @@
 \usepackage{amsthm}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
-
+\newcommand{\ExternalLink}{
+    \tikz[x=1.2ex, y=1.2ex, baseline=-0.05ex]{ 
+        \begin{scope}[x=1ex, y=1ex]
+            \clip (-0.1,-0.1) 
+                --++ (-0, 1.2) 
+                --++ (0.6, 0) 
+                --++ (0, -0.6) 
+                --++ (0.6, 0) 
+                --++ (0, -1);
+            \path[draw, 
+                line width = 0.5, 
+                rounded corners=0.5] 
+                (0,0) rectangle (1,1);
+        \end{scope}
+        \path[draw, line width = 0.5] (0.5, 0.5) 
+            -- (1, 1);
+        \path[draw, line width = 0.5] (0.6, 1) 
+            -- (1, 1) -- (1, 0.6);
+        }
+    }
+\usetikzlibrary{shapes.geometric, arrows.meta}
 \newtheorem{definition}{Definizione}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}{proposition}[section]
@@ -16,31 +41,38 @@
 
 
 \begin{document}
-
 \maketitle
 
 \chapter{Introduzione}
 La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate, tra cui i dispositivi IoT.
 
-La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicato senza utilizzare canali non protetti ( di solito comunicati in persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
+La cifratura a chiave pubblica è l'evoluzione della cifratura a chiave privata, quest'ultima infatti presentava una sola chiave, simmetrica, nota sia al mittente che al destinatario, comunicata senza utilizzare canali non protetti ( di solito comunicata in persona evitando dispositivi connessi ad internet ) in modo da poter successivamente instaurare una comunicazione su un canale sicuro, dove sia il mittente che il destinatario dispongono della stessa chiave.
 
-La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usate per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
+La cifratura a chiave pubblica introduce una nuova chiave per ogni utente all'interno della comunicazione, una chiave pubblica usata per cifrare il messaggio, e una privata usata per decifrare il messaggio ricevuto; la chiave pubblica di cifrazione è nota a tutti gli utenti interessati a comunicare con una certa persona, la seconda chiave ( di decifrazione ) è privata e nota solamente ad un individuo, una volta ricevuto il messaggio cifrato con la chiave pubblica del destinatario, questo usa la sua chiave privata per decifrare il messaggio.
 
-TO FIX ATTACK
-
-L'attacco più comune compiuto contro sistemi a chiave pubblica si chiama \textit{know-plaintext} consiste nel codificare una serie di messaggi con le informazioni date dal destinatario ( la sua chiave pubblica e la funzione usata per cifrare i messaggi da inviare ) per poi confrontare questi nuovi crittogrammi con quelli che vengono inviati su un canale di comunicazione, in modo da vedere se coincidono.
-
-BROKEN BY QUANTUM COMPUTERS TO FIX
+L'attacco più comune compiuto contro sistemi a chiave pubblica si chiama \textit{known-plaintext}\ \cite{Biryukov}.
+\\Si consideri il seguente scenario: due utenti vogliono comunicare attraverso un canale non sicuro,
+perciò utilizzano un cifrario per nascondere i messaggi inviati.
+\\Nonostante le precauzioni consideriamo l'evento in cui un attaccante sia stato in grado di accedere
+a delle coppie $(P_i,\ C_i), i = 1,\ \dots, \ N$ di \textit{plaintext}\footnote
+{con plaintext si intende un messaggio non cifrato} noti, e i crittogrammi ad essi associati.
+Date abbastanza coppie diventa triviale risalire al messaggio originale dato un nuovo
+crittogramma non visto prima di allora.
+\\Un esempio di known-plaintext attack è \textit{probable word}
 
 Alcuni degli algoritmi più popolari che utilizzano le chiavi pubbliche che rimangono al giorno d'oggi inviolati sono RSA e Diffie-Hellman;
 
 \section{Campi}
 Prima di parlare di algoritmi crittografici è necessario introdurre alcuni concetti matematici, primo tra i quali i \textit{campi}.
 \begin{definition}
-    Un campo $(K, +, \cdot)$ è un insieme non vuoto che presenta operazioni binarie le quali soddisfano le seguenti propietà:
+    Un campo $(K, +, \cdot)$ è un insieme non vuoto che presenta operazioni binarie le quali soddisfano le seguenti proprietà:
     \begin{itemize}
         \item $(K, +)$ è un gruppo con elemento neutro $0$
-        \item $(K \setminus \{0\}, \cdot)$ è un gruppo abeliano con elemento neutro 1
+        \item $(K \setminus \{0\}, \cdot)$ è un gruppo abeliano\footnote{Un gruppo abeliano è definito come un gruppo la cui operazione binaria interna gode della proprietà commutativa, ossia dato un gruppo $(G, \cdot)$, questo è abeliano se
+        \begin{equation}
+            a \cdot b = b \cdot a, \forall a, b \in G.
+        \end{equation}
+        } con elemento neutro 1
         \item La moltiplicazione è distributiva rispetto all'addizione: $a \cdot ( b + c ) = ( a \cdot b ) + ( a \cdot c )$
     \end{itemize}
 \end{definition}
@@ -57,13 +89,13 @@ In altre parole si vuole che ogni elemento, escluso lo $0$ abbia un inverso molt
 \section{Funzione di Eulero}
 
 \begin{definition}
-    La funzipne di Eulero può essere scritta come $\Phi(n) = \left\lvert \mathbb{Z}_n^*\right\rvert $
+    La funzione di Eulero può essere scritta come $\Phi(n) = \left\lvert \mathbb{Z}_n^*\right\rvert $
 \end{definition}
 
 Questa funzione risulta utile perché dato: 
 \begin{itemize}
     \item $\Phi(p) = p - 1$
-    \item $\Phi(pq) = (p - 1)(q - 1)$
+    \item $\Phi(pq) = (p - 1)(q - 1)$\footnote{Valido solo quando p e q sono coprimi}
     \item \textit{a} primo con \textit{b} allora $\Phi(ab) = \Phi(a)\Phi(b)$
     \item $\Phi(n)$ difficile da calcolare senza conoscere la fattorizzazione di n
 \end{itemize}
@@ -81,7 +113,7 @@ Il cifrario RSA fonda la sua sicurezza sulla difficoltà di fattorizzazione di g
 
 \subsection{Creazione delle chiavi}
 
-Un Destinatario deve compiere queste operazioni in modo di creare le chiavi pubbliche e private:
+Un Destinatario deve compiere queste operazioni in modo da creare le chiavi pubbliche e private:
 \begin{enumerate}
 	\item scegliere due numeri primi molto grandi p, q
 	
@@ -91,9 +123,9 @@ Un Destinatario deve compiere queste operazioni in modo di creare le chiavi pubb
 
 	\item calcolare l'intero d inverso di e modulo $\Phi (n)$
 
-	\item rendere pubblica la chiave $k_{\text{pub}} = (e, n)$, e mantere segreta la chiave $k_{\text{prv}} = d$
+	\item rendere pubblica la chiave $k_{\text{pub}} = (e, n)$, e mantenere segreta la chiave $k_{\text{prv}} = d$
 \end{enumerate}
-Per codificare correttamente il messaggio questo deve essere trasformato in binario, il quale viene trattato come un numero intero m, questo deve risultare $<$ n, il che è possibile dividendo il messaggio m in blocchi di al più $\lfloor \log_2(n) \rfloor \text{bit}$
+Per codificare correttamente il messaggio questo deve essere trasformato in binario, il quale viene trattato come un numero intero m, la lunghezza del quale deve risultare $<$ n, il che è possibile dividendo il messaggio m in blocchi di al più $\lfloor \log_2(n) \rfloor \text{bit}$
 
 \begin{align}
     c &= m^e \bmod n \quad \text{(cifratura)} \\
@@ -111,7 +143,58 @@ A differenza di RSA Diffie-Hellman richiede una collaborazione da parte dei due 
     \item A calcola la chiave segreta $K = B^a \bmod p$
 \end{enumerate}
 
-La sicurezza di questo protocollo è dato dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ ripetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$.
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        >={Stealth[length=2.5mm]},
+        actor/.style={ellipse, draw=black, thick, minimum width=2.4cm,
+            minimum height=0.8cm, align=center, text=black, fill=white,
+            font=\bfseries},
+        lifeline/.style={thick, dashed, black},
+        arrAB/.style={-{Stealth[length=2.5mm]}, cyan, thick},
+        arrBA/.style={-{Stealth[length=2.5mm]}, orange, thick},
+        msg/.style={font=\small, align=center, text=black},
+        note/.style={font=\small, align=center, text=red!60!orange!80!black },
+        stepnum/.style={font=\small\bfseries, text=cyan}
+    ]
+
+    \fill[white] (-3.2,1) rectangle (9.5,-11);
+
+    % Actors
+    \node[actor] (A) at (0,0) {A};
+    \node[actor] (B) at (8,0) {B};
+
+    % Lifelines
+    \draw[lifeline] (0,-0.5) -- (0,-10.5);
+    \draw[lifeline] (8,-0.5) -- (8,-10.5);
+
+    % Step 1: A sceglie p, g, a  (local, no arrow)
+    \node[stepnum] at (-2.8,-1.3) {1};
+    \node[note] at (4,-1.3) {A: sceglie $p$, $g$, $a$};
+
+    % Step 2: A calcola A e invia (g,p,A)
+    \node[stepnum] at (-2.8,-3.0) {2};
+    \node[note] at (4,-2.5) {A: calcola $A=g^a\bmod p$};
+    \draw[arrAB] (0,-3.4) -- (8,-3.4) node[midway, above, msg] {$(g,\ p,\ A)$};
+
+    % Step 3: B sceglie b, calcola B, invia
+    \node[stepnum] at (-2.8,-5.4) {3};
+    \node[note] at (4,-4.9) {B: sceglie $b$, calcola $B=g^b\bmod p$};
+    \draw[arrBA] (8,-5.8) -- (0,-5.8) node[midway, above, msg] {$B$};
+
+    % Step 4: B calcola K
+    \node[stepnum] at (-2.8,-7.3) {4};
+    \node[note] at (4,-7.3) {B: calcola $K=A^b\bmod p$};
+
+    % Step 5: A calcola K
+    \node[stepnum] at (-2.8,-9.0) {5};
+    \node[note] at (4,-9.0) {A: calcola $K=B^a\bmod p$};
+
+    \end{tikzpicture}
+    \caption{Scambio di chiavi Diffie-Hellman.}
+\end{figure}
+
+La sicurezza di questo protocollo è data dal fatto che anche se un crittoanalista potrebbe aver intercettato i valori $p$, $g$, $A$, $B$ scambiati in chiaro tra i due utenti, questo dovrebbe risolvere l'equazione $A = g^a \bmod p$ rispetto ad a oppure $B = g^b \bmod p$ rispetto a b ovvero calcolare il logaritmo discreto di $A$, o di $B$.
 
 \chapter{Curve Ellittiche}
 \section{Curve ellittiche su $\mathbb{R}$}
@@ -119,10 +202,22 @@ Una curva ellittica è una curva piana definita da un'equazione del tipo:
 \begin{equation}
     y^2 = x^3 + ax + b \footnote{Questo funziona solamente quando la caratteristica del campo K è diversa da 2 e 3, altrimenti l'equazione diventerebbe $y^2 + axy + by = x^3 + cx^2 + dx + e$ dove $a, b, c, d, e \in K$}
 \end{equation}
-Qeusta possiede un’operazione di somma fra punti
-appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui elemento neutro è costituito dal punto all’infinito $O$.
-\\Una curva ellittica è caratterizzata dal fatto che sommando due punti se ne ottiene un terzo della stessa curva.
-Nella definizione di curva ellittica viene definito anche il \textit{punto all'infinito O} definito come la somma di tre punti su una curva ellittica collegati da una retta.
+Questa possiede un’operazione di somma fra punti
+appartenenti alla curva, rispetto alla quale essa è un gruppo abeliano il cui elemento neutro è costituito dal punto all’infinito $\mathcal{O}$ \hyperref[sec:punto-infinito]{\ref{sec:punto-infinito}}.
+\\Una curva ellittica è caratterizzata dal fatto che sommando due punti se ne ottiene un terzo appartenente alla stessa curva.
+\\Nella definizione di curva ellittica viene definito anche il \textit{punto all'infinito $\mathcal{O}$} intuitivamente pensato come il terzo punto di intersezione di rette parallele all'asse y; la definizione rigorosa segue dalle coordinate omogenee \hyperref[sec:punto-infinito]{\ref{sec:punto-infinito}} \cite{silverman}.
+
+\begin{figure} [H]
+    \centering
+    \begin{tikzpicture}[scale=0.7]
+        \draw[black!70, ->] (-4, 0) -- (4.0, 0) node[right] {$x$};
+        \draw[black!70, ->] (0, -4.0) -- (0, 4.0) node[above] {$y$};
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+    \end{tikzpicture}
+\end{figure}
 
 \subsection{Caratteristiche curve ellittiche}
 \begin{enumerate}
@@ -130,7 +225,7 @@ Nella definizione di curva ellittica viene definito anche il \textit{punto all'i
         \forall P, Q \in E(a, b): P + Q \in E(a, b)
     \end{equation}
     \item Elemento neutro: \begin{equation}
-        \forall P \in E(a, b): P + O = O + P = P
+        \forall P \in E(a, b): P + \mathcal{O} = \mathcal{O} + P = P
     \end{equation} (vedere \hyperref[sec:Somma]{Somma su curve ellittiche})
     \item Associatività:
     \begin{equation}
@@ -143,9 +238,10 @@ Nella definizione di curva ellittica viene definito anche il \textit{punto all'i
 \end{enumerate}
 
 \subsection{Punto all'infinito}
+\label{sec:punto-infinito}
 \begin{definition}
     Punto improprio definito in Geometria proiettiva associato a una direzione nel piano: ogni famiglia di rette parallele converge in un unico punto all'infinito, l'insieme di questi punti forma la \emph{retta impropria}.\\
-    Nelle curve ellittiche, il punto all'infinito $\mathcal{O}$ è unico ed funge da elemento neutro dell'addizione del gruppo.
+    Nelle curve ellittiche, il punto all'infinito $\mathcal{O}$ è unico e funge da elemento neutro dell'addizione del gruppo.
 \end{definition}
 \subsubsection*{Intuizione geometrica}
     I punti all'infinito corrispondono ai punti $[X:Y:Z]$ con $Z = 0$.
@@ -156,18 +252,50 @@ Nella definizione di curva ellittica viene definito anche il \textit{punto all'i
 Ponendo $Z = 0$ si ottiene $X = 0$, da cui il punto all'infinito è 
 $\mathcal{O} = [0:1:0]$ \cite{silverman}.
 
+
+\begin{tikzpicture}[scale=1, every node/.style={font=\sffamily}]
+    \centering
+    \begin{scope}
+    \clip (-2.6,-4.3) rectangle (3.0,4.3);
+ 
+    % assi
+    \draw[black!70, ->] (-2.6,0) -- (3.0,0) node[right] {$x$};
+    \draw[black!40, -] (0,-4.0) -- (0,4.0);
+ 
+    % curva y^2 = x^3 - 3x + 3
+    \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+        plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+    \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+        plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+ 
+    % retta verticale per P e -P, con frecce ad entrambe le estremita'
+    \draw[red!60!orange!80!black , thick, <->] (1,-4.1) -- (1,4.1);
+ 
+    % etichette O ad entrambe le estremita' (stesso punto sul piano proiettivo)
+    \node[red!60!orange!80!black ] at (1.35,3.85) {$\mathcal{O}$};
+    \node[red!60!orange!80!black ] at (1.35,-3.85) {$\mathcal{O}$};
+ 
+    % punti P e -P
+    \filldraw[black] (1,1) circle (1.8pt) node[above right=1pt] {$P$};
+    \filldraw[black] (1,-1) circle (1.8pt) node[below right=1pt] {$-P$};
+ 
+    \node[black, align=left, font=\sffamily\small] at (-1.1,-3.3)
+        {$P+(-P)=\mathcal{O}$};
+\end{scope}
+\end{tikzpicture}
+ 
+
 \subsection{Somma su curve ellittiche}
 \label{sec:Somma}
 
-DA METTERE ELEMENTO NEUTRO IN SOMMA DI DUE PUNTI CON LA STESSA X
 \begin{definition}
     Ogni retta interseca una curva ellittica in al più tre punti \cite{Margara}
 \end{definition}
 
-Dalla definizione sopra si può capire dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R} nel caso $P \neq Q$; altrimenti la retta interseca soltanto due punti. \\Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
+Dalla definizione sopra si può dedurre che se una retta interseca una curva $E(a, b)$ in due punti \textit{P} e \textit{Q} allora la retta interseca anche un terzo punto \textit{R} nel caso $P \neq Q$; altrimenti la retta interseca soltanto due punti. \\Se la retta è verticale invece, oltre ai punti \textit{P} e \textit{Q} interseca anche il punto all'infinito $\mathcal{O}$.
 \\Dati tre punti \textit{P, Q, R} di una curva ellittica $E(a, b)$ se \textit{P, Q} e \textit{R} sono disposti su una retta, allora la loro somma si pone uguale al punto all'infinito:
 \begin{equation}
-    P + Q + R = O
+    P + Q + R = \mathcal{O}
 \end{equation}
 
 Da queste definizioni è possibile ricavare la regola per sommare due punti \textit{P} e \textit{Q}
@@ -187,14 +315,72 @@ Da un punto di vista pratico questo vuol dire:
     \item $y_s = -y_p + \lambda(x_p - x_s)$
 \end{enumerate}
 
-Se studiamo il caso in cui \textit{P} e \textit{Q} hanno la stessa coordinata \textit{x}, perciò $Q = - P$, questi si trovano allineati lungo la verticale che interseca il punto all'infinito della curva.\\
-Questa affermazione si può anche mostrare utilizzando la formula della somma di due punti $P + Q = P + (- P) = O$
-\\Da un punto di vista matematico questo si vede nel seguente modo:
+\textbf{Caso 1 -- Elemento neutro (punti con la stessa ascissa).} Se \textit{P} e \textit{Q} 
+hanno la stessa coordinata \textit{x}, allora necessariamente $Q = -P$ (sono simmetrici 
+rispetto all'asse delle ascisse, essendo entrambi soluzioni di $y^2 = x^3+ax+b$ per lo stesso 
+\textit{x}). La retta che li congiunge è quindi verticale e, come visto in precedenza, 
+interseca la curva anche nel punto all'infinito $\mathcal{O}$, che diventa il terzo punto di 
+intersezione $R = \mathcal{O}$. Applicando la regola generale $P + Q = -R$ e osservando che 
+$-\mathcal{O} = \mathcal{O}$ (essendo l'elemento neutro), si ottiene:
+\begin{equation}
+    P + Q = P + (-P) = \mathcal{O}
+\end{equation}
+\begin{figure} [H]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw[black!70, ->] (-4, 0) -- (4.0, 0) node[right] {$x$};
+        \draw[black!70, ->] (0, -4.0) -- (0, 4.0) node[above] {$y$};
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+            % retta secante per P e Q, prolungata fino a toccare R
+            \draw[red!60!orange!80!black , thin]
+                (-2.4, {2.236 - 0.3467*(-2.4+1)}) -- (2.4, {2.236 - 0.3467*(2.4+1)});
+
+            % riflessione verticale da R a -R = P+Q
+            \draw[black!60, dashed] (-0.380, 2.021) -- (-0.380, -2.021);
+
+            % punti
+            \filldraw[black] (-1, 2.236) circle (1.6pt) node[above left=1pt] {$P$};
+            \filldraw[black] (1.5, 1.369) circle (1.6pt) node[above right=1pt] {$Q$};
+            \filldraw[black] (-0.380, 2.021) circle (1.6pt) node[above=2pt] {$R$};
+            \filldraw[orange] (-0.380, -2.021) circle (1.6pt) node[below=2pt] {$P+Q=-R$};
+    \end{tikzpicture}
+\end{figure}
+
+\textbf{Caso 2 -- Raddoppio di un punto ($P = Q$).} Quando i due punti da sommare coincidono, 
+la retta secante degenera nella tangente alla curva in \textit{P}, come già anticipato. Da un 
+punto di vista pratico:
 \begin{enumerate}
     \item $P = (x_p, y_p), 2P = S = (x_s, y_s)$
-    \item $y_p \neq 0 \Rightarrow \lambda = \frac{(3x_p^2 + a)}{2y_p}$ 
-    \item $y_p = 0 \Rightarrow \text{tangente verticale} \Rightarrow 2P = 0$
+    \item $y_p \neq 0 \Rightarrow \lambda = \dfrac{3x_p^2 + a}{2y_p}$ 
+    \item $y_p = 0 \Rightarrow$ tangente verticale $\Rightarrow 2P = \mathcal{O}$
 \end{enumerate}
+
+\begin{figure} [H]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw[black!70, ->] (-4, 0) -- (4.0, 0) node[right] {$x$};
+        \draw[black!70, ->] (0, -4.0) -- (0, 4.0) node[above] {$y$};
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+        \draw[cyan, thick, domain=-2.1038:2.7, samples=200, smooth, variable=\x]
+            plot ({\x}, {-sqrt(max(\x*\x*\x - 3*\x + 3, 0))});
+            % retta secante per P e Q, prolungata fino a toccare R
+            \draw[red!60!orange!80!black , thin]
+                (-2.3, {2.2109 - 0.2442*(-2.3+0.8)}) -- (2.5, {2.2109 - 0.2442*(2.5+0.8)});
+
+            % riflessione verticale da R a -R = P+Q
+            \draw[black!60, dashed] (1.6597, 1.6101) -- (1.6597, -1.6101);
+
+            % punti
+            \filldraw[black] (-0.8, 2.2109) circle (1.6pt) node[above left=1pt] {$P$};
+            \filldraw[black] (1.6597, 1.6101) circle (1.6pt) node[above right=1pt] {$R$};
+            \filldraw[orange] (1.6597, -1.6101) circle (1.6pt) node[below right=1pt] {$2P$};
+    \end{tikzpicture}
+\end{figure}
+
 \subsection{Moltiplicazione scalare}
 La moltiplicazione scalare consiste nella ripetizione della somma di un punto a se stesso, un numero arbitrario grande \textit{k} volte, segnato come $S = kP$.
 Il problema si incontra quando, \textit{k}, inevitabilmente, diventa molto grande; per evitare la difficoltà computazionale richiesta per sommare migliaia di volte un punto su un'equazione si usa un algoritmo chiamato \textbf{double-and-add}
@@ -220,15 +406,50 @@ Per la proprietà distributiva questa espressione può essere scritta come:
 
 Il termine $2^iP$ rappresenta il punto \textit{P} raddoppiato \textit{i} volte. Perciò il problema si riduce ad una serie di raddoppi e addizioni di punti, il che rappresenta l'essenza dell'algoritmo.
 
+\begin{figure} [H]
+    \centering
+    \begin{tikzpicture}[
+        scale=1.2,
+    process/.style={rectangle, draw=cyan, thick, rounded corners=2pt,
+        minimum width=3.4cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    decision/.style={diamond, draw=red!60!orange!80!black , thick,
+        minimum width=3.0cm, minimum height=1.4cm, align=center,
+        text=black, fill=white, inner sep=1pt},
+    terminal/.style={ellipse, draw=black, thick,
+        minimum width=3.6cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    arr/.style={-{Stealth[length=2.2mm]}, black, thick},
+    lbl/.style={red!60!orange!80!black , font=\small}
+    ]
+    \node[terminal] (start) at (0,10)   {$k=(k_{n-1}\dots k_0)_2$};
+    \node[process]  (init)  at (0,8.5)  {$Q \leftarrow \mathcal{O}$\\$i \leftarrow n-1$};
+    \node[process]  (dbl)   at (0,6.8)  {$Q \leftarrow 2Q$};
+    \node[decision] (dec1)  at (0,5.0)  {$k_i=1$?};
+    \node[process]  (add)   at (3.9,5.0) {$Q \leftarrow Q+P$};
+    \node[decision] (dec2)  at (0,2.9)  {$i>0$?};
+    \node[terminal] (out)   at (0,1.1)  {output $Q=kP$};
+    \draw[arr] (start) -- (init);
+    \draw[arr] (init)  -- (dbl);
+    \draw[arr] (dbl)   -- (dec1);
+    \draw[arr] (dec1.east) -- node[lbl, above]{s\`i} (add.west);
+    \draw[arr] (dec1) -- node[lbl, left]{no} (dec2);
+    \draw[arr] (add.south) -- (3.9,2.9) -- (dec2.east);
+    \draw[arr] (dec2) -- node[lbl, right]{no} (out);
+    \draw[arr] (dec2.west) -- (-3.9,2.9) -- (-3.9,6.8)
+        -- node[lbl, above, pos=0.5]{s\`i, $i\leftarrow i-1$} (dbl.west);
+    \end{tikzpicture}
+\end{figure}
+
 \section{Curve su campo finito}
-Le curve ellittiche su $\mathbb{R}$ non sono di particolare interesse ai crittografici, si preferisce invece lavorare su curve ellittiche definite su campi finiti.
-Questa decisione permette di compiere operazioni veloci e precise dato dal fatto che tutte le operazioni riguardano coefficienti relativamente ridotti e interi, senza preoccuparsi di calcoli approssimati ed esageramente lunghi.
+Le curve ellittiche su $\mathbb{R}$ non sono di particolare interesse ai crittografi, si preferisce invece lavorare su curve ellittiche definite su campi finiti.
+Questa decisione permette di compiere operazioni veloci e precise dato dal fatto che tutte le operazioni riguardano coefficienti relativamente ridotti e interi, senza preoccuparsi di calcoli approssimati ed esageratamente lunghi.
 \\In aggiunta operare in aritmetica modulare ci permette di sviluppare problemi che risultano computazionalmente difficili.
 \\Per il resto di questa relazione si utilizzerà un campo $\mathbb{Z}_p$ con caratteristica $p > 3$ in modo da utilizzare l'equazione ellittica ridotta alla forma normale di Weierstrass.
 \begin{definition}
-    Sia $p > 3$ un numero primo. La curva ellittica su $\mathbb{Z}_p$, denotata $E_p(a,b)$, è l'insieme dei punti che soddisfano l'equazione $y^2 = x^3 + ax + b \mod p$ insieme al punto all'infinito.
+    Sia $p > 3$ un numero primo. La curva ellittica su $\mathbb{Z}_p$, denotata $E_p(a,b)$, è l'insieme dei punti che soddisfano l'equazione $y^2 = x^3 + ax + b \pmod p$ insieme al punto all'infinito.
     \begin{equation}
-        E_p(a, b) = \{(x, y) \in \mathbb{Z}_p^2: y^2 = x^3 + ax + b \pmod{p} \} \cup \{O\}
+        E_p(a, b) = \{(x, y) \in \mathbb{Z}_p^2: y^2 = x^3 + ax + b \pmod{p} \} \cup \{\mathcal{O}\}
     \end{equation}
     dove in aggiunta:
     \begin{equation}
@@ -245,19 +466,70 @@ Questa decisione permette di compiere operazioni veloci e precise dato dal fatto
 I punti della curva $E_p(a, b)$ che rispettano queste due condizioni formano un gruppo abeliano finito rispetto all'operazione di addizione. \cite{silverman}
 
 \subsection{Creazione di chiavi su $\mathbb{Z}_p$}
+\label{sec:creazione_di_chiavi}
 Due utenti Angelica e Brian vogliono instaurare una comunicazione sicura, si concordano pubblicamente su un campo finito e su una curva ellittica definita su questo campo.
-Dopodiché scelgono un punto \textit{P} appartenente alla curva di ordine \textit{n} grande, in modo che $nP = O$.
-\\Angelica Sceglie un intero positivo $n_a < n$ come chiave privata, genera una chiave pubblica $P_a = n_aB$ spedendola in chiaro a Brian.
-\\Allo stesso modo Brian genera un punto casuale $P_b = n_bB$ che a sua volta viene spedito ad Angelica in chiaro.\footnote{I Punti \textit{$P_a$ e $P_b$} rappresentano punti calcolati a partire da punti scelti casualmente, questi appartengono alla curva}
-\\Angelica riceva il punto $P_b$ e calcola un nuovo punto $n_aP_b = n_an_bB = S$\footnote{S è un nuovo punto appartenente alla curva}, Brian compie la stessa operazione con $n_b$ al posto di $n_a$ in modo da ottenere lo stesso punto \textit{S}
+Dopodiché scelgono un punto \textit{G} appartenente alla curva di ordine \textit{n} grande, in modo che $nG = \mathcal{O}$.
+\\Angelica sceglie un intero positivo $n_a < n$ come chiave privata, genera una chiave pubblica $P_a = n_aG$ spedendola in chiaro a Brian.
+\\Allo stesso modo Brian genera un punto casuale $P_b = n_bG$ che a sua volta viene spedito ad Angelica in chiaro.\footnote{I punti \textit{$P_a$ e $P_b$} rappresentano punti calcolati a partire da punti scelti casualmente, questi appartengono alla curva}
+\\Angelica riceve il punto $P_b$ e calcola un nuovo punto $n_aP_b = n_an_bG = S$\footnote{S è un nuovo punto appartenente alla curva}, Brian compie la stessa operazione con $n_b$ al posto di $n_a$ in modo da ottenere lo stesso punto \textit{S}
 \\ Per trasformare \textit{S} in una chiave segreta condivisa occorre trasformarlo in un numero intero, convenzionalmente si considerano gli ultimi 256 bit dell'ascissa di \textit{S}, ovvero:
 \begin{equation}
-    k = x_s\mod2^{256}
+    k = x_s\pmod2^{256}
 \end{equation}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        >={Stealth[length=2.5mm]},
+        actor/.style={ellipse, draw=black, thick, minimum width=2.6cm,
+            minimum height=0.8cm, align=center, text=black, fill=white,
+            font=\bfseries},
+        lifeline/.style={thick, dashed, black},
+        arrAB/.style={-{Stealth[length=2.5mm]}, cyan, thick},
+        arrBA/.style={-{Stealth[length=2.5mm]}, orange, thick},
+        msg/.style={font=\small, align=left, text=black},
+        note/.style={font=\scriptsize, align=left, text=red!60!orange!80!black },
+        stepnum/.style={font=\small\bfseries, text=cyan}
+    ]
+
+    \fill[white] (-2.6,1) rectangle (9.5,-9.5);
+
+    % Actors
+    \node[actor] (A) at (0,0) {Angelica};
+    \node[actor] (B) at (8,0) {Brian};
+
+    % Lifelines
+    \draw[lifeline] (0,-0.5) -- (0,-9);
+    \draw[lifeline] (8,-0.5) -- (8,-9);
+
+    % Step 1: parametri pubblici comuni
+    \node[note] at (4,-1.0) {accordo pubblico su campo e curva, punto $G$ di ordine $n$};
+    \node[stepnum] at (-2.4,-1.6) {1};
+
+    % Step 2: Angelica calcola Pa e invia
+    \node[note, anchor=east] at (-0.3,-2.6) {sceglie $n_a$, calcola $P_a=n_aG$};
+    \draw[arrAB] (0,-3.6) -- (8,-3.6) node[midway, above, msg] {$P_a$};
+    \node[stepnum] at (-2.4,-3.6) {2};
+
+    % Step 3: Brian calcola Pb e invia
+    \node[note, anchor=west] at (8.3,-4.8) {sceglie $n_b$, calcola $P_b=n_bG$};
+    \draw[arrBA] (8,-5.8) -- (0,-5.8) node[midway, above, msg] {$P_b$};
+    \node[stepnum] at (-2.4,-5.8) {3};
+
+    % Step 4: entrambi calcolano S
+    \node[note, anchor=east] at (-0.3,-7.0) {calcola $n_aP_b=n_an_bG=S$};
+    \node[note, anchor=west] at (8.3,-7.0) {calcola $n_bP_a=n_an_bG=S$};
+    \node[stepnum] at (-2.4,-7.6) {4};
+
+    \node[note] at (4,-8.6) {$k = x_S \bmod 2^{256}$};
+
+    \end{tikzpicture}
+    \caption{Creazione della chiave condivisa su $\mathbb{Z}_p$ tra Angelica e Brian.}
+\end{figure}
 
 \subsection{Metodi a confronto}
 
-Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota come le curve ellittiche utilizzino chiavi di dimensione notevolmente inferiore rispetto agli altri, il che le rende molto utili per dispositivi con risorse limitate, come smartcard, dispositivi IoT\dots
+Mettendo a confronto i metodi crittografici visti fino ad ora si nota come le curve ellittiche utilizzino chiavi di dimensione notevolmente inferiore rispetto agli altri, il che le rende molto utili per dispositivi con risorse limitate, come smartcard, dispositivi IoT\dots
 
 \begin{center}
     \begin{tabular}{|c|c|c|}
@@ -275,7 +547,6 @@ Quando mettendo a confronto i metodi crittografici visto fino ad ora si nota com
 \end{center}
 
 \subsection{Problema del logaritmo discreto}
-\label{sec: Discrete Logarithm}
 Il problema del logaritmo discreto ellittico (ECDLP) richiede di trovare 
 un intero $m$ tale che
 \begin{equation}
@@ -322,6 +593,7 @@ devono essere scelti in modo che $n$ sia divisibile da un primo grande.
 \chapter{Protocolli basati su Curve Ellittiche}
 In questa sezione si affronteranno due protocolli applicati alle curve ellittiche: \textit{firma digitale} e \textit{cifratura integrata}
 \section{Firma digitale}
+\label{sec:firma_digitale}
 Con lo sviluppo di internet si sono venuti a creare nuovi problemi, quelli che verranno discussi in questa sezione sono:
 \begin{itemize}
 \item \textbf{Identificazione}: un sistema di elaborazione deve essere in grado di accertare l'identità di un utente che richiede di accedere ai suoi servizi.
@@ -337,45 +609,45 @@ La proprietà di sicurezza fondamentale di uno schema di firma digitale è l'\te
 \subsection{Generazione delle chiavi per comunicare}
 
 \subsubsection{prerequisiti}
-Per assicurarsi di utilizzare una curva ellittica che non sia vulnerabile ad attacchi crittografici noti è importante tenere in considerazione questi aspetti quando durante la scelta della curva:
+Per assicurarsi di utilizzare una curva ellittica che non sia vulnerabile ad attacchi crittografici noti è importante tenere in considerazione questi aspetti durante la scelta della curva:
 \begin{enumerate}
-    \item un campo finito di ordine \textit{q}, dove o $q = p\footnote{\textit{p} rappresenta la caratteristica del campo, importante quando si tratta campi come $F_{2^m}$}$, un numero primo dispari, oppure $q = 2^m$
+    \item un campo finito di ordine \textit{q}, dove o $q = p$\footnote{\textit{p} rappresenta la caratteristica del campo, importante quando si tratta campi come $F_{2^m}$}, un numero primo dispari, oppure $q = 2^m$
     \item un'indicazione FR (\textit{field representation}) della rappresentazione usata per gli elementi di $\mathbb{F}_q$
     \item due elementi \textit{a}, \textit{b} che definiscono la curva ellittica \textit{E} definita su $\mathbb{F}_q$ (es. $y^2 = x^3 + ax + b$ nel caso di $p > 3$, e $y^2 + xy = x^3 + ax^2 + b$ in caso $p = 2$)
     \item due elementi del campo $x_G$ e $y_G$ su $\mathbb{F}_q$ i quali definiscono un punto finito $G = (x_G, y_G)$ di ordine primo in $E(\mathbb{F}_q)$
-    \item l'ordine \textit{n} del punto \textit{G}, con $n > 2^160$ e $n > 4\sqrt{q}$
+    \item l'ordine \textit{n} del punto \textit{G}, con $n > 2^{160}$ e $n > 4\sqrt{q}$
     \item il cofattore $h = \frac{\#E(\mathbb{F}_q)}{n}$
 \end{enumerate}
 Per una spiegazione più dettagliata della motivazione dietro alla scelta di questi requisiti consultare \cite{Johnson}
 
 \subsubsection{calcolo effettivo}
-Le coppie di chiavi di un dato utente \textit{A, chiave publbica - chiave privata} sono associate ad un insieme specifico dei parametri del dominio di una curva ellittica denominati $D = (q, FR, a, b, G, n, h)$, i valori che questi devono assumeri sono stati discussi precedentemente. È necessario che ogni utente si assicuri che i parametri del dominio siano validi prima della creazione delle chiavi \cite{Johnson}
+Le coppie di chiavi di un dato utente \textit{A, chiave pubblica - chiave privata} sono associate ad un insieme specifico dei parametri del dominio di una curva ellittica denominati $D = (q, FR, a, b, G, n, h)$, i valori che questi devono assumere sono stati discussi precedentemente. È necessario che ogni utente si assicuri che i parametri del dominio siano validi prima della creazione delle chiavi \cite{Johnson}
 Per generare una coppia di chiavi, \textit{pubblica - privata}, ogni utente deve seguire tre passi:
 \begin{enumerate}
     \item Selezionare un numero casuale, o pseudo-casuale, \textit{d} compreso nell'intervallo $[1, n - 1]$.
     \item Calcolare $Q = dG$.
-    \item La chiave privata dell'utente è \textit{Q}; la chiave pubblica è \textit{d}
+    \item La chiave privata dell'utente è \textit{d}; la chiave pubblica è \textit{Q}
 \end{enumerate}
 \subsection{Verifica della chiave pubblica}
 
 Per validare una chiave pubblica \textit{Q} ricevuta da un utente \textit{A}, si possono usare uno di questi metodi:
 \begin{enumerate}
-    \item \textit{A} utilizza un algoritmo di validazione delle chiavi pubbliche, come \ref{sec: validare_chiave_pubblica}
+    \item \textit{A} utilizza un algoritmo di validazione delle chiavi pubbliche, come descritto nell'algoritmo \ref{sec:validare_chiave_pubblica}
     \item \textit{A} genera \textit{Q} utilizzando un sistema affidabile
-    \item \textit{A} riceve conferma da un'entità affidabile \textit{T} la quale ha validato la chiave utilizzando un algoritmo simile a \ref{sec: validare_chiave_pubblica}
+    \item \textit{A} riceve conferma da un'entità affidabile \textit{T} la quale ha validato la chiave utilizzando un algoritmo simile a \ref{sec:validare_chiave_pubblica}
     \item \textit{A} riceve conferma da un'entità affidabile \textit{T} che \textit{Q} è stato generato utilizzando un sistema affidabile
 \end{enumerate}
 
 \subsubsection{Algoritmo di validazione della chiave pubblica}
-\label{sec: validare_chiave_pubblica}
+\label{sec:validare_chiave_pubblica}
 INPUT: Una chiave pubblica $Q = (x_Q, y_Q)$ associata a parametri di dominio validi \textit{(q, FR, a, b, G, n, h)}.
 \\ OUTPUT: Accettazione o rifiuto della validità di \textit{Q}.
 \begin{enumerate}
-    \item Controllare che $Q \neq O$
+    \item Controllare che $Q \neq \mathcal{O}$
     \item Controllare che $x_Q$ e $y_Q$ sono elementi correttamente rappresentati su $\mathbb{F}_q$ (es., interi compresi nell'intervallo $[0, p - 1]$ nel caso $q = p$, e stringhe di bit di lunghezza \textit{m} nel caso di $q = 2^m$).
         \item Controllare che \textit{Q} appartiene alla curva ellittica definita da \textit{a} e \textit{b}
-        \item Controllare che $nQ = O$
-        \item Se qualunque di questi controlli risultano falsi, allora \textit{Q} \textit{non è valido}; altrimenti
+        \item Controllare che $nQ = \mathcal{O}$
+        \item Se qualunque di questi controlli risultano falsi, allora \textit{Q} \textit{non è valido}; altrimenti Q è considerato valido
 \end{enumerate}
 
 \subsection{Creazione di una firma digitale}
@@ -383,50 +655,623 @@ Per firmare un messaggio \textit{m}, un utente \textit{A} con parametri di domin
 \begin{enumerate}
     \item Selezionare un numero casuale, o pseudocasuale, \textit{k} all'interno dell'intervallo $1 \leq k \leq n - 1$.
     \item Calcolare $kG = (x_1, y_1) \text{e convertire } x_1 \text{ in un intero } \bar{x}_1 $.
-    \item Calcolare $r = x_1 \mod n$. Se $r = 0$ allora tornare allo step 1.
-    \item Calcolare $k^{-1} \mod n$.
-    \item Calcolare SHA-1(\textit{m})e convertire la stringa di bit in un intero \textit{e}.
-    \item Calcolare $s = k^{-1}(e + dr) \mod n$. Se $s = 0$ allora tornare allo step 1.
+    \item Calcolare $r = x_1 \pmod n$. Se $r = 0$ allora tornare allo step 1.
+    \item Calcolare $k^{-1} \pmod n$.
+    \item Calcolare SHA-1(\textit{m})\footnote{SHA-1 utilizzato per coerenza con la fonte citata; è oggi considerato obsoleto per la resistenza alle collisioni, e le implementazioni moderne di ECDSA utilizzano tipicamente SHA-256 o algoritmi successivi.} e convertire la stringa di bit in un intero \textit{e}.
+    \item Calcolare $s = k^{-1}(e + dr) \pmod n$. Se $s = 0$ allora tornare allo step 1.
     \item La firma dell'utente \textit{A} per il messaggio \textit{m} è  \textit{(r, s)}.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        scale=1.1,
+    process/.style={rectangle, draw=cyan, thick, rounded corners=2pt,
+        minimum width=3.6cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    decision/.style={diamond, draw=red!60!orange!80!black , thick,
+        minimum width=3.0cm, minimum height=1.4cm, align=center,
+        text=black, fill=white, inner sep=1pt},
+    terminal/.style={ellipse, draw=black, thick,
+        minimum width=3.2cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    arr/.style={-{Stealth[length=2.2mm]}, black, thick},
+    lbl/.style={red!60!orange!80!black , font=\small}
+    ]
+    \node[terminal] (start) at (0,11)   {inizio};
+    \node[process]  (pick_k) at (0,9.5) {scegliere $k$\\$1 \leq k \leq n-1$};
+    \node[process]  (kg)     at (0,7.8) {calcolare $kG=(x_1,y_1)$};
+    \node[process]  (calc_r) at (0,6.1) {calcolare $r = x_1 \bmod n$};
+    \node[decision] (dec_r)  at (0,4.2) {$r=0$?};
+    \node[process]  (kinv)   at (0,2.2) {calcolare $k^{-1} \bmod n$\\e $e = \text{SHA-1}(m)$};
+    \node[process]  (calc_s) at (0,0.2) {calcolare\\$s = k^{-1}(e+dr) \bmod n$};
+    \node[decision] (dec_s)  at (0,-1.8) {$s=0$?};
+    \node[terminal] (out)    at (0,-3.8) {output firma $(r,s)$};
+
+    \draw[arr] (start)   -- (pick_k);
+    \draw[arr] (pick_k)  -- (kg);
+    \draw[arr] (kg)      -- (calc_r);
+    \draw[arr] (calc_r)  -- (dec_r);
+    \draw[arr] (dec_r)   -- node[lbl, right] {no} (kinv);
+    \draw[arr] (kinv)    -- (calc_s);
+    \draw[arr] (calc_s)  -- (dec_s);
+    \draw[arr] (dec_s)   -- node[lbl, right] {no} (out);
+    \draw[arr] (dec_r.west) -- node[lbl, above] {s\`i} (-3.6,4.2) -- (-3.6,9.5) -- (pick_k.west);
+    \draw[arr] (dec_s.west) -- node[lbl, above] {s\`i} (-3.6,-1.8) -- (-3.6,9.5);
+    \end{tikzpicture}
+    \caption{Flowchart per la creazione di una firma digitale ECDSA.}
+\end{figure}
+
+\subsection{Potenziale vulnerabilità}
+Il segreto per messaggio k deve essere generato in modo indipendente per ciascun messaggio firmato. Altrimenti la chiave privata \textit{d} può essere scoperta.\footnote{Se viene utilizzato un generatore di numeri casuali o pseudocasuali la possibilità di generare due numeri identici è trascurabile}
+Questa vulnerabilità è stata scoperta in un caso reale nel 2010, quando un gruppo di ricerca \textit{fail0verflow} lo ha presentato alla conferenza 27C3 nel dicembre del 2010 svelando una grave vulnerabilità nei sistemi dell'azienda \textit{Sony}.
+\\ Perché questo attacco possa essere messo in atto serve che l'utente che sta firmando i messaggi utilizzi la stessa \textit{k} per molteplici messaggi, nel caso di Sony utilizzavano la stessa \textit{k} come costante per ogni messaggio criptato inviato, se questo accade è possibile risalire alla chiave privata \textit{d} in questa maniera:
+\begin{enumerate}
+    \setcounter{enumi}{-1}
+    \item Si suppone che Alice abbia usato la stessa \textit{k} per due messaggi diversi $m_1$ e $m_2$. Dato che $k$ è uguale, allora lo è anche $r$ \footnote{Questo è vero perché r rappresenta la coordinata x di $k\cdot G$}. Le due firme sono:
+    \begin{equation}
+        s_1 \equiv k^{-1}(e_1 + dr) (\pmod n)
+    \end{equation}
+    \begin{equation}
+        s_2 \equiv k^{-1}(e_2 + dr) (\pmod n)
+    \end{equation}
+    \item Moltiplicare entrambi i lati per k:
+    \begin{equation}
+        ks_1 \equiv e_1 + dr (\pmod n)
+    \end{equation}
+    \begin{equation}
+        ks_2 \equiv e_2 + dr (\pmod n)
+    \end{equation}
+    \item Sottraiamo la seconda equazione dalla prima:
+    \begin{equation}
+        k(s_1 - s_2) \equiv e_1 - e_2 (\pmod n)
+    \end{equation}
+    L'intuizione da notare è che scompare temporaneamente la chiave privata.
+    \item Se $s_1 \not\equiv s_2$,si possono dividere entrambe le parti \footnote{Questa operazione è valida perché se $s_1 \equiv s_2$ è facile vedere che questo implica che $e_1 \equiv e_2$, il che è quasi impossibile utilizzando SHA-1 con $m_1 \neq m_2$, perciò è valido dare per scontato che $s_1 \not\equiv s_2$}:
+    \begin{equation}
+        k \equiv (s_1 - s_2)^{-1}(e_1 - e_2) (\pmod n)
+    \end{equation}
+    \item Ora per trovare \textit{d} basta invertire la formula originale:
+    \begin{equation}
+        d \equiv r^{-1}(ks_1 - e_1) (\pmod n)
+    \end{equation}
+    Dato che $s_1, s_2$ si possono ricavare dalla firma e $e_1, e_2$ sono le hash dei messaggi si può ricavare tutto senza avere accesso alla chiave privata
 \end{enumerate}
 
 \subsection{Verifica di una firma digitale}
 Per verificare la firma \textit{(r, s)} dell'utente \textit{A} per il messaggio \textit{m}, l'utente \textit{B} ottiene una copia autentica dei parametri di dominio di $A: D = (q, FR, a, b, n, h)$ e la chiave pubblica \textit{Q} ad esso associata.
-\\ Una volta validati sia \textit{B} che \textit{Q} (per una dimostrazione formale consultare \cite{Johnson}), \textit{B} deve procedere in questa maniera:
+\\ Una volta validati sia \textit{D} che \textit{Q} (per una dimostrazione formale consultare \cite{Johnson}), \textit{B} deve procedere in questa maniera:
 \begin{enumerate}
     \item Verificare che \textit{r} e \textit{s} siano interi che appartengono all'intervallo $[1, n - 1]$.
-    \item Calcolare SHA-1(\textit{m}) e convertire la string di bit in un intero \textit{e}.
-    \item Calcolare $w = s^{-1} \mod n$.
-    \item Calcolare $w_1 = ew \mod n \text{e} w_2 = rw \mod n$.
-    \item Calcolare $X = w_1G + u_2Q$.
-    \item Se $X = O$, allora rifiutare la firma. Altrimenti conertire la coordinata \textit{x} di \textit{X} in un intero $\bar x_1$ e calcolare $v = \bar{x_1} \mod n$
+    \item Calcolare SHA-1(\textit{m}) e convertire la stringa di bit in un intero \textit{e}.
+    \item Calcolare $w = s^{-1} \pmod n$.
+    \item Calcolare $u_1 = ew \pmod n \text{ e } u_2 = rw \pmod n$.
+    \item Calcolare $X = u_1G + u_2Q$.
+    \item Se $X = \mathcal{O}$, allora rifiutare la firma. Altrimenti convertire la coordinata \textit{x} di \textit{X} in un intero $\bar x_1$ e calcolare $v = \bar{x_1} \pmod n$
     \item Accettare la firma solo e soltanto se $v = r$
 \end{enumerate}
 
+\section{Codifica di un messaggio}
+Una volta generate le chiavi pubbliche e private, e le necessarie firme digitali, i due utenti, \textit{A} e \textit{B} hanno bisogno di un protocollo in grado di cifrare questi messaggi per poi essere inviati.
+\\Il protocollo usato per codificare messaggi attraverso curve ellittiche è denominato "\textit{ECIES (elliptic curve integrated encryption scheme)}" che implementa le seguenti funzioni:
+\begin{itemize}
+    \item Key Agreement (KA): Funzione usata per la generazione di un segreto condiviso tra due utenti.
+    \item Key Derivation Function (KDF): Meccanismo che produce una coppia di chiavi derivate da parametri ideati per la generazione di tali chiavi e altri parametri opzionali.
+    \item Encryption (ENC): Algoritmo di criptazione simmetrica.
+    \item Message Authentication Code (MAC): Dati utilizzati in modo da autenticare messaggi.
+    \item Hash (HASH): Funzione digest usata all'interno di KDF e MAC.
+\end{itemize}
+
+Per spiegare meglio il protocollo descritto sopra si propone un esempio. Si utilizzeranno come utenti \textit{Alice}, la quale invierà il messaggio e \textit{Bob} il quale riceverà il messaggio.
+\\Consideriamo $u, U\ \text{e} \ v, V$ rispettivamente le chiavi private e pubbliche dei due utenti.
+I passi che \textit{Alice} dovrà seguire sono i seguenti:
+\begin{enumerate}
+    \item Alice deve generare una coppia di chiavi effimera composta dall'elemento di campo finito u e dal punto della curva ellittica U = u · G. Tale coppia deve essere generata pseudocasualmente.
+    \item Una volta generati Alice utilizzerà la funzione KA, per creare un valore segreto condiviso, il quale è il risultato della moltiplicazione scalare $u \cdot V$
+    \item Dopodiché Alice deve prendere il nuovo valore segreto condiviso ed usarlo, assieme ad altri valori opzionali, come input per la funzione KDF. L'output di questa funzione è la concatenazione della chiave di criptazione simmetrica, $k_{ENC}$, e la chiave MAC, $k_{MAC}$
+    \item Una volta creata $k_{ENC}$ Alice userà l'algoritmo ENC, in modo da trasformare il messaggio in chiaro \textit{m} in un messaggio criptato \textit{c}.
+    \item Presi inoltre il crittogramma \textit{c}, $k_{MAC}$ e opzionalmente altri parametri, Alice deve usare la funzione MAC in modo da produrre un \textit{tag}.
+    \item Infine, Alice prenderà \textit{U, tag} e \textit{c} e manderà il crittogramma (\textit{U} $\vert\vert$ \textit{tag}$\vert\vert$ \textit{c}) il quale consiste dei tre elementi concatenati, a Bob.
+\end{enumerate}
+\cite{Gayoso}
+
+\section{Decodifica di un messaggio}
+Per quanto riguarda la decodifica del messaggio ricevuto da Alice Bob deve seguire i seguenti passi:
+\begin{enumerate}
+    \item Utilizzando la chiave pubblica \textit{U} e la sua chiave privata \textit{v}, Bob deve moltiplicarli assieme per ottenere lo stesso prodotto di Alice, $u\cdot V$
+    \item Usando come input il valore segreto condiviso $v\cdot U$ e gli stessi parametri opzionali che ha usato Alice, Bob deve produrre le stesse $k_{ENC} \ \text{e} \ k_{MAC}$ utilizzando la stessa procedura con la funzione KDF.
+    \item Utilizzando la chiave $k_{MAC}$, il messaggio criptato \textit{c} e gli stessi parametri opzionali usati da Alice, Bob deve calcolare il valore \textit{tag*} attraverso la funzione MAC, per poi confrontarlo con il \textit{tag} ricevuto da Alice. Se i due valori risultano diversi, Bob deve rifiutare il crittogramma a causa di un fallimento della procedura di verifica MAC.
+    \item Se invece il valore del tag è uguale, allora Bob può procedere a decifrare il messaggio \textit{c} utilizzando l'algoritmo simmetrico ENC e la chiave $k_{ENC}$ una volta decriptato Bob sarà in grado di leggere in chiaro il messaggio inviato da Alice.
+\end{enumerate}
+
+\begin{figure} [H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[
+        scale=1.2,
+    process/.style={rectangle, draw=cyan, thick, rounded corners=2pt,
+        minimum width=3.4cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    decision/.style={diamond, draw=red!60!orange!80!black , thick,
+        minimum width=3.0cm, minimum height=1.4cm, align=center,
+        text=black, fill=white, inner sep=1pt},
+    terminal/.style={ellipse, draw=black, thick,
+        minimum width=3.6cm, minimum height=0.9cm, align=center,
+        text=black, fill=white},
+    arr/.style={-{Stealth[length=2.2mm]}, black, thick},
+    pubArr/.style={-{Stealth[length=2.2mm]}, orange, thick},
+    lbl/.style={red!60!orange!80!black , font=\small}
+    ]
+    \node[terminal] (start) at (-2, 10) {Alice};
+
+    % \node[terminal] (start) at (0,10)   {$k=(k_{n-1}\dots k_0)_2$};
+    \node[process]  (init)      at (-2,8.5)  {Generazione chiavi \\privata $\rightarrow u$ \\ $pubblica \rightarrow U$};
+    \node[process]  (step1)     at (-2,6.5)  {KA\\Segreto generato attraverso \\ $u \cdot V$};
+    \node[process]  (step2)     at (-2,4.5)  {KDF\\Output \\$Chiave\ simmetrica \rightarrow k_{ENC}$\\$Chiave\ MAC \rightarrow k_{MAC}$};
+    \node[process]  (step3)     at (-2,2.5)  {ENC\\ messaggio in chiaro $m \rightarrow c$ criptato};
+    \node[process]  (step4)     at (-2,1)    {MAC\\ $c, k_{MAC}, \dots \rightarrow tag$};
+    \node[process]  (out)     at (-2,-0.5) {Invio $U || tag || c$};
+
+    \node[terminal] (begin)     at (5, 10) {Bob};
+    
+    \node[process]  (recieve) at        (5, 8.5)    {Ricezione\\$U||tag||c$};
+    \node[process]  (initial step) at   (5, 6.5)    {Generazione chiave come Alice \\ $v \cdot U$};
+    \node[process]  (second step) at    (5, 4.5)    {KDF\\Utilizzando \\$v \cdot U$ come input \\Stessi parametri di Alice\\produce $\rightarrow k_{ENC}\ e \ k_{MAC}$};
+    \node[process]  (third step) at     (5, 2.5)    {calcolare \textit{tag*} allo stesso modo di Alice};
+    \node[decision] (choice) at         (5, 0.5)    {\textit{tag*} = \textit{tag?}};
+    \node[process]  (refuse) at         (3, -1.5)   {rifiutare crittogramma};
+    \node[process]  (accept) at         (7.5, -1.5)   {ENC\\utilizzando $k_{ENC}$\\ decifrare il messaggio };
+    % \node[decision] (dec1)  at (0,4.0)  {$k_i=1$?};
+    % \node[process]  (add)   at (3.9,4.0) {$Q \leftarrow Q+P$};
+    % \node[decision] (dec2)  at (0,1.9)  {$i>0$?};
+    % \node[terminal] (out)   at (0,0.1)  {output $Q=kP$};
+    \draw[arr] (start)              -- (init);
+    \draw[arr] (init)               -- (step1);
+    \draw[arr] (step1)              -- (step2);
+    \draw[arr] (step2)              -- (step3);
+    \draw[arr] (step3)              -- (step4);
+    \draw[arr] (step4)              -- (out);
+    \draw[pubArr] (out.east)        -- (out.east) -- (1.5, -0.5) -- (1.5, 8.5) -- (recieve.west);
+    \draw[arr] (recieve)            -- (initial step);
+    \draw[arr] (initial step)       -- (second step);
+    \draw[arr] (second step)        -- (third step);
+    \draw[arr] (third step)         -- (choice);
+    \draw[arr] (choice.west)        -- node[lbl, above] {no} (3, 0.5) -- (refuse.north);
+    \draw[arr] (choice.east)        -- node[lbl, above] {s\'i} (7.5, 0.5) -- (accept.north);
+    % \draw[arr] (dbl)   -- (dec1);
+    % \draw[arr] (dec1.east) -- node[lbl, above]{s\`i} (add.west);
+    % \draw[arr] (dec1) -- node[lbl, left]{no} (dec2);
+    % \draw[arr] (add.south) -- (3.9,2.9) -- (dec2.east);
+    % \draw[arr] (dec2) -- node[lbl, right]{no} (out);
+    % \draw[arr] (dec2.west) -- (-3.9,2.9) -- (-3.9,6.8)
+    %     -- node[lbl, above, pos=0.5]{s\`i, $i\leftarrow i-1$} (dbl.west);
+    \end{tikzpicture}
+    }
+\end{figure}
+
+
+\chapter{ECC nei Dispositivi IoT}
+\section{Vincoli Hardware dei dispositivi IoT}
+In questa relazione verranno trattati due dispositivi IoT in particolare: \textit{Arduino Uno} e \textit{ESP-32}.
+\\Le specifiche tecniche di questi due dispositivi sono le seguenti \cite{Ricci}:
+\subsubsection*{Arduino Uno MCU}
+\begin{itemize}
+    \item  8 bit, 16MHz
+    \item Memoria flash: 32 KB
+    \item Memoria SRAM: 2 KB, EEPROM: 1 KB
+\end{itemize}
+\subsubsection*{ESP-32}
+\begin{itemize}
+    \item CPU: Xtensa dual-core 32-bit LX6 microprocessore, 160-240 MHz
+    \item Memoria: 320 KiB RAM, 448 KiB ROM
+    \item Wireless connectivity: Wi-Fi: 802.11 b/g/n + Bluetooth: v4.2 BR/EDR e BLE
+\end{itemize}
+
+\section{Perché RSA è inadatto}
+Arduino Uno dispone di soli \textbf{2048 byte} di RAM totale. 
+A differenza di quanto si potrebbe pensare sommando semplicemente le dimensioni di chiave,
+messaggio e risultato, la quantità di byte all'interno della RAM necessari per RSA 
+risulta essere significativamente più alta, per tre motivi:
+\begin{itemize}
+    \item La moltiplicazione di due numeri da 256 byte produce un prodotto intermedio,
+    prima della riduzione modulo $n$, di fino a 512 byte;
+    \item Un algoritmo di riduzione, come Montgomery, richiede ulteriori buffer temporanei;
+    \item l'uso del CRT ( Chinese Remainder Theorem ), usato per rendere la decifratura sufficientemente veloce, richiede 
+    costanti precalcolate aggiuntive.
+\end{itemize}
+Questo è confermato da misurazioni dirette su hardware AVR:
+un'implementazione ottimizzata di RSA-2048 su un ATmega128 (un microcontrollore della stessa famiglia
+dell'ATmega328P trovato su Arduino Uno ma con il doppio della RAM) 
+richiede 1332 byte di RAM per l'operazione a chiave pubblica e 1853 per quella a chiave privata con CRT. \cite{Gura}
+\\Considerando i 2048 byte disponibili su Arduino Uno, l'operazione a chiave pubblica occuperebbe da sola circa il
+\textbf{65\%} della RAM totale, mentre l'operazione a chiave privata ne occuperebbe circa il \textbf{90\%}
+senza considerare buffer e variabili necessarie al programma. Questo rende, 
+nella pratica, la decifratura RSA-2048 non realizzabile su un dispositivo con le 
+caratteristiche di Arduino Uno.
+Ci sono implementazioni di RSA su Arduino Uno come questo programma presente su \href{https://gitea.bucchino.org/gbucchino/rsa_arduino}{gitea \ExternalLink}. 
+\\ Il problema con implementazioni come questa è che utilizzano una chiave da soli 32 bit anziché 2048, rendendo un attacco brute force semplice, quindi inutile la cifratura.
+\\Per quanto riguarda l'ESP-32 che è in grado di supportare da un punto di vista di memoria
+le operazioni necessarie per utilizzare l'algoritmo di RSA, risulta inefficiente in confronto ad algoritmi ECC.
+\begin{center}
+\begin{tabular}{|l|c|c|}
+    \hline
+    & \textbf{Arduino Uno} & \textbf{ESP32} \\
+    \hline
+    RAM disponibile & 2 KB & 320 KB \\
+    Chiave RSA-2048 & impossibile & possibile ma lento \\
+    Chiave ECC-256 & difficile & efficiente \\
+    \hline
+\end{tabular}
+\end{center}
+Studiando più nel dettaglio un confronto tra i due argomenti si può notare in quali 
+aspetti algoritmi ECC siano più efficienti di algoritmi RSA, e invece in quali ambiti sia il contrario.
+I dati utilizzati in questa sezione si possono controllare in questo paper \cite{Vahdati}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar, bar width=32pt, width=8cm, height=6.5cm,
+    symbolic x coords={chiave pubblica, chiave privata CRT},
+    xtick=data, x tick label style={black, font=\small, align=center},
+    ymin=0, ymax=110,
+    ylabel={\% della RAM totale (2048 byte)},
+    axis lines*=left, axis line style={black}, tick style={black},
+    tick label style={black, font=\small}, label style={black},
+    ylabel style={yshift=2pt},
+    nodes near coords, nodes near coords style={black, font=\small\bfseries},
+    enlarge x limits=0.5,
+]
+\addplot[fill=orange, draw=orange!70!black, fill opacity=0.9]
+    coordinates {(chiave pubblica,65) (chiave privata CRT,90)};
+\draw[black!60, dashed, thick]
+    (rel axis cs:0,{100/110}) -- (rel axis cs:1,{100/110})
+    node[midway, above, black!80, font=\scriptsize] {RAM totale disponibile};
+\end{axis}
+\end{tikzpicture}
+\caption{Occupazione della RAM di Arduino Uno per le operazioni RSA-2048 \cite{Gura}.}
+\end{figure}
+
+\subsection{Requisiti di memoria}
+Considerando un livello di sicurezza pari a 128 e 160 si nota un vantaggio notevole da parte degli algoritmi ECC:
+\\La grandezza delle chiavi risulta pari a 1024 e 2048 rispettivamente per quanto riguarda RSA, invece pari a 160 e 210 
+per quanto riguarda ECC; similmente si nota che i requisiti di memoria (in byte) risultano notevolmente superiori per RSA rispetto a ECC, con valori rispettivamente pari a 313, 621 e 125, 140.
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar, bar width=22pt, width=9cm, height=6.5cm,
+    symbolic x coords={sicurezza 128, sicurezza 160},
+    xtick=data, ymin=0, ymax=680,
+    ylabel={Memoria richiesta (byte)},
+    axis lines*=left, axis line style={black}, tick style={black},
+    tick label style={black, font=\small}, label style={black},
+    ylabel style={yshift=2pt},
+    nodes near coords, nodes near coords style={black, font=\scriptsize},
+    enlarge x limits=0.35,
+    legend style={at={(0.5,1.08)}, anchor=south, legend columns=2,
+        draw=black, text=black, fill=white, font=\small},
+]
+\addplot[fill=cyan, draw=cyan!70!black] coordinates {(sicurezza 128,313) (sicurezza 160,621)};
+\addplot[fill=orange, draw=orange!70!black] coordinates {(sicurezza 128,125) (sicurezza 160,140)};
+\legend{RSA, ECC}
+\end{axis}
+\end{tikzpicture}
+\caption{Requisiti di memoria (byte) per RSA ed ECC a due livelli di sicurezza \cite{Vahdati}.}
+\end{figure}
+
+\subsection{Consumo energetico}
+Un altro aspetto molto importante per dispositivi IoT è il consumo energetico, un calcolatore come l'ESP-32 è spesso alimentato da una batteria,
+perciò ottimizzare il consumo energetico è importante per permettere al dispositivo di continuare ad operare senza 
+il bisogno di cambiare la batteria.
+\\Vediamo dalle tabelle del paper citato sopra che a pari livelli di sicurezza
+l'algoritmo ECC comporta un consumo nettamente inferiore rispetto a quello di RSA, si passa da una differenza di $\sim 8mWh$ a livello di sicurezza pari a 80,
+ad una differenza di $\sim 40mWh$ a livello di sicurezza pari a 128.
+\subsection{Generazione delle Chiavi e Tempo di Esecuzione}
+A parità di sicurezza le chiavi generate dall'algoritmo RSA risultano costantemente più grandi e necessitano anche di più tempo
+per essere generate.
+\\Per quanto riguarda l'esecuzione dell'algoritmo invece RSA risulta essere più veloce quando si considera l'operazione con chiave pubblica,
+quando si considera l'operazione con chiave privata invece ECC risulta nettamente più veloce.
+\\Date le restrizioni dei dispositivi considerati è chiaro che algoritmi ECC risultano più efficienti per 
+quanto riguarda la cifratura e firma di messaggi, soprattutto quando si considerano dispositivi come \textit{Smart Cards} o dispositivi che similmente necessitano di utilizzare una comunicazione sicura.
+Inoltre RSA può essere più adatto ad applicazioni che richiedono la verifica di messaggi piuttosto che generazione di firme.
+
+\section{Protocolli di comunicazione}
+Nell'ambito dell'IoT è comune trovare numerosi dispositivi che comunicano allo stesso momento, 
+alcuni dei quali connessi alla corrente altri invece che utilizzano 
+una semplice batteria come alimentazione.
+\\Per questi motivi il protocollo TLS usato come tale non risulta adatto
+in quanto richiede un canale di comunicazione affidabile e ordinato.
+TLS si affida allo strato TCP per ottenere queste caratteristiche di canale di comunicazione.
+Con questi requisiti, di conseguenza, si vengono a formare problemi di latenza,
+larghezza di banda, e risorse.
+\\Per evitare questi problemi è stato sviluppato un nuovo protocollo basato su TLS: \textit{DTLS}.
+
+\section{DTLS}
+Le differenze ad alto livello tra TLS e DTLS riguardano principalmente la "qualità" del canale di comunicazione;
+come annunciato precedentemente TLS utilizza un canale di comunicazione affidabile e ordinato, il che richiede molte risorse. 
+Per evitare questo problema DTLS utilizza un canale affidabile e ordinato soltanto durante il protocollo di \textit{handshaking}
+\footnote{handshaking inteso come la fase iniziale dove il cliente e il server si 
+accertano dell'identità l'uno dell'altro}, 
+il resto della comunicazione non presenta questo tipo di accertamento, il che implica
+che informazioni si possano perdere durante la comunicazione.
+Per evitare la perdita totale di dati
+il server che implementa DTLS invia un messaggio \textit{ACK} per segnalare le informazioni ricevute,
+una volta ricevuto il messaggio il cliente può controllare se manca dell'informazione e di conseguenza
+inviare solo i dati mancanti.
+Questi accertamenti permettono a dispositivi che implementano il protocollo DTLS
+a utilizzare meno risorse rispetto a TLS e di lasciare i canali di comunicazione più liberi.
+
+\subsection{Scambio di chiavi su DTLS}
+Come già discusso nelle sezioni
+[\hyperref[sec:firma_digitale]{\ref {sec:firma_digitale}}
+\hyperref[sec:creazione_di_chiavi]{\ref {sec:creazione_di_chiavi}}] il server autentica i parametri 
+effimeri tramite firma \textit{ECDSA} e le due parti calcolano il valore segreto 
+tramite ECDH. Nello specifico nel protocollo DTLS questo meccanismo si inserisce nella
+fase di \textit{handshake} in questo modo:
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        >={Stealth[length=2.5mm]},
+        actor/.style={ellipse, draw=black, thick, minimum width=2.4cm,
+            minimum height=0.8cm, align=center, text=black, fill=white,
+            font=\bfseries},
+        lifeline/.style={thick, dashed, black},
+        arrC2S/.style={-{Stealth[length=2.5mm]}, cyan, thick},
+        arrS2C/.style={-{Stealth[length=2.5mm]}, orange, thick},
+        arrBoth/.style={{Stealth[length=2.5mm]}-{Stealth[length=2.5mm]}, red!60!orange!80!black , thick},
+        msg/.style={font=\small, align=left, text=black},
+        stepnum/.style={font=\small\bfseries, text=cyan}
+    ]
+
+    % Background
+    \fill[white] (-1.5,1) rectangle (9.5,-16.5);
+
+    % Actors
+    \node[actor] (client) at (0,0) {Client};
+    \node[actor] (server) at (8,0) {Server};
+
+    % Lifelines
+    \draw[lifeline] (0,-0.5) -- (0,-16);
+    \draw[lifeline] (8,-0.5) -- (8,-16);
+
+    % Step 1
+    \draw[arrC2S] (0,-1.2) -- (8,-1.2) node[midway, above, msg] {ClientHello};
+    \node[stepnum] at (-1,-1.2) {1};
+
+    % Step 2
+    \draw[arrS2C] (8,-2.8) -- (0,-2.8) node[midway, above, msg] {HelloVerifyRequest\\ + cookie};
+    \node[stepnum] at (-1,-2.8) {2};
+
+    % Step 3
+    \draw[arrC2S] (0,-4.6) -- (8,-4.6) node[midway, above, msg] {ClientHello\\ + cookie};
+    \node[stepnum] at (-1,-4.6) {3};
+
+    % Step 4
+    \draw[arrS2C] (8,-7.2) -- (0,-7.2) node[midway, above, msg] {
+        ServerHello\\
+        \{Certificate*\}\\
+        \{ServerKeyExchange\}\\
+        \{ServerHelloDone\}
+    };
+    \node[stepnum] at (-1,-7.2) {4};
+
+    % Step 5
+    \draw[arrC2S] (0,-9.8) -- (8,-9.8) node[midway, above, msg] {
+        ClientKeyExchange\\
+        \{ChangeCipherSpec\}\\
+        \{Finished\}
+    };
+    \node[stepnum] at (-1,-9.8) {5};
+
+    % Step 6
+    \draw[arrS2C] (8,-11.8) -- (0,-11.8) node[midway, above, msg] {
+        [ChangeCipherSpec]\\
+        \{Finished\}
+    };
+    \node[stepnum] at (-1,-11.8) {6};
+
+    % Step 7
+    \draw[arrBoth] (0,-13.6) -- (8,-13.6) node[midway, above, msg] {[Application Data]};
+    \node[stepnum] at (-1,-13.6) {7};
+
+    \end{tikzpicture}
+    \caption{DTLS handshake}
+\end{figure}
+
+Il formato del messaggio \textit{ClientHello} deve essere della forma:
+\begin{verbatim}
+    enum {
+        elliptic_curves(10),
+        ec_point_formats(11)
+    } ExtensionType;
+\end{verbatim}
+\cite{rfc8422}
+
+Dove \verb|elliptic_curves| indica le curve ellittiche supportate dal cliente.
+\verb|ec_point_formats| invece indica i punti che il cliente può analizzare.
+\\Una volta accordati la curva e i punti appartenenti a questa da utilizzare 
+(vedere \cite{rfc8422} per dettagli implementativi) il server invierà un \textit{ServerHello}
+che include un messaggio denominato \textit{Server Key Exchange}.
+Questo messaggio include la chiave pubblica \textit{ECDH} effimera assieme ai parametri della curva,
+i quali sono firmati tramite \textit{ECDSA} utilizzando la chiave privata del certificato su un hash
+che include i valori random di entrambe le parti.
+\\ Visivamente si può rappresentare in questo modo:
+\begin{verbatim}
+    SHA(ClientHello.random + ServerHello.random + params)
+\end{verbatim}
+Una volta ricevuto questo messaggio il cliente recupera i parametri di dominio della 
+curva ellittica e la chiave pubblica \textit{ECDH} effimera del server.
+\\
+Successivamente il cliente invia un \textit{Client Key Exchange} che include una 
+chiave pubblica \textit{ECDH} che corrisponde ai parametri ricevuti dal server.
+A quel punto il server controlla che la chiave appartenga alla stessa curva della sua chiave 
+\textit{ECDH}.
+\\Entrambe le parti calcolano indipendentemente il premaster secret tramite 
+moltiplicazione scalare (come discusso in \hyperref[sec:creazione_di_chiavi]{\ref{sec:creazione_di_chiavi}}), dal quale vengono derivate le 
+chiavi simmetriche utilizzate per cifrare i dati applicativi nel passo 7.
+
+\section{Curva P-256}
+
+Prima di parlare di come dispositivi IoT utilizzano e sfruttano le curve ellittiche è buono introdurre una delle curve più popolari: 
+\textit{P-256}, anche chiamata \textit{secp256r1} oppure \textit{prime256v1}.
+Questa curva, standardizzata dal NIST, presenta come parametri consigliati i seguenti:
+\begin{itemize}
+    \item 
+    \begin{tabular}[t]{@{}l l@{}}
+        p = & FFFFFFFF 00000001 00000000 00000000 00000000 FFFFFFFF FFFFFFFF\\
+            & FFFFFFFF
+    \end{tabular}
+
+    \item 
+    \begin{tabular}[t]{@{}l l@{}}
+        a = &FFFFFFFF 00000001 00000000 00000000 00000000 FFFFFFFF FFFFFFFF\\
+            & FFFFFFFC
+    \end{tabular}
+
+    \item 
+    \begin{tabular}[t]{@{}l l@{}}
+        b = & 5AC635D8 AA3A93E7 B3EBBD55 769886BC 651D06B0 CC53B0F6 3BCE3C3E\\
+            & 27D2604B
+    \end{tabular}
+
+    \item S =   C49D3608 86E70493 6A6678E1 139D26B7 819F7E90
+    \item 
+    \begin{tabular}[t]{@{}l l@{}}
+        G = & 03 6B17D1F2 E12C4247 F8BCE6E5 63A440F2 77037D81 2DEB33A0\\
+            & F4A13945 D898C296
+    \end{tabular}
+
+    \item 
+    \begin{tabular}[t]{@{}l l@{}}
+        n = & FFFFFFFF 00000000 FFFFFFFF FFFFFFFF BCE6FAAD A7179E84 F3B9CAC2\\
+            & FC632551
+    \end{tabular}
+
+    \item h = 01
+
+\end{itemize}
+
+P-256 (secp256r1) è raccomandata da NIST in \cite{fips186} ed è obbligatoria
+per l'interoperabilità in TLS secondo \cite{rfc8422}, 
+il che ne spiega l'adozione massiccia.
+Questi parametri assieme ad altri parametri consigliati per diverse curve si
+possono trovare leggendo \cite{sec2}
+
+\section{ESP32 mbedTLS}
+All'interno del framework ufficiale di Espressif per ESP32 è presente una libreria 
+crittografica chiamata \textit{mbedTLS}, la quale fornisce un'implementazione di TLS 1.2/1.3,
+supporto a DTLS, primitive crittografiche e generazione di numeri casuali;
+per una descrizione dettagliata consultare \cite{espressif_mbedtls}.
+\\Come supplemento a questa libreria il dispositivo ESP32 presenta anche un 
+acceleratore hardware usato per velocizzare operazioni AES, assieme a operazioni SHA.
+Per specifiche tecniche su queste componenti consultare \cite{esp32_trm}.
+\\Queste due caratteristiche dell'ESP32 permettono di compiere calcoli su ECC su un microcontrollore, 
+altrimenti queste operazioni risulterebbero troppo lente, rendendole inefficienti per dispositivi come questo.
+
+\section{Note aggiuntive}
+Il protocollo \textit{Matter} utilizza la curva P-256 durante la comunicazione 
+tra dispositivi IoT \cite{matter}; questo standard è stato adottato da aziende rilevanti
+quali \textit{Google, Apple e Amazon.}
+
+\chapter{Conclusioni}
+Con lo sviluppo della tecnologia e dei dispositivi utilizzati sul posto di lavoro si è arrivati a riuscire a
+creare dispositivi di dimensione ridotta ma i quali riescono comunque a completare operazioni complesse e diversificate.
+\\Una conseguenza di questa nuova popolarità è la necessità di comunicare in maniera sicura nonostante le
+risorse relativamente limitate di questi dispositivi. Grazie agli sviluppi e ai progressi nell'ambito crittografico 
+separato da quello di IoT si è visto che i metodi di comunicazione più efficienti per dispositivi simili a quelli usati nell'IoT sono
+i protocolli asimmetrici. Il problema quindi si è trasformato nel cercare di sviluppare algoritmi crittografici 
+in grado di operare efficacemente su dispositivi con risorse limitate.
+\\ Algoritmi quali \textit{RSA \text{o} Diffie-Hellman}, i quali si basano sulla difficoltà computazionale di fattorizzare grandi numeri, 
+nonostante molto efficaci su dispositivi in confronto potenti, 
+risultano inadatti in quanto la dimensione elevata delle chiavi comporta un severo rallentamento delle operazioni
+rendendole praticamente inutili quando applicate a comunicazioni in tempo reale tra dispositivi.
+\\La soluzione a questo problema la si trova nella forma delle \textit{curve ellittiche} le quali si basano sulla difficoltà di risolvere
+il problema del logaritmo discreto, questi algoritmi sono stati ideati con l'obiettivo di raggiungere livelli di sicurezza 
+comparabili ma utilizzando chiavi di dimensione notevolmente ridotta in modo da rendere possibile l'utilizzo di questi sui dispositivi nominati sopra
+\\Alcune delle applicazioni più note di questi algoritmi sono la firma digitale, \textit{ECDH}, \textit{DTLS}, \textit{Matter}, 
+utilizzati su dispositivi come \textit{Arduino UNO} e \textit{ESP-32} come esempi menzionati sopra.
+\\Come visto dal confronto dell'algoritmo \textit{RSA} e \textit{ECC} in condizioni di sicurezza equivalente, la dimensione della chiave usata
+in ECC è notevolmente inferiore a quella utilizzata in \textit{RSA}, la quale nella pratica non risulta utilizzabile in ambito IoT.
+\\Il percorso qui delineato, dalla teoria dei campi finiti fino all'implementazione pratica su dispositivi come Arduino Uno ed ESP-32,
+mostra come un problema apparentemente astratto — la struttura algebrica delle curve ellittiche — trovi una delle sue applicazioni più rilevanti 
+proprio dove le risorse computazionali sono più scarse.
+
+
 \begin{thebibliography}{9}
+
+    \bibitem{Biryukov}
+    Sabrina De Capitani di Vimercati, Pierangela Samarati 
+    \textit{Encyclopedia of Cryptography, Security and Privacy}, Springer, 2025
 
     \bibitem{Margara}
     L. Margara, \textit{Crittografia su Curve Ellittiche}, Unibo, 2026.
 
-    \bibitem{Languasco}
-    A. Languasco, A. Zaccagnini, \textit{Introduzione alla Crittografia. 
-    Algoritmi, Protocolli, Sicurezza Informatica}, Springer, 2004.
-
     \bibitem{silverman}
     J. H. Silverman, \textit{The Arithmetic of Elliptic Curves}, 
     2nd ed., Springer, 2009.
-
-    \bibitem{Treccani}
-    Enciclopedia Treccani, \textit{Punto all'infinito},
-    \url{https://www.treccani.it/enciclopedia/punto-all-infinito_(Enciclopedia-della-Matematica)/},
-    consultato il \today.
+    
     \bibitem{Hankerson}
     Darrel Hankerson, Alfred Menezes, Scott Vanstone \textit{Guide to Elliptic Curve Cryptography}, Springer, 2004
-
-    \bibitem{Biryukov}
-    Alex Biryukov, \textit{Encyclopedia of Cryptography, Security and Privacy}, Springer, 2025
+    
     \bibitem{Johnson}
     Don Johnson, Alfred Menezes, Scott Vanstone \textit{The Elliptic Curve Digital Signature Algorithm (ECDSA)}, Springer, 2001
+    
+    \bibitem{Ricci}
+    Alessandro Ricci, \textit{Embedded systems and IoT}, Unibo, 2025
+
+    \bibitem{Vahdati}
+    Z. Vahdati, S. M. Yasin, A. Ghasempour, M. Salehi,
+    \textit{Comparison of ECC and RSA Algorithms in IoT Devices},
+    Journal of Theoretical and Applied Information Technology
+
+    \bibitem{rfc8422}
+    Y. Nir, S. Josefsson, M. Pegourie-Gonnard,
+    \textit{Elliptic Curve Cryptography (ECC) Cipher Suites for Transport Layer Security (TLS) Versions 1.2 and Earlier},
+    RFC 8422, IETF, August 2018.
+
+    \bibitem{sec2}
+    Certicom Research,\\
+    \textit{SEC 2: Recommended Elliptic Curve Domain Parameters},
+    Version 2.0, SECG, January 2010.
+    \texttt{https://www.secg.org/sec2-v2.pdf}
+
+    \bibitem{fips186}
+    National Institute of Standards and Technology (NIST),
+    \textit{Digital Signature Standard (DSS)},
+    FIPS PUB 186-4, July 2013.
+    \newline
+    \texttt{https://csrc.nist.gov/publications/detail/fips/186/4/final}
+
+    \bibitem{espressif_mbedtls}
+    Espressif Systems, \textit{mbedTLS -- ESP-IDF Programming Guide},
+    \url{https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/protocols/mbedtls.html},
+    consultato il June 2, 2026.
+
+    \bibitem{esp32_trm}
+    Espressif Systems,
+    \textit{ESP32 Technical Reference Manual},
+    Version 5.4,
+    \url{https://documentation.espressif.com/esp32_technical_reference_manual_en.pdf},
+    consultato il June 3, 2026.
+
+    \bibitem{matter}
+    Connectivity Standards Alliance,
+    \textit{Matter 1.2 Core Specification},
+    CSA, 2023.\\
+    \url{https://csa-iot.org/wp-content/uploads/2023/10/Matter-1.2-Core-Specification.pdf}
+
+    \bibitem{Gayoso}
+    Gayoso Mart\'inez, V. and Hern\'andez Encinas, L. and S\'anchez \'Avila, C.
+    \textit{A Survey of the Elliptic Curve Integrated Encryption Scheme}
+    Journal of Computer Science and Engineering, 2010
+
+    \bibitem{Gura}
+    N. Gura, A. Patel, A. Wander, H. Eberle, S. Chang Shantz,
+    \textit{Comparing Elliptic Curve Cryptography and RSA on 8-bit CPUs},
+    Cryptographic Hardware and Embedded Systems -- CHES 2004,
+    Lecture Notes in Computer Science, vol. 3156, Springer, 2004.
+
 \end{thebibliography}
 
 \end{document}
