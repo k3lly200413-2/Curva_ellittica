@@ -31,7 +31,7 @@
         }
     }
 \usetikzlibrary{shapes.geometric, arrows.meta}
-\newtheorem{definition}{Definizione}
+\newtheorem{definition}{Definizione}[section]
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}{proposition}[section]
 
@@ -42,6 +42,8 @@
 
 \begin{document}
 \maketitle
+
+\tableofcontents
 
 \chapter{Introduzione}
 La necessità di trasmettere informazioni riservate su canali di comunicazione pubblici ha reso la crittografia a chiave pubblica uno degli strumenti fondamentali dell'informatica moderna. Tra le costruzioni crittografiche asimmetriche, la crittografia su curve ellittiche (ECC) si distingue per l'elevata sicurezza ottenibile con chiavi di dimensioni ridotte, caratteristica che la rende particolarmente adatta ai sistemi con risorse computazionali limitate, tra cui i dispositivi IoT.
@@ -119,7 +121,7 @@ Un Destinatario deve compiere queste operazioni in modo da creare le chiavi pubb
 	
 	\item calcolare $n = p \cdot q $ e $\Phi (n) = (p - 1)\cdot(q - 1)$
 	
-	\item scegliere un numero intero e minore di $\Phi (n)$ e primo con esso
+	\item scegliere un numero intero $e$ minore di $\Phi (n)$ e primo con esso
 
 	\item calcolare l'intero d inverso di e modulo $\Phi (n)$
 
@@ -359,7 +361,7 @@ punto di vista pratico:
             \filldraw[black] (1.6597, 1.6101) circle (1.6pt) node[above right=1pt] {$R$};
             \filldraw[orange] (1.6597, -1.6101) circle (1.6pt) node[below right=1pt] {$2P$};
     \end{tikzpicture}
-    \caption{Somma di punti con la ascissa diversa}
+    \caption{Raddoppio di un dato punto $P$}
 \end{figure}
 
 \subsection{Moltiplicazione scalare}
@@ -569,8 +571,8 @@ La dimostrazione si può trovare in \cite{silverman}.
 in un gruppo di ordine $n$ a sottoproblemi nei sottogruppi di ordine 
 primo di $\langle P \rangle$, utilizzando il Teorema Cinese del Resto 
 per ricostruire la soluzione. La complessità dell'algoritmo dipende 
-dal fattore primo più grande di $n$: se $n$ è $B$-smooth\footnote{con n-smooth si intende un numero 
-i quali fattori primi sono tutti $\leq$ di n}, l'attacco diventa efficiente. 
+dal fattore primo più grande di $n$: se $n$ è $B$-smooth\footnote{con B-smooth si intende un numero 
+i quali fattori primi sono tutti $\leq$ di B}, l'attacco diventa efficiente. 
 Per questa ragione, i parametri della curva devono essere scelti in modo che 
 $n$ sia divisibile da un primo grande.
 \end{proposition}
@@ -992,7 +994,7 @@ a utilizzare meno risorse rispetto a TLS e di lasciare i canali di comunicazione
 
 \subsection{Scambio di chiavi su DTLS}
 Come già discusso nelle sezioni
-[\hyperref[sec:firma_digitale]{\ref {sec:firma_digitale}}
+[\hyperref[sec:firma_digitale]; {\ref {sec:firma_digitale}}
 \hyperref[sec:creazione_di_chiavi]{\ref {sec:creazione_di_chiavi}}] il server autentica i parametri 
 effimeri tramite firma \textit{ECDSA} e le due parti calcolano il valore segreto 
 tramite ECDH. Nello specifico nel protocollo DTLS questo meccanismo si inserisce nella
@@ -1107,33 +1109,33 @@ Questa curva, standardizzata dal NIST, presenta come parametri consigliati i seg
 \begin{itemize}
     \item 
     \begin{tabular}[t]{@{}l l@{}}
-        p = & FFFFFFFF 00000001 00000000 00000000 00000000 FFFFFFFF FFFFFFFF\\
-            & FFFFFFFF
+        \small p = & FFFFFFFF 00000001 00000000 00000000 \\
+            & 00000000 FFFFFFFF FFFFFFFF FFFFFFFF
     \end{tabular}
 
     \item 
     \begin{tabular}[t]{@{}l l@{}}
-        a = &FFFFFFFF 00000001 00000000 00000000 00000000 FFFFFFFF FFFFFFFF\\
-            & FFFFFFFC
+        \small a = &FFFFFFFF 00000001 00000000 00000000 \\
+            & 00000000 FFFFFFFF FFFFFFFF FFFFFFFC
     \end{tabular}
 
     \item 
     \begin{tabular}[t]{@{}l l@{}}
-        b = & 5AC635D8 AA3A93E7 B3EBBD55 769886BC 651D06B0 CC53B0F6 3BCE3C3E\\
-            & 27D2604B
+        \small b = & 5AC635D8 AA3A93E7 B3EBBD55 769886BC \\
+        & 651D06B0 CC53B0F6 3BCE3C3E 27D2604B
     \end{tabular}
 
-    \item S =   C49D3608 86E70493 6A6678E1 139D26B7 819F7E90
+    \small \item S = C49D3608 86E70493 6A6678E1 139D26B7 819F7E90
     \item 
     \begin{tabular}[t]{@{}l l@{}}
-        G = & 03 6B17D1F2 E12C4247 F8BCE6E5 63A440F2 77037D81 2DEB33A0\\
-            & F4A13945 D898C296
+        \small G = & 03 6B17D1F2 E12C4247 F8BCE6E5 63A440F2 \\
+            & 77037D81 2DEB33A0 F4A13945 D898C296
     \end{tabular}
 
     \item 
     \begin{tabular}[t]{@{}l l@{}}
-        n = & FFFFFFFF 00000000 FFFFFFFF FFFFFFFF BCE6FAAD A7179E84 F3B9CAC2\\
-            & FC632551
+        \small n = & FFFFFFFF 00000000 FFFFFFFF FFFFFFFF\\
+            & BCE6FAAD A7179E84 F3B9CAC2 FC632551
     \end{tabular}
 
     \item h = 01
